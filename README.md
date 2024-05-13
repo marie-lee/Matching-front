@@ -1,2 +1,15 @@
-# Matching-front
-2024 프로젝트 매칭 플랫폼 프론트엔드 작업 공간 입니다. 
+# React(javascript,vite) + SWC 보일러 플레이팅
+
+---
+
+### 패키지 다운로드
+
+```
+$ yarn
+```
+
+### 실행
+
+```
+$ yarn dev
+```
