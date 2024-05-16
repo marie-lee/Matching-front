@@ -1,4 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom';
+
 import { PATHS } from '@/routes/paths';
 
 const account = {
