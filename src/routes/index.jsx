@@ -2,6 +2,11 @@ import { Navigate, Outlet, useRoutes } from 'react-router-dom';
 
 import account from '@/routes/account';
 
+import NotFoundPage from '@/pages/error/404';
+import Home from '@/pages/home';
+
+// ----------------------------------------------------------------------
+
 const Router = () => {
   return useRoutes([
     {
@@ -12,6 +17,10 @@ const Router = () => {
           index: true,
           element: <Navigate to={'/home'} replace />,
         },
+        {
+          path: 'home',
+          element: <Home />,
+        },
       ],
     },
 
@@ -19,7 +28,7 @@ const Router = () => {
 
     {
       path: '*',
-      element: <div>404 Not Found</div>,
+      element: <NotFoundPage />,
     },
   ]);
 };
