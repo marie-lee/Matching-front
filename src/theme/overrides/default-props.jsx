@@ -1,4 +1,4 @@
-export function defaultProps() {
+export const defaultProps = () => {
   return {
     MuiContainer: {
       defaultProps: {
@@ -6,4 +6,4 @@ export function defaultProps() {
       },
     },
   };
-}
+};
