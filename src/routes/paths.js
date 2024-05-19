@@ -5,4 +5,7 @@ export const PATHS = {
     signUp: '/account/sign-up',
     resetPassword: '/account/reset-password',
   },
+  profile: {
+    root: '/profile',
+  },
 };

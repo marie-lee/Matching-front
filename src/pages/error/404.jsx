@@ -1,6 +1,9 @@
 import { Button, Container, Stack, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const NotFoundPage = () => {
+  const navigate = useNavigate();
+
   return (
     <Container>
       <Stack minHeight={'100vh'} justifyContent={'center'}>
@@ -22,8 +25,12 @@ const NotFoundPage = () => {
 
         {/* 버튼 */}
         <Stack direction={'row'} spacing={2} mt={4} alignSelf={'center'}>
-          <Button variant={'outlined'}>이전 화면으로 돌아가기</Button>
-          <Button variant={'contained'}>홈으로 가기</Button>
+          <Button variant={'outlined'} onClick={() => navigate(-1)}>
+            이전 화면으로 돌아가기
+          </Button>
+          <Button variant={'contained'} onClick={() => navigate('/')}>
+            홈으로 가기
+          </Button>
         </Stack>
       </Stack>
     </Container>

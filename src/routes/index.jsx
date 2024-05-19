@@ -1,9 +1,10 @@
 import { Navigate, Outlet, useRoutes } from 'react-router-dom';
 
 import account from '@/routes/account';
+import profile from '@/routes/profile';
 
 import NotFoundPage from '@/pages/error/404';
-import Home from '@/pages/home';
+import GuestLayout from '@/layouts/guest/guest-layout';
 
 // ----------------------------------------------------------------------
 
@@ -11,20 +12,17 @@ const Router = () => {
   return useRoutes([
     {
       path: '/',
-      element: <Outlet />,
+      element: <GuestLayout />,
       children: [
         {
           index: true,
-          element: <Navigate to={'/home'} replace />,
-        },
-        {
-          path: 'home',
-          element: <Home />,
+          element: <div>게스트</div>,
         },
       ],
     },
 
     account,
+    profile,
 
     {
       path: '*',
