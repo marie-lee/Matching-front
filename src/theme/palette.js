@@ -18,9 +18,73 @@ export const common = {
   white: '#FFFFFF',
 };
 
+// 100 300 500 700 900
+
+export const primary = {
+  lighter: '#F3F3F3',
+  light: '#BCBCBC',
+  main: '#282424',
+  dark: '#171011',
+  darker: '#0F0609',
+  contrastText: '#FFFFFF',
+};
+
+export const secondary = {
+  lighter: '#EFD5FE',
+  light: '#C581FC',
+  main: '#8B2EF8',
+  dark: '#5017B2',
+  darker: '#270877',
+  contrastText: '#FFFFFF',
+};
+
+export const success = {
+  lighter: '#F0FCD1',
+  light: '#C2F174',
+  main: '#7DD11D',
+  dark: '#4A960E',
+  darker: '#266405',
+  contrastText: '#FFFFFF',
+};
+
+export const info = {
+  lighter: '#D9FEFE',
+  light: '#8EEDFD',
+  main: '#43C6F9',
+  dark: '#2176B3',
+  darker: '#0C3C77',
+  contrastText: '#FFFFFF',
+};
+
+export const warning = {
+  lighter: '#FFF5D9',
+  light: '#FFD98D',
+  main: '#FFB042',
+  dark: '#B76C21',
+  darker: '#7A390C',
+  contrastText: '#FFFFFF',
+};
+
+export const error = {
+  lighter: '#FFE1D8',
+  light: '#FF8F8B',
+  main: '#FF3F5C',
+  dark: '#B71F53',
+  darker: '#7A0C45',
+  contrastText: '#FFFFFF',
+};
+
 export const palette = {
   grey,
   common,
+  //
+  primary,
+  secondary,
+  info,
+  success,
+  warning,
+  error,
+  //
   divider: alpha(grey[500], 0.5),
   text: {
     primary: grey[800],
@@ -28,7 +92,6 @@ export const palette = {
     disabled: grey[500],
   },
   background: {
-    paper: '#FFFFFF',
     default: '#FFFFFF',
     neutral: grey[200],
   },

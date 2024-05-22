@@ -7,11 +7,16 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { NavDesktop } from '@/layouts/main/components/nav-desktop';
-import { configNavigation } from '@/layouts/guest/config-navigation';
+
+import { PATHS } from '@/routes/paths';
+import { HEADER } from '@/layouts/config-layout';
+
+// ----------------------------------------------------------------------
 
 const HeaderGuest = () => {
   const theme = useTheme();
+
+  // ----------------------------------------------------------------------
 
   return (
     <AppBar
@@ -22,11 +27,7 @@ const HeaderGuest = () => {
       <Toolbar
         sx={{
           px: `0 !important`,
-          height: 72,
-          transition: theme.transitions.create(['height'], {
-            easing: theme.transitions.easing.easeInOut,
-            duration: theme.transitions.duration.shorter,
-          }),
+          height: HEADER.H_DESKTOP,
           backgroundColor: theme.palette.background.default,
         }}
       >
@@ -35,11 +36,9 @@ const HeaderGuest = () => {
             프로젝트 매칭 플랫폼 로고
           </Typography>
 
-          <NavDesktop data={configNavigation} />
-
           <Box sx={{ flexGrow: 1 }} />
 
-          <Link href={'/sign-in'} underline={'none'}>
+          <Link href={PATHS.auth.signIn} underline={'none'}>
             로그인
           </Link>
         </Container>

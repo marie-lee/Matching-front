@@ -6,12 +6,18 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+
 import { NavDesktop } from '@/layouts/main/components/nav-desktop';
 import { configNavigation } from '@/layouts/main/config-navigation';
 import { ProfilePopover } from '@/layouts/components/profile-popover';
+import { HEADER } from '@/layouts/config-layout';
+
+// ----------------------------------------------------------------------
 
 const Header = () => {
   const theme = useTheme();
+
+  // ----------------------------------------------------------------------
 
   return (
     <AppBar
@@ -22,11 +28,7 @@ const Header = () => {
       <Toolbar
         sx={{
           px: `0 !important`,
-          height: 72,
-          transition: theme.transitions.create(['height'], {
-            easing: theme.transitions.easing.easeInOut,
-            duration: theme.transitions.duration.shorter,
-          }),
+          height: HEADER.H_DESKTOP,
           backgroundColor: theme.palette.background.default,
         }}
       >
