@@ -1,8 +1,14 @@
 import { Button, Container, Stack, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
+import { PATHS } from '@/routes/paths';
+
+// ----------------------------------------------------------------------
+
 const NotFoundPage = () => {
   const navigate = useNavigate();
+
+  // ----------------------------------------------------------------------
 
   return (
     <Container>
@@ -28,9 +34,7 @@ const NotFoundPage = () => {
           <Button variant={'outlined'} onClick={() => navigate(-1)}>
             이전 화면으로 돌아가기
           </Button>
-          <Button variant={'contained'} onClick={() => navigate('/')}>
-            홈으로 가기
-          </Button>
+          <Button onClick={() => navigate(PATHS.root)}>홈으로 가기</Button>
         </Stack>
       </Stack>
     </Container>

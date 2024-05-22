@@ -1,9 +1,14 @@
-import MainLayout from '@/layouts/main/main-layout';
 import { lazy } from 'react';
+
+import MainLayout from '@/layouts/main/main-layout';
+
+// ----------------------------------------------------------------------
 
 const ProfilePortfolioPage = lazy(
   () => import('@/pages/profile/profile-portfolio-page'),
 );
+
+// ----------------------------------------------------------------------
 
 const profile = {
   path: 'profile',

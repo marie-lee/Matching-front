@@ -1,9 +1,12 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Divider, IconButton, Link, MenuItem, Stack } from '@mui/material';
+import { Divider, IconButton, MenuItem, Stack } from '@mui/material';
 
 import { CustomPopover } from '@/components/custom-popover';
 import { Icon } from '@iconify/react';
+import { useDispatch } from 'react-redux';
+import { PATHS } from '@/routes/paths';
+import { signOut } from '@/store/auth-slice';
 
 const MENUS = [
   {
@@ -15,8 +18,10 @@ const MENUS = [
 // ----------------------------------------------------------------------
 
 export const ProfilePopover = () => {
-  const [open, setOpen] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [open, setOpen] = useState(null);
 
   const handleOpenPopover = useCallback((event) => {
     setOpen(event.currentTarget);
@@ -27,14 +32,16 @@ export const ProfilePopover = () => {
   }, []);
 
   const handleLogout = () => {
-    // dispatch(logout());
-    navigate('/');
+    dispatch(signOut());
+    navigate(PATHS.root);
   };
 
   const handleClickItem = (path) => {
     handleClosePopover();
     navigate(path);
   };
+
+  // ----------------------------------------------------------------------
 
   return (
     <>
