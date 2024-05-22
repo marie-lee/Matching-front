@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/routes/paths';
 
 // ----------------------------------------------------------------------
+// 비로그인 상태에서 접근 가능한 메인 화면
+// ----------------------------------------------------------------------
 
 const GuestPage = () => {
   const navigate = useNavigate();

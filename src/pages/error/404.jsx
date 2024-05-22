@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/routes/paths';
 
 // ----------------------------------------------------------------------
+// 404 화면
+// ----------------------------------------------------------------------
 
 const NotFoundPage = () => {
   const navigate = useNavigate();

@@ -17,6 +17,7 @@ const ThemeProvider = ({ children }) => {
   const options = {
     palette: palette,
     typography: typography,
+    shape: { borderRadius: 8 },
     shadows: shadows(),
     customShadows: customShadows(),
   };
