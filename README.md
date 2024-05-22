@@ -33,3 +33,7 @@ $ yarn dev
 #### styleOverrides
 - `src/theme/overrides` : MUI 컴포넌트의 디자인 스타일을 재정의할 수 있음
 - https://mui.com/material-ui/customization/theme-components/#theme-style-overrides
+
+#### palette
+- [Eva-Design-System](https://colors.eva.design/)
+
