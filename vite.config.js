@@ -6,4 +6,10 @@ export default defineConfig({
   resolve: {
     alias: [{ find: '@', replacement: '/src' }],
   },
+  //* 저장시 자동 새로고침 설정
+  server: {
+    watch: {
+      usePolling: true,
+    },
+  },
 });

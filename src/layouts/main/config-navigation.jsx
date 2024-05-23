@@ -11,4 +11,8 @@ export const configNavigation = [
     title: '프로필 & 포트폴리오',
     path: '/profile',
   },
+  {
+    title: '멤버 추천',
+    path: '/recommend',
+  },
 ];
