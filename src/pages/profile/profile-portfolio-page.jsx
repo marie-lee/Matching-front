@@ -11,7 +11,7 @@ import {
 
 const ProfilePortfolioPage = () => {
   const hasProfile = true;
-  const hasPortfolio = false;
+  const hasPortfolio = true;
 
   const renderEmptyContent = () => {
     return (

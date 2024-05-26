@@ -41,12 +41,7 @@ const PortfolioList = ({ hasProfile, hasPortfolio, data }) => {
               </Typography>
 
               {/* 사용 스킬 */}
-              <Stack
-                useFlexGap
-                flexWrap={'wrap'}
-                direction={'row'}
-                spacing={0.5}
-              >
+              <Stack useFlexGap flexWrap={'wrap'} direction={'row'} gap={0.7}>
                 {pfol.stacks.map((stack, index) => (
                   <Chip
                     key={`${pfol.pfolNm}_stack_${index}`}

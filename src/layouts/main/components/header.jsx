@@ -2,6 +2,7 @@ import {
   AppBar,
   Box,
   Container,
+  IconButton,
   Stack,
   Toolbar,
   Typography,
@@ -10,6 +11,7 @@ import {
 
 import { ProfilePopover, MenuPopover } from '@/layouts/components';
 import { HEADER } from '@/layouts/config-layout';
+import { Icon } from '@iconify/react';
 
 // ----------------------------------------------------------------------
 
@@ -47,6 +49,9 @@ const Header = () => {
           <Box sx={{ flexGrow: 1 }} />
 
           <Stack direction={'row'} spacing={1}>
+            <IconButton>
+              <Icon icon={'iconoir:bell'} fontSize={28} />
+            </IconButton>
             <MenuPopover />
             <ProfilePopover />
           </Stack>
