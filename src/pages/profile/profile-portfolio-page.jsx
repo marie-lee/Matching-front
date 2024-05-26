@@ -1,15 +1,15 @@
 import { Grid } from '@mui/material';
 
-import { ProfileDetails } from '@/pages/profile/components';
+import { ProfileDetails, PortfolioList } from '@/pages/profile/components';
 
 const ProfilePortfolioPage = () => {
   return (
-    <Grid container>
-      <Grid xs={12} md={3}>
+    <Grid container spacing={3}>
+      <Grid item xs={12} md={4}>
         <ProfileDetails />
       </Grid>
-      <Grid xs={12} md={9}>
-        포트폴리오
+      <Grid item xs={12} md={8}>
+        <PortfolioList />
       </Grid>
     </Grid>
   );

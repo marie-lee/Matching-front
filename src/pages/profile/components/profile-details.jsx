@@ -149,7 +149,7 @@ const ProfileDetails = () => {
   // ----------------------------------------------------------------------
 
   return (
-    <Stack spacing={3}>
+    <Stack spacing={3} p={3} bgcolor={'background.default'}>
       <Typography variant={'xl'}>프로필</Typography>
 
       <Stack alignItems={'center'}>

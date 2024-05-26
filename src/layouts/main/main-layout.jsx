@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 
 const MainLayout = () => {
   return (
-    <Box>
+    <Box sx={{ backgroundColor: (theme) => theme.palette.background.neutral }}>
       <Header />
 
       <Content>

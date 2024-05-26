@@ -7,7 +7,7 @@ const Content = ({ children }) => {
       component={'main'}
       sx={{
         flexGrow: 1,
-        pt: `${HEADER.H_DESKTOP}px`,
+        pt: `${HEADER.H_DESKTOP + 24}px `,
         pb: 3,
       }}
     >
