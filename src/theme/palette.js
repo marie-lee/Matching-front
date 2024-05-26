@@ -74,6 +74,24 @@ export const error = {
   contrastText: '#FFFFFF',
 };
 
+export const low = {
+  lighter: '#F8ECFE',
+  light: '#E5C6FD',
+  main: '#CAA0FA',
+  dark: '#7550B3',
+  darker: '#371E77',
+  contrastText: '#FFFFFF',
+};
+
+export const high = {
+  lighter: '#DCC9F8',
+  light: '#865ED6',
+  main: '#270877',
+  dark: '#160455',
+  darker: '#0A0139',
+  contrastText: '#FFFFFF',
+};
+
 export const palette = {
   grey,
   common,
@@ -84,6 +102,10 @@ export const palette = {
   success,
   warning,
   error,
+  //
+  low,
+  middle: { ...secondary },
+  high,
   //
   divider: alpha(grey[500], 0.5),
   text: {
