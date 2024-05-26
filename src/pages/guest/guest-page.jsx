@@ -17,7 +17,7 @@ const GuestPage = () => {
       <Stack spacing={2} alignItems={'center'}>
         <Typography
           variant={'h4'}
-          fontWeight={'fontWeightSemiBold'}
+          fontWeight={'fontWeightBold'}
           textAlign={'center'}
         >
           당신에게 맞는 프로젝트를 찾아드립니다!

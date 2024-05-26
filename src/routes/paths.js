@@ -12,4 +12,12 @@ export const PATHS = {
   profile: {
     root: '/profile',
   },
+  // 프로젝트
+  project: {
+    root: '/project',
+  },
+  // 매칭
+  matching: {
+    root: '/matching',
+  },
 };

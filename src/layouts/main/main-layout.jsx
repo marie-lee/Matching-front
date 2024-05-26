@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import { Content, Header } from '@/layouts/main/components';
+import { Suspense } from 'react';
 
 const MainLayout = () => {
   return (
@@ -8,7 +9,9 @@ const MainLayout = () => {
       <Header />
 
       <Content>
-        <Outlet />
+        <Suspense>
+          <Outlet />
+        </Suspense>
       </Content>
     </Box>
   );

@@ -38,8 +38,8 @@ const SignInPage = () => {
   return (
     <Box>
       <Stack alignItems={'center'} mb={3}>
-        <Typography variant={'h5'} fontWeight={'fontWeightSemiBold'}>
-          프로젝트 매칭 플랫폼 로그인
+        <Typography variant={'h5'} fontFamily={'Esamanru'}>
+          Project Matching
         </Typography>
       </Stack>
 

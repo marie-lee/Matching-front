@@ -32,14 +32,21 @@ const HeaderGuest = () => {
         }}
       >
         <Container sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography variant={'lg'} fontWeight={'fontWeightSemiBold'} mr={5}>
-            프로젝트 매칭 플랫폼 로고
+          <Typography
+            variant={'lg'}
+            fontFamily={'Esamanru'}
+            fontWeight={'fontWeightBold'}
+            mr={5}
+          >
+            Project Matching
           </Typography>
 
           <Box sx={{ flexGrow: 1 }} />
 
           <Link href={PATHS.auth.signIn} underline={'none'}>
-            로그인
+            <Typography variant={'md'} fontWeight={'fontWeightBold'}>
+              로그인
+            </Typography>
           </Link>
         </Container>
       </Toolbar>
