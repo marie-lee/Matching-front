@@ -5,7 +5,7 @@ export const pxToRem = (value) => {
 // ----------------------------------------------------------------------
 
 export const typography = {
-  fontFamily: 'Pretendard, Roboto, sans-serif',
+  fontFamily: 'Pretendard, Esamanru, Roboto, sans-serif',
   fontWeightRegular: 400,
   fontWeightMedium: 500,
   fontWeightSemiBold: 600,
