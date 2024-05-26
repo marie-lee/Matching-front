@@ -29,6 +29,7 @@ const Header = () => {
           px: `0 !important`,
           height: HEADER.H_DESKTOP,
           backgroundColor: theme.palette.background.default,
+          borderBottom: `1px solid ${theme.palette.grey[300]}`,
         }}
       >
         <Container sx={{ display: 'flex', alignItems: 'center' }}>
