@@ -1,18 +1,20 @@
-import { useCallback, useState } from 'react';
+import { IconButton, MenuItem, Stack } from '@mui/material';
+import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
-import { Divider, IconButton, MenuItem, Stack } from '@mui/material';
+import { useCallback, useState } from 'react';
 
 import { CustomPopover } from '@/components/custom-popover';
-import { Icon } from '@iconify/react';
-import { useDispatch } from 'react-redux';
-import { PATHS } from '@/routes/paths';
-import { signOut } from '@/store/auth-slice';
 import { useActiveLink } from '@/hooks/use-active-link';
+import { PATHS } from '@/routes/paths';
 
 const MENUS = [
   {
-    label: '프로필 & 포트폴리오',
-    path: PATHS.profile.root,
+    label: '프로젝트',
+    path: PATHS.project.root,
+  },
+  {
+    label: '매칭',
+    path: PATHS.matching.root,
   },
 ];
 
@@ -28,9 +30,8 @@ const Menu = ({ menu, handleClickItem }) => {
 
 // ----------------------------------------------------------------------
 
-const ProfilePopover = () => {
+const MenuPopover = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const [open, setOpen] = useState(null);
 
@@ -42,11 +43,6 @@ const ProfilePopover = () => {
     setOpen(null);
   }, []);
 
-  const handleLogout = () => {
-    dispatch(signOut());
-    navigate(PATHS.root);
-  };
-
   const handleClickItem = (path) => {
     handleClosePopover();
     navigate(path);
@@ -57,7 +53,7 @@ const ProfilePopover = () => {
   return (
     <>
       <IconButton onClick={handleOpenPopover}>
-        <Icon icon={'iconoir:profile-circle'} fontSize={28} />
+        <Icon icon={'iconoir:view-grid'} fontSize={28} />
       </IconButton>
 
       <CustomPopover
@@ -74,18 +70,9 @@ const ProfilePopover = () => {
             />
           ))}
         </Stack>
-
-        <Divider sx={{ borderStyle: 'dashed ' }} />
-
-        <MenuItem
-          onClick={handleLogout}
-          sx={{ m: 1, fontWeight: 'fontWeightBold', color: 'error.main' }}
-        >
-          로그아웃
-        </MenuItem>
       </CustomPopover>
     </>
   );
 };
 
-export default ProfilePopover;
+export default MenuPopover;

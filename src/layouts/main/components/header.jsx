@@ -2,14 +2,13 @@ import {
   AppBar,
   Box,
   Container,
+  Stack,
   Toolbar,
   Typography,
   useTheme,
 } from '@mui/material';
 
-import { NavDesktop } from '@/layouts/main/components/nav-desktop';
-import { configNavigation } from '@/layouts/main/config-navigation';
-import { ProfilePopover } from '@/layouts/components/profile-popover';
+import { ProfilePopover, MenuPopover } from '@/layouts/components';
 import { HEADER } from '@/layouts/config-layout';
 
 // ----------------------------------------------------------------------
@@ -33,15 +32,23 @@ const Header = () => {
         }}
       >
         <Container sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography variant={'lg'} fontWeight={'fontWeightSemiBold'} mr={5}>
-            프로젝트 매칭 플랫폼 로고
+          <Typography
+            variant={'lg'}
+            fontFamily={'Esamanru'}
+            fontWeight={'fontWeightMedium'}
+            mr={5}
+          >
+            Project Matching
           </Typography>
 
-          <NavDesktop data={configNavigation} />
+          {/*<NavDesktop data={configNavigation} />*/}
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <ProfilePopover />
+          <Stack direction={'row'} spacing={1}>
+            <MenuPopover />
+            <ProfilePopover />
+          </Stack>
         </Container>
       </Toolbar>
     </AppBar>

@@ -10,7 +10,7 @@ const CenteredLayout = () => {
           sx={{
             py: 10,
             m: 'auto',
-            maxWidth: 500,
+            maxWidth: 400,
             minHeight: '100vh',
             justifyContent: 'center',
           }}
