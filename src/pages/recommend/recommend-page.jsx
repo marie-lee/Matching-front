@@ -46,7 +46,7 @@ const RecommendPage = () => {
             width: '100%',
             flexDirection: 'column',
             alignItems: 'flex-start',
-            height: 1 / 3.2,
+            height: 1 / 2.7,
             padding: 1,
           }}
         >
@@ -112,11 +112,11 @@ const RecommendPage = () => {
                 <Typography
                   variant="sm"
                   fontWeight="fontWeightMedium"
-                  sx={{ mt: 1.5 }}
+                  sx={{ mt: 2 }}
                 >
                   스택
                 </Typography>
-                {Array.from({ length: 5 }).map((index) => (
+                {Array.from({ length: 3 }).map((index) => (
                   <Typography
                     key={index}
                     fontWeight="fontWeightMedium"
