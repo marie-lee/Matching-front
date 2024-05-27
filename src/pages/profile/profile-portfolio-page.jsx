@@ -8,10 +8,13 @@ import {
   STACKS,
   URLS,
 } from '@/pages/profile/constants';
+import { useNavigate } from 'react-router-dom';
+import { PATHS } from '@/routes/paths';
 
 const ProfilePortfolioPage = () => {
   const hasProfile = true;
   const hasPortfolio = true;
+  const navigate = useNavigate();
 
   const renderEmptyContent = () => {
     return (
@@ -29,7 +32,9 @@ const ProfilePortfolioPage = () => {
             <Typography textAlign={'center'}>
               아직 등록한 프로필과 포트폴리오가 없어요! 🥲
             </Typography>
-            <Button>등록하러 가기</Button>
+            <Button onClick={() => navigate(PATHS.profiles.editProfile)}>
+              등록하러 가기
+            </Button>
           </Stack>
         </Grid>
       </Backdrop>

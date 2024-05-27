@@ -8,10 +8,14 @@ import {
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { ResponsiveImg } from '@/components/img';
+import { useNavigate } from 'react-router-dom';
+import { PATHS } from '@/routes/paths';
 
 // ----------------------------------------------------------------------
 
 const PortfolioList = ({ hasProfile, hasPortfolio, data }) => {
+  const navigate = useNavigate();
+
   const renderList = () => {
     return (
       <Grid container columnSpacing={2} rowSpacing={3}>
@@ -77,7 +81,9 @@ const PortfolioList = ({ hasProfile, hasPortfolio, data }) => {
           <Typography textAlign={'center'}>
             아직 등록한 포트폴리오가 없어요! 🥲
           </Typography>
-          <Button>포트폴리오 추가하러 가기</Button>
+          <Button onClick={() => navigate(PATHS.profiles.editPortfolio)}>
+            포트폴리오 추가하러 가기
+          </Button>
         </Stack>
       )}
     </Stack>

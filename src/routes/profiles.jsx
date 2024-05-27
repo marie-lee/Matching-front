@@ -8,17 +8,23 @@ const ProfilePortfolioPage = lazy(
   () => import('@/pages/profile/profile-portfolio-page'),
 );
 
+const ProfileEditPage = lazy(() => import('@/pages/profile/profile-edit-page'));
+
 // ----------------------------------------------------------------------
 
-const profile = {
-  path: 'profile',
+const profiles = {
+  path: 'profiles',
   element: <MainLayout />,
   children: [
     {
       index: true,
       element: <ProfilePortfolioPage />,
     },
+    {
+      path: 'edit-profile',
+      element: <ProfileEditPage />,
+    },
   ],
 };
 
-export default profile;
+export default profiles;

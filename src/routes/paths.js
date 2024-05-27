@@ -9,8 +9,10 @@ export const PATHS = {
     resetPassword: '/auth/reset-password',
   },
   // 프로필&포트폴리오
-  profile: {
-    root: '/profile',
+  profiles: {
+    root: '/profiles',
+    editProfile: '/profiles/edit-profile',
+    editPortfolio: '/profiles/edit-portfolio',
   },
   // 프로젝트
   project: {
