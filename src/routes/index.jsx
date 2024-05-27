@@ -3,7 +3,7 @@ import { shallowEqual, useSelector } from 'react-redux';
 import { lazy } from 'react';
 
 import auth from '@/routes/auth';
-import profile from '@/routes/profile';
+import profiles from '@/routes/profiles';
 
 import NotFoundPage from '@/pages/error/404';
 import GuestLayout from '@/layouts/guest/guest-layout';
@@ -42,7 +42,7 @@ const Router = () => {
     // 인증
     auth,
     // 프로필&포트폴리오
-    profile,
+    profiles,
 
     {
       path: '*',

@@ -12,7 +12,7 @@ import { useActiveLink } from '@/hooks/use-active-link';
 const MENUS = [
   {
     label: '프로필 & 포트폴리오',
-    path: PATHS.profile.root,
+    path: PATHS.profiles.root,
   },
 ];
 

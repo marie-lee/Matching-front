@@ -21,8 +21,10 @@ export const typography = {
   },
   lg: {
     fontSize: pxToRem(18),
+    fontWeight: 500,
   },
   xl: {
     fontSize: pxToRem(20),
+    fontWeight: 500,
   },
 };

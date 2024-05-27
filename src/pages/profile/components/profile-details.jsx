@@ -8,6 +8,8 @@ import {
   Typography,
 } from '@mui/material';
 import { Icon } from '@iconify/react';
+import { useNavigate } from 'react-router-dom';
+import { PATHS } from '@/routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -97,6 +99,8 @@ const Url = ({ data }) => {
 };
 
 const ProfileDetails = ({ data }) => {
+  const navigate = useNavigate();
+
   // ----------------------------------------------------------------------
 
   return (
@@ -115,7 +119,7 @@ const ProfileDetails = ({ data }) => {
         spacing={1}
       >
         <Typography variant={'xl'}>홍길동</Typography>
-        <IconButton>
+        <IconButton onClick={() => navigate(PATHS.profiles.editProfile)}>
           <Icon icon={'akar-icons:edit'} fontSize={24} />
         </IconButton>
       </Stack>
