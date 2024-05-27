@@ -16,12 +16,13 @@ export const PATHS = {
   },
   recommend: {
     root: '/recommend',
-  // 프로젝트
-  project: {
-    root: '/project',
   },
   // 매칭
   matching: {
     root: '/matching',
+  },
+  // 프로젝트
+  project: {
+    root: '/project',
   },
 };
