@@ -1,29 +1,51 @@
-import { Navigate, Outlet, useRoutes } from 'react-router-dom';
+import { useRoutes } from 'react-router-dom';
+import { shallowEqual, useSelector } from 'react-redux';
+import { lazy } from 'react';
 
-import account from '@/routes/account';
+import auth from '@/routes/auth';
 import profile from '@/routes/profile';
-import recommend from '@/routes/recommend';
+
 import NotFoundPage from '@/pages/error/404';
 import GuestLayout from '@/layouts/guest/guest-layout';
+
+import NotFoundPage from '@/pages/error/404';
+
+// ----------------------------------------------------------------------
+
+const GuestPage = lazy(() => import('@/pages/guest/guest-page'));
 
 // ----------------------------------------------------------------------
 
 const Router = () => {
-  return useRoutes([
-    {
-      path: '/',
-      element: <GuestLayout />,
-      children: [
-        {
-          index: true,
-          element: <div>게스트</div>,
-        },
-      ],
-    },
+  const { isSignIn } = useSelector(
+    ({ auth }) => ({
+      isSignIn: auth.isSignIn,
+    }),
+    shallowEqual,
+  );
 
-    account,
+  const main = {
+    path: '/',
+    element: isSignIn ? <MainLayout /> : <GuestLayout />,
+    children: [
+      {
+        index: true,
+        element: isSignIn ? <div></div> : <GuestPage />,
+      },
+    ],
+  };
+
+  // ----------------------------------------------------------------------
+
+  return useRoutes([
+    // 메인
+    main,
+
+    // 인증
+    auth,
+    // 프로필&포트폴리오
     profile,
-    recommend,
+
     {
       path: '*',
       element: <NotFoundPage />,

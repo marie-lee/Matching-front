@@ -1,11 +1,11 @@
-export function pxToRem(value) {
+export const pxToRem = (value) => {
   return `${value / 16}rem`;
-}
+};
 
 // ----------------------------------------------------------------------
 
 export const typography = {
-  fontFamily: 'Pretendard, Roboto, sans-serif',
+  fontFamily: 'Pretendard, Esamanru, Roboto, sans-serif',
   fontWeightRegular: 400,
   fontWeightMedium: 500,
   fontWeightSemiBold: 600,

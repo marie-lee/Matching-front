@@ -3,28 +3,32 @@ import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 const initialState = {
-  isLogined: false,
-  token: '',
+  isSignIn: false,
+  token: null,
 };
 
 const persistConfig = {
   key: 'auth',
   storage,
-  whiteList: ['isLogined', 'token'],
+  whiteList: ['isSignIn', 'token'],
 };
 
 const authSlice = createSlice({
   name: 'auth',
   initialState: initialState,
   reducers: {
-    login: (state, action) => {
+    signIn: (state, action) => {
       const { token } = action.payload;
-      state.isLogined = true;
+      state.isSignIn = true;
       state.token = token;
     },
-  }
+    signOut: (state) => {
+      state.isSignIn = false;
+      state.token = null;
+    },
+  },
 });
 
-export const { login } = authSlice.actions;
+export const { signIn, signOut } = authSlice.actions;
 
 export default persistReducer(persistConfig, authSlice.reducer);
