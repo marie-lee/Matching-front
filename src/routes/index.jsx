@@ -8,8 +8,6 @@ import profile from '@/routes/profile';
 import NotFoundPage from '@/pages/error/404';
 import GuestLayout from '@/layouts/guest/guest-layout';
 
-import NotFoundPage from '@/pages/error/404';
-
 // ----------------------------------------------------------------------
 
 const GuestPage = lazy(() => import('@/pages/guest/guest-page'));
