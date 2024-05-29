@@ -23,6 +23,7 @@ const Header = () => {
   return (
     <AppBar
       sx={{
+        backgroundColor: 'transparent',
         color: theme.palette.text.primary,
       }}
     >
