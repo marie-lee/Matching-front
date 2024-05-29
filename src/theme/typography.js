@@ -25,6 +25,6 @@ export const typography = {
   },
   xl: {
     fontSize: pxToRem(20),
-    fontWeight: 500,
+    fontWeight: 600,
   },
 };

@@ -14,15 +14,16 @@ export const PATHS = {
     editProfile: '/profiles/edit-profile',
     editPortfolio: '/profiles/edit-portfolio',
   },
+  // 프로젝트
+  project: {
+    root: '/project',
+    details: '/project/details',
+  },
   recommend: {
     root: '/recommend',
   },
   // 매칭
-  matching: {
-    root: '/matching',
-  },
-  // 프로젝트
-  project: {
-    root: '/project',
+  match: {
+    root: '/match',
   },
 };

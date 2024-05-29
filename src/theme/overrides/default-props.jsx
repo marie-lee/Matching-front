@@ -14,6 +14,7 @@ export const defaultProps = () => {
     MuiButton: {
       defaultProps: {
         variant: 'contained',
+        disableElevation: true,
         type: 'button',
       },
     },

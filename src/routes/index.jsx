@@ -4,8 +4,11 @@ import { lazy } from 'react';
 
 import auth from '@/routes/auth';
 import profiles from '@/routes/profiles';
+import project from '@/routes/project';
 import recommend from '@/routes/recommend';
+import match from '@/routes/match';
 import Home from '@/pages/home';
+
 import NotFoundPage from '@/pages/error/404';
 import GuestLayout from '@/layouts/guest/guest-layout';
 import MainLayout from '@/layouts/main/main-layout';
@@ -45,8 +48,12 @@ const Router = () => {
     auth,
     // 프로필&포트폴리오
     profiles,
+    // 프로젝트
+    project,
     // 추천
     recommend,
+    // 매칭
+    match,
 
     {
       path: '*',

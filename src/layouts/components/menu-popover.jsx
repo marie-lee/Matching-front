@@ -9,12 +9,12 @@ import { PATHS } from '@/routes/paths';
 
 const MENUS = [
   {
-    label: '프로젝트',
+    label: '내 프로젝트 목록',
     path: PATHS.project.root,
   },
   {
-    label: '매칭',
-    path: PATHS.matching.root,
+    label: '매칭 현황',
+    path: PATHS.match.root,
   },
 ];
 
