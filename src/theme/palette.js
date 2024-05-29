@@ -91,6 +91,9 @@ export const high = {
   darker: '#0A0139',
   contrastText: '#FFFFFF',
 };
+export const login = {
+  main: '#9C27B0',
+};
 
 export const palette = {
   grey,
@@ -101,6 +104,7 @@ export const palette = {
   info,
   success,
   warning,
+  login,
   error,
   //
   low,
