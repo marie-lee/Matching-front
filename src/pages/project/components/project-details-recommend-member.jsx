@@ -1,13 +1,17 @@
+import { useState } from 'react';
 import {
   Autocomplete,
   Avatar,
   Chip,
+  Dialog,
   Grid,
   Stack,
   TextField,
   Typography,
 } from '@mui/material';
+
 import { RECOMMEND_MEMBERS, STACKS_OPTIONS } from '@/pages/project/constants';
+import { ProjectDetailsMemberProfiles } from '@/pages/project/components';
 
 // ----------------------------------------------------------------------
 
@@ -21,9 +25,9 @@ const memberItemStyles = {
   },
 };
 
-const MemberItem = ({ member }) => {
+const MemberItem = ({ member, ...other }) => {
   return (
-    <Grid container item xs={12} md={6}>
+    <Grid container item xs={12} md={6} {...other}>
       <Grid container sx={{ ...memberItemStyles }}>
         <Grid container alignItems={'center'} spacing={3}>
           <Grid item xs={'auto'}>
@@ -55,6 +59,16 @@ const MemberItem = ({ member }) => {
 // ----------------------------------------------------------------------
 
 const ProjectDetailsRecommendMember = () => {
+  const [profilesDialogOpen, setProfilesDialogOpen] = useState(false);
+
+  const [member, setMember] = useState({});
+
+  const handleClickMember = (member) => {
+    console.log('?');
+    setProfilesDialogOpen(true);
+    setMember(member);
+  };
+
   return (
     <Grid container p={3} bgcolor={'background.default'}>
       <Grid item container spacing={3}>
@@ -84,10 +98,24 @@ const ProjectDetailsRecommendMember = () => {
         {/* 추천된 멤버 목록 */}
         <Grid item container spacing={2}>
           {RECOMMEND_MEMBERS.map((member, index) => (
-            <MemberItem key={`recommend-member-${index}`} member={member} />
+            <MemberItem
+              key={`recommend-member-${index}`}
+              member={member}
+              onClick={() => handleClickMember(member)}
+            />
           ))}
         </Grid>
       </Grid>
+
+      {/* 선택한 멤버의 프로필/포트폴리오 상세 조회 Dialog */}
+      <Dialog
+        fullWidth
+        maxWidth={'md'}
+        open={profilesDialogOpen}
+        onClose={() => setProfilesDialogOpen(false)}
+      >
+        <ProjectDetailsMemberProfiles member={member} />
+      </Dialog>
     </Grid>
   );
 };
