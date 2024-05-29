@@ -115,6 +115,6 @@ export const palette = {
   },
   background: {
     default: '#FFFFFF',
-    neutral: grey[100],
+    neutral: grey[200],
   },
 };

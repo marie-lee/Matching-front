@@ -4,6 +4,9 @@ import { lazy } from 'react';
 // ----------------------------------------------------------------------
 
 const ProjectListPage = lazy(() => import('@/pages/project/project-list-page'));
+const ProjectDetailsPage = lazy(
+  () => import('@/pages/project/project-details-page'),
+);
 
 // ----------------------------------------------------------------------
 
@@ -14,6 +17,10 @@ const project = {
     {
       index: true,
       element: <ProjectListPage />,
+    },
+    {
+      path: 'details/:id',
+      element: <ProjectDetailsPage />,
     },
   ],
 };

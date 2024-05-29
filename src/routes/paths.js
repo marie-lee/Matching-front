@@ -17,6 +17,7 @@ export const PATHS = {
   // 프로젝트
   project: {
     root: '/project',
+    details: '/project/details',
   },
   recommend: {
     root: '/recommend',

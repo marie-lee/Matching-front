@@ -10,8 +10,12 @@ export const dataGrid = (theme) => {
         columnHeaders: {
           backgroundColor: theme.palette.grey[200],
         },
+
         footerContainer: {
           backgroundColor: `${alpha(theme.palette.grey[200], 0.5)}`,
+        },
+        row: {
+          backgroundColor: theme.palette.background.default,
         },
       },
     },
