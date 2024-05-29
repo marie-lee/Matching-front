@@ -64,7 +64,6 @@ const ProjectDetailsRecommendMember = () => {
   const [member, setMember] = useState({});
 
   const handleClickMember = (member) => {
-    console.log('?');
     setProfilesDialogOpen(true);
     setMember(member);
   };

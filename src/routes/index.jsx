@@ -6,6 +6,7 @@ import auth from '@/routes/auth';
 import profiles from '@/routes/profiles';
 import project from '@/routes/project';
 import recommend from '@/routes/recommend';
+import match from '@/routes/match';
 
 import NotFoundPage from '@/pages/error/404';
 import GuestLayout from '@/layouts/guest/guest-layout';
@@ -50,6 +51,8 @@ const Router = () => {
     project,
     // 추천
     recommend,
+    // 매칭
+    match,
 
     {
       path: '*',

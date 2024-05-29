@@ -129,7 +129,7 @@ const ProjectDetailsMemberProfiles = ({ member }) => {
             경력
           </Typography>
           <Stack spacing={1} pt={1}>
-            {member.company_experience.map((exp, index) => (
+            {member.company_experience?.map((exp, index) => (
               <Stack key={`career_${index}`}>
                 <Typography>{exp.company_name}</Typography>
                 <Typography variant={'sm'} color={'text.secondary'}>

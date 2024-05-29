@@ -23,7 +23,7 @@ export const PATHS = {
     root: '/recommend',
   },
   // 매칭
-  matching: {
-    root: '/matching',
+  match: {
+    root: '/match',
   },
 };
