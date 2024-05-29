@@ -1,15 +1,18 @@
-import { Chip, Stack, Typography, useTheme } from '@mui/material';
+import { Chip, Link, Stack, Typography, useTheme } from '@mui/material';
 import { Icon } from '@iconify/react';
 
 import { BasicDataGrid } from '@/components/data-grid';
 
 import { PROJECTS } from '@/pages/project/constants';
+import { PATHS } from '@/routes/paths';
+import { useNavigate } from 'react-router-dom';
 
 // ----------------------------------------------------------------------
 
 const ProjectStatus = ({ params }) => {
   let color = '';
   const status = params.row.status;
+  const hasLeaderRole = params.row.hasLeaderRole;
 
   switch (status) {
     case '모집중':
@@ -25,7 +28,12 @@ const ProjectStatus = ({ params }) => {
       break;
   }
 
-  return <Chip label={status} color={color} size={'small'} />;
+  return (
+    <Stack direction={'row'} spacing={1}>
+      <Chip label={status} color={color} size={'small'} />
+      {hasLeaderRole && <Chip label={'MY'} color={'primary'} size={'small'} />}
+    </Stack>
+  );
 };
 
 const ProjectEmptyRows = () => {
@@ -61,6 +69,8 @@ const ProjectEmptyRows = () => {
 // ----------------------------------------------------------------------
 
 const ProjectList = () => {
+  const navigate = useNavigate();
+
   const columns = [
     {
       field: 'nm',
@@ -72,14 +82,14 @@ const ProjectList = () => {
       field: 'desc',
       headerName: '프로젝트 설명',
       sortable: false,
-      width: 350,
+      width: 400,
     },
     {
       field: 'startDt',
       headerName: '기간',
       sortable: false,
       valueGetter: (params) => `${params.row.startDt} ~ ${params.row.endDt}`,
-      width: 300,
+      width: 250,
     },
     {
       field: 'status',
@@ -98,6 +108,9 @@ const ProjectList = () => {
       columns={columns}
       rows={PROJECTS}
       noRows={ProjectEmptyRows}
+      onRowClick={(params) => {
+        navigate(`${PATHS.project.details}/${params.row.id}`);
+      }}
     />
   );
 };
