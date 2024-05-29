@@ -18,7 +18,13 @@ import { PROJECTS } from '@/pages/project/constants';
 
 // ----------------------------------------------------------------------
 
-const MatchSection = ({ title, keyName, data, handleClickProject }) => {
+const MatchSection = ({
+  title,
+  keyName,
+  data,
+  disabled,
+  handleClickProject,
+}) => {
   return (
     <Grid item xs={12}>
       <Grid container bgcolor={'background.default'}>
@@ -32,6 +38,7 @@ const MatchSection = ({ title, keyName, data, handleClickProject }) => {
             <MatchItem
               key={`match-${keyName}-${index}`}
               value={item}
+              disabled={disabled}
               handleClickProject={handleClickProject}
             />
           ))}
@@ -41,7 +48,7 @@ const MatchSection = ({ title, keyName, data, handleClickProject }) => {
   );
 };
 
-const MatchItem = ({ value, handleClickProject }) => {
+const MatchItem = ({ value, disabled, handleClickProject }) => {
   return (
     <Grid item xs={12} md={6}>
       <Grid container p={2} border={1} borderColor={'divider'} borderRadius={1}>
@@ -73,23 +80,25 @@ const MatchItem = ({ value, handleClickProject }) => {
             </Stack>
           </Grid>
 
-          <Grid item container xs={12} md={2} spacing={1}>
-            <Grid item xs={6} md={12}>
-              <Button fullWidth size={'small'}>
-                수락
-              </Button>
+          {!disabled && (
+            <Grid item container xs={12} md={2} spacing={1}>
+              <Grid item xs={6} md={12}>
+                <Button fullWidth size={'small'}>
+                  수락
+                </Button>
+              </Grid>
+              <Grid item xs={6} md={12}>
+                <Button
+                  fullWidth
+                  variant={'outlined'}
+                  color={'error'}
+                  size={'small'}
+                >
+                  거절
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={6} md={12}>
-              <Button
-                fullWidth
-                variant={'outlined'}
-                color={'error'}
-                size={'small'}
-              >
-                거절
-              </Button>
-            </Grid>
-          </Grid>
+          )}
         </Grid>
       </Grid>
     </Grid>
@@ -130,6 +139,7 @@ const MatchList = () => {
         title={'거절'}
         data={MATCH_LIST.deny}
         keyName={'deny'}
+        disabled={true}
         handleClickProject={handleClickProject}
       />
 

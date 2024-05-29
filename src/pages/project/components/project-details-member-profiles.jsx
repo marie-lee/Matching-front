@@ -61,7 +61,14 @@ const ProjectDetailsMemberProfiles = ({ member }) => {
       <Grid container p={3} border={1} borderColor={'divider'} borderRadius={1}>
         <Grid item container spacing={5}>
           {/* 프로필 이미지 */}
-          <Grid item xs={'auto'} alignSelf={'center'}>
+          <Grid
+            item
+            container
+            xs={12}
+            md={'auto'}
+            justifyContent={'center'}
+            alignSelf={'center'}
+          >
             <Avatar alt={'프로필 이미지'} sx={{ width: 100, height: 100 }} />
           </Grid>
 
@@ -78,7 +85,7 @@ const ProjectDetailsMemberProfiles = ({ member }) => {
             </Grid>
 
             {/* 한 줄 소개 */}
-            <Grid item container>
+            <Grid item container mt={1}>
               <Typography variant={'lg'}>{member.introduction}</Typography>
             </Grid>
 
