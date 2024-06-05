@@ -10,16 +10,44 @@ import { Icon } from '@iconify/react';
 import { ResponsiveImg } from '@/components/img';
 import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/routes/paths';
-
+import { useEffect, useState } from 'react';
+import { instance } from '@/services/api';
 // ----------------------------------------------------------------------
 
-const PortfolioList = ({ hasProfile, hasPortfolio, data }) => {
+const PortfolioList = ({ hasProfile, hasPortfolio }) => {
   const navigate = useNavigate();
+
+  const [portfolio, setPortfolio] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await instance.get('member/profile');
+        const data = response.data;
+        console.log('data', data.portfolioInfo);
+        const PORTFOLIOS = data.portfolioInfo.map((item) => ({
+          id: item.PFOL_SN,
+          pfolNm: item.PFOL_NM,
+          //인트로가 없음 추가해야함
+          intro: '인트로가 없어서 임의로 추가 합니다.',
+          startDt: item.START_DT,
+          endDt: item.END_DT,
+          stacks: item.stack.map((stackItem) => ({ stNm: stackItem.ST_NM })),
+          img: item.IMG,
+        }));
+        console.log('PORTFOLIOS', PORTFOLIOS);
+        setPortfolio(PORTFOLIOS);
+      } catch (error) {
+        console.log('error', error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const renderList = () => {
     return (
       <Grid container columnSpacing={2} rowSpacing={3}>
-        {data.map((pfol) => (
+        {portfolio.map((pfol) => (
           <Grid item xs={12} md={4} key={pfol.id}>
             <Stack spacing={0.5} sx={{ cursor: 'pointer' }}>
               {/* 대표 이미지 */}

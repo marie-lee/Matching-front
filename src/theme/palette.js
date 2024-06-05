@@ -74,7 +74,7 @@ export const error = {
   contrastText: '#FFFFFF',
 };
 
-export const low = {
+export const LOW = {
   lighter: '#F8ECFE',
   light: '#E5C6FD',
   main: '#CAA0FA',
@@ -83,7 +83,7 @@ export const low = {
   contrastText: '#FFFFFF',
 };
 
-export const high = {
+export const HIGH = {
   lighter: '#DCC9F8',
   light: '#865ED6',
   main: '#270877',
@@ -107,9 +107,9 @@ export const palette = {
   login,
   error,
   //
-  low,
-  middle: { ...secondary },
-  high,
+  LOW,
+  MEDIUM: { ...secondary },
+  HIGH,
   //
   divider: alpha(grey[500], 0.5),
   text: {

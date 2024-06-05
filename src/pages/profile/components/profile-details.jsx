@@ -7,9 +7,12 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/routes/paths';
+import { instance } from '@/services/api.jsx';
+import { set } from 'lodash';
 
 // ----------------------------------------------------------------------
 
@@ -20,7 +23,7 @@ const Career = ({ data }) => {
 
       {data.map((career, index) => (
         <Stack key={`career_${index}`} spacing={0.5}>
-          <Typography>{career.careerNm}</Typography>
+          <Typography>{career.careerName}</Typography>
           <Stack direction={'row'} alignItems={'center'}>
             <Typography variant={'xs'} color={'text.secondary'}>
               {`${career.enteringDt} ~ ${career.quitDt != null ? career.quitDt : '재직중'}`}
@@ -82,15 +85,15 @@ const Url = ({ data }) => {
 
       {data.map((url, index) => (
         <Stack key={`url_${index}`} spacing={0.5}>
-          <Typography>{url.desc}</Typography>
+          <Typography>{url.intro}</Typography>
           <Link
-            href={url.url}
+            href={url.addr}
             variant={'xs'}
             color={'text.secondary'}
             target={'_blank'}
             underline="hover"
           >
-            {url.url}
+            {url.addr}
           </Link>
         </Stack>
       ))}
@@ -98,8 +101,55 @@ const Url = ({ data }) => {
   );
 };
 
-const ProfileDetails = ({ data }) => {
+const ProfileDetails = () => {
   const navigate = useNavigate();
+
+  const [careers, setCareers] = useState([]);
+  const [stack, setStack] = useState([]);
+  const [interest, setInterest] = useState([]);
+  const [url, setUrl] = useState([]);
+  const [name, setName] = useState([]);
+
+  //임의 추가
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await instance.get('member/profile');
+        const data = response.data;
+
+        const careersData = data.profile[0].carrer.map((career) => ({
+          careerName: career.CARRER_NM,
+          enteringDt: career.ENTERING_DT,
+          quitDt: career.QUIT_DT,
+        }));
+        setCareers(careersData);
+
+        const stacksData = data.profile[0].stack.map((stack) => ({
+          stNm: stack.ST_NM,
+          level: stack.ST_LEVEL,
+        }));
+
+        setStack(stacksData);
+
+        const interestData =
+          data.profile[0].interest &&
+          data.profile[0].interest.map((interest) => interest.INTEREST_NM);
+        setInterest(interestData);
+
+        const urlsData = data.profile[0].url.map((url) => ({
+          addr: url.URL_ADDR,
+          intro: url.URL_INTRO,
+        }));
+        setUrl(urlsData);
+
+        setName(data.profile[0].USER_NM);
+      } catch (error) {
+        console.log('error: ', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // ----------------------------------------------------------------------
 
@@ -118,7 +168,7 @@ const ProfileDetails = ({ data }) => {
         justifyContent={'space-between'}
         spacing={1}
       >
-        <Typography variant={'xl'}>홍길동</Typography>
+        <Typography variant={'xl'}>{name}</Typography>
         <IconButton onClick={() => navigate(PATHS.profiles.editProfile)}>
           <Icon icon={'akar-icons:edit'} fontSize={24} />
         </IconButton>
@@ -126,29 +176,31 @@ const ProfileDetails = ({ data }) => {
 
       {/* 한 줄 소개 */}
       <Stack>
-        <Typography variant={'lg'}>나를 표현하는 한 줄 소개</Typography>
+        <Typography variant={'lg'}>
+          나를 표현하는 한줄 소개에 불러올 데이터가 없어요.
+        </Typography>
       </Stack>
 
       {/* 구분선 */}
       <Divider />
 
       {/* 경력 */}
-      <Career data={data.careers} />
+      <Career data={careers} />
 
       {/* 구분선 */}
       <Divider />
 
       {/*/!* 주요 스킬 *!/*/}
-      <MajorStack data={data.stacks} />
+      <MajorStack data={stack} />
 
       {/*/!* 관심 분야 *!/*/}
-      <Intrst data={data.intrsts} />
+      <Intrst data={interest} />
 
       {/*/!* 구분선 *!/*/}
       <Divider />
 
       {/*/!* 링크 *!/*/}
-      <Url data={data.urls} />
+      <Url data={url} />
     </Stack>
   );
 };
