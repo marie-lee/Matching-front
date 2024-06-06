@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/routes/paths';
-import { instance } from '@/services/api.jsx';
+import { instance } from '@/services/config';
 
 // ----------------------------------------------------------------------
 

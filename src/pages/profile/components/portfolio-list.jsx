@@ -11,7 +11,7 @@ import { ResponsiveImg } from '@/components/img';
 import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/routes/paths';
 import { useEffect, useState } from 'react';
-import { instance } from '@/services/api';
+import { instance } from '@/services/config';
 // ----------------------------------------------------------------------
 
 const PortfolioList = ({ hasProfile, hasPortfolio }) => {

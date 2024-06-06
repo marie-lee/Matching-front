@@ -54,7 +54,8 @@ const SignInPage = () => {
       dispatch(signIn({ token: res?.data?.accessToken }));
       navigate(PATHS.root);
     } catch (error) {
-      console.log(error);
+      setIsPending(false);
+      signInForm.setError('password', { message: error?.data });
     }
   };
 
