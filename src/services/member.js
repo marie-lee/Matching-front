@@ -1,4 +1,4 @@
-import { instance } from '@/services/api';
+import { instance } from '@/services/config';
 
 // ----------------------------------------------------------------------
 

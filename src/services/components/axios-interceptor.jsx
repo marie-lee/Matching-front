@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 
-import { instance } from '@/services/api';
+import { instance } from '@/services/config';
 
 // ----------------------------------------------------------------------
 
@@ -34,7 +34,7 @@ const AxiosInterceptor = () => {
   };
 
   const responseErrorInterceptor = (error) => {
-    return Promise.reject(error);
+    return Promise.reject(error?.response);
   };
 
   useEffect(() => {
