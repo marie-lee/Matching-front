@@ -21,6 +21,8 @@ import {
   sigInInFormDefaultValues,
   signInFormSchema,
 } from '@/pages/auth/constants';
+import { useState } from 'react';
+import { postMemberLogin } from '@/services/member';
 
 // ----------------------------------------------------------------------
 // 로그인 화면
@@ -31,6 +33,8 @@ const SignInPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [isPending, setIsPending] = useState(false);
+
   const signInForm = useForm({
     defaultValues: sigInInFormDefaultValues,
     resolver: yupResolver(signInFormSchema),
@@ -38,10 +42,21 @@ const SignInPage = () => {
 
   const { handleSubmit } = signInForm;
 
-  const onSubmit = handleSubmit(() => {
-    dispatch(signIn({ token: 'token' }));
-    navigate(PATHS.root);
+  const onSubmit = handleSubmit(async (data) => {
+    await fetchLogin(data);
   });
+
+  const fetchLogin = async (data) => {
+    setIsPending(true);
+    try {
+      const res = await postMemberLogin(data);
+      setIsPending(false);
+      dispatch(signIn({ token: res?.data?.accessToken }));
+      navigate(PATHS.root);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // ----------------------------------------------------------------------
 
@@ -112,6 +127,7 @@ const SignInPage = () => {
           </Link>
         </Box>
         <LoadingButton
+          loading={isPending}
           sx={{
             backgroundColor: theme.palette.login.main,
             borderRadius: 10,
