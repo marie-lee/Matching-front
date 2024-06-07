@@ -8,6 +8,8 @@ import App from '@/App';
 import { persistor, store } from '@/store';
 import ThemeProvider from '@/theme';
 
+import { AxiosInterceptor } from '@/services/components';
+
 // ----------------------------------------------------------------------
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -16,6 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <BrowserRouter>
         <Suspense>
           <ThemeProvider>
+            <AxiosInterceptor />
             <App />
           </ThemeProvider>
         </Suspense>

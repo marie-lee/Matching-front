@@ -10,7 +10,7 @@ const initialState = {
 const persistConfig = {
   key: 'auth',
   storage,
-  whiteList: ['isSignIn', 'token'],
+  whitelist: ['isSignIn', 'token'],
 };
 
 const authSlice = createSlice({
