@@ -1,9 +1,10 @@
 import { Chip, Stack, Typography, useTheme } from '@mui/material';
 import { Icon } from '@iconify/react';
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 import { BasicDataGrid } from '@/components/data-grid';
 
-import { PROJECTS } from '@/pages/project/constants';
 import { PATHS } from '@/routes/paths';
 import { getProjectList } from '@/services/project';
 
@@ -14,15 +15,18 @@ const ProjectStatus = ({ params }) => {
   let label = params.row.PJT_STTS;
   const hasLeaderRole = params.row.hasLeaderRole;
 
-  switch (status) {
-    case '모집중':
-      color = 'high';
+  switch (params.row.PJT_STTS) {
+    case 'RECRUIT':
+      color = 'HIGH';
+      label = '모집중';
       break;
-    case '진행중':
-      color = 'middle';
+    case 'PROGRESS':
+      color = 'MEDIUM';
+      label = '진행중';
       break;
-    case '종료':
-      color = 'low';
+    case 'FINISH':
+      color = 'LOW';
+      label = '완료';
       break;
     default:
       color = 'LOW';
@@ -71,6 +75,25 @@ const ProjectEmptyRows = () => {
 
 const ProjectList = () => {
   const navigate = useNavigate();
+
+  const [isFetching, setIsFetching] = useState(false);
+  const [data, setData] = useState([]);
+
+  const fetchProjectList = async () => {
+    setIsFetching(true);
+    try {
+      const res = await getProjectList();
+      setIsFetching(false);
+      setData(res?.data);
+    } catch (error) {
+      console.log(error);
+      setIsFetching(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProjectList();
+  }, []);
 
   const columns = [
     {
