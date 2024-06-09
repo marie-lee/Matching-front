@@ -1,5 +1,5 @@
 import { DataGrid } from '@mui/x-data-grid';
-import { Stack, Typography, useTheme } from '@mui/material';
+import { LinearProgress, Stack, Typography, useTheme } from '@mui/material';
 import { Icon } from '@iconify/react';
 
 // ----------------------------------------------------------------------
@@ -36,6 +36,7 @@ const BasicDataGrid = ({ rows, columns, noRows, ...other }) => {
       slots={{
         noRowsOverlay: noRows || EmptyRows,
         noResultsOverlay: noRows || EmptyRows,
+        loadingOverlay: LinearProgress,
       }}
       slotProps={{
         pagination: {
