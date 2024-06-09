@@ -109,14 +109,11 @@ const ProjectList = () => {
       width: 400,
     },
     {
-      field: 'PERIOD',
-      headerName: '기간',
-    },
-    {
       field: 'START_DT',
       headerName: '기간',
       sortable: false,
-      // valueGetter: (params) => `${params.row.START_DT} ~ ${params.row?.END_DT}`,
+      valueGetter: (params) =>
+        `${params.row.START_DT} ~ ${params.row.END_DT || ''}`,
       width: 250,
     },
     {
