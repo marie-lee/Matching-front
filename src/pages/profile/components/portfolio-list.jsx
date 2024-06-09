@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 import { instance } from '@/services/config';
 // ----------------------------------------------------------------------
 
-const PortfolioList = ({ hasProfile, hasPortfolio }) => {
+const PortfolioList = ({ hasProfile }) => {
   const navigate = useNavigate();
 
   const [portfolio, setPortfolio] = useState([]);
@@ -101,10 +101,10 @@ const PortfolioList = ({ hasProfile, hasPortfolio }) => {
       </Stack>
 
       {/* 포트폴리오가 있는 경우 */}
-      {hasPortfolio && renderList()}
+      {portfolio && renderList()}
 
       {/* 포트폴리오가 없고, 프로필은 있는 경우 */}
-      {!hasPortfolio && hasProfile && (
+      {!portfolio.length && hasProfile && (
         <Stack spacing={2} p={3} bgcolor={'background.neutral'}>
           <Typography textAlign={'center'}>
             아직 등록한 포트폴리오가 없어요! 🥲

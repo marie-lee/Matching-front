@@ -1,8 +1,8 @@
-import { Chip, Link, Stack, Typography, useTheme } from '@mui/material';
+import { Chip, Stack, Typography, useTheme } from '@mui/material';
 import { Icon } from '@iconify/react';
-
+import { useEffect, useState } from 'react';
 import { BasicDataGrid } from '@/components/data-grid';
-
+import { instance } from '@/services/config';
 import { PROJECTS } from '@/pages/project/constants';
 import { PATHS } from '@/routes/paths';
 import { useNavigate } from 'react-router-dom';
@@ -16,13 +16,13 @@ const ProjectStatus = ({ params }) => {
 
   switch (status) {
     case '모집중':
-      color = 'high';
+      color = 'HIGH';
       break;
     case '진행중':
-      color = 'middle';
+      color = 'MEDIUM';
       break;
     case '종료':
-      color = 'low';
+      color = 'LOW';
       break;
     default:
       break;
@@ -70,6 +70,31 @@ const ProjectEmptyRows = () => {
 
 const ProjectList = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await instance.get('project');
+        const data = response.data;
+        console.log('data', data);
+        // const PORTFOLIOS = data.portfolioInfo.map((item) => ({
+        //   id: item.PFOL_SN,
+        //   pfolNm: item.PFOL_NM,
+        //   //인트로가 없음 추가해야함
+        //   intro: '인트로가 없어서 임의로 추가 합니다.',
+        //   startDt: item.START_DT,
+        //   endDt: item.END_DT,
+        //   stacks: item.stack.map((stackItem) => ({ stNm: stackItem.ST_NM })),
+        //   img: item.IMG,
+        // }));
+        // console.log('PORTFOLIOS', PORTFOLIOS);
+        // setPortfolio(PORTFOLIOS);
+      } catch (error) {
+        console.log('error', error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const columns = [
     {
