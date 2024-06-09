@@ -7,10 +7,14 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-
+import { useState, useEffect } from 'react';
+import { getProject, getSTATUS } from '@/services/project';
 import { ResponsiveImg } from '@/components/img';
+import { useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectName } from '@/store/name-reducer';
 
-const Group = ({ title, currentCnt, expectCnt }) => {
+const Group = ({ title, currentCnt, expectCnt, userInfo }) => {
   return (
     <Grid item xs={6}>
       <Stack
@@ -28,14 +32,24 @@ const Group = ({ title, currentCnt, expectCnt }) => {
         p={2}
         sx={{
           backgroundColor: (theme) => theme.palette.grey[300],
+          minHeight: 56.75,
         }}
       >
-        <Chip
-          avatar={<Avatar alt={'홍길동 프로필 이미지'} />}
-          label={'홍길동'}
-          size={'small'}
-          clickable
-        />
+        {userInfo.map((user, index) => {
+          if (user.part === title) {
+            return (
+              <Chip
+                key={index}
+                avatar={<Avatar alt={`${user.name} 프로필 이미지`} />}
+                label={user.name}
+                size={'small'}
+                clickable
+              />
+            );
+          } else {
+            return null;
+          }
+        })}
       </Box>
     </Grid>
   );
@@ -43,30 +57,67 @@ const Group = ({ title, currentCnt, expectCnt }) => {
 
 // ----------------------------------------------------------------------
 
-const ProjectDetails = ({ projectData }) => {
+const ProjectDetails = () => {
+  const location = useLocation();
+  const [projectData, setProjectData] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
+  const name = useSelector(selectName);
+  console.log('name', name);
+
+  const fetchProject = async () => {
+    try {
+      const { projectData } = location.state;
+
+      const res = await getProject(projectData.PJT_SN);
+      const res1 = await getSTATUS();
+      const targetItem = res1.data.projectReqList.find(
+        (item) => item.PJT_SN === projectData.PJT_SN,
+      );
+      console.log('targetItem', targetItem);
+
+      const userInfo = targetItem.REQ_LIST.map((item) => ({
+        name: item.USER_NM,
+        part: item.PART,
+      }));
+      setUserInfo(userInfo);
+
+      setProjectData(res.data[0]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProject();
+  }, []);
+
+  if (!projectData) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Grid item container p={3} bgcolor={'background.default'}>
-      <Grid item container spacing={3}>
+      <Grid item container spacing={2}>
         {/* 제목, 프로젝트명, 기간, 팀장, 이미지  */}
         <Grid item container>
-          <Grid item xs={12} md={7}>
+          <Grid item xs={12} md={10}>
             <Stack>
               {/* 제목 */}
-              <Typography variant={'xl'}>{projectData.nm}</Typography>
+              <Typography variant={'xl'}>{projectData.pjtNm}</Typography>
               {/* 팀장, 기간 */}
               <Stack direction={'row'} spacing={1} mt={1}>
                 <Typography>팀장</Typography>
-                <Typography>{projectData.leaderNm}</Typography>
+                <Typography>{name}</Typography>
               </Stack>
               <Stack direction={'row'} spacing={1}>
                 <Typography>기간</Typography>
                 <Typography>
-                  {projectData.startDt} ~ {projectData.endDt}
+                  {projectData.startDt}~{projectData.endDt}
                 </Typography>
               </Stack>
             </Stack>
           </Grid>
-          {projectData.img && (
+          {projectData.pjtImg && (
             <Grid item xs={12} md>
               <ResponsiveImg
                 src={projectData.img}
@@ -91,7 +142,7 @@ const ProjectDetails = ({ projectData }) => {
             </Typography>
           </Grid>
           <Grid item>
-            <Typography variant={'sm'}>{projectData.desc}</Typography>
+            <Typography variant={'sm'}>{projectData.pjtDetail}</Typography>
           </Grid>
         </Grid>
 
@@ -106,11 +157,15 @@ const ProjectDetails = ({ projectData }) => {
             <Typography fontWeight={'fontWeightMedium'}>요구 기술</Typography>
           </Grid>
           <Grid item container spacing={0.5}>
-            {projectData?.stacks?.map((stack, index) => (
-              <Grid item key={`stack_${index}`}>
-                <Chip label={stack} size={'small'} />
+            {Array.isArray(projectData.stack) ?
+              <Grid item container spacing={0.5}>
+                {projectData.stack.map((stack, index) => (
+                  <Grid item key={`stack${index}`}>
+                    <Chip label={stack} size={'small'} />
+                  </Grid>
+                ))}
               </Grid>
-            ))}
+            : <Chip label={projectData.stack} size={'small'} />}
           </Grid>
         </Grid>
 
@@ -129,15 +184,20 @@ const ProjectDetails = ({ projectData }) => {
           >
             <Typography fontWeight={'fontWeightMedium'}>모집 인원</Typography>
             <Typography variant={'sm'}>
-              {`현재 인원: ${projectData?.currentCnt}명 / 총 희망 인원: ${projectData?.expectCnt}명`}
+              {`현재 인원: ${projectData?.TO}명 / 총 희망 인원: ${projectData?.PO}명`}
             </Typography>
           </Grid>
 
           <Grid item container spacing={2}>
-            <Group title={'기획'} currentCnt={1} expectCnt={2} />
-            <Group title={'디자인'} currentCnt={1} expectCnt={1} />
-            <Group title={'프론트엔드'} currentCnt={1} expectCnt={2} />
-            <Group title={'백엔드'} currentCnt={1} expectCnt={2} />
+            {projectData.role.map((group, index) => (
+              <Group
+                key={`group_${index}`}
+                title={group.part}
+                currentCnt={group.cnt}
+                expectCnt={group.totalCnt}
+                userInfo={userInfo}
+              />
+            ))}
           </Grid>
         </Grid>
       </Grid>

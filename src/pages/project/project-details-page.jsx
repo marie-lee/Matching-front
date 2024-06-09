@@ -38,7 +38,8 @@ const ProjectDetailsPage = () => {
       {/*{projectData.hasLeaderRole && <ProjectDetailsMatchStatus />}*/}
 
       {/* 본인이 프로젝트 리더인 경우, 멤버 추천 조회 가능 */}
-      {projectData.hasLeaderRole && <ProjectDetailsRecommendMember />}
+      {/*{projectData.hasLeaderRole && <ProjectDetailsRecommendMember />}*/}
+      {<ProjectDetailsRecommendMember />}
     </Grid>
   );
 };

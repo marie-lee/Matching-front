@@ -110,7 +110,7 @@ const ProjectList = () => {
     },
     {
       field: 'PERIOD',
-      headerName: '기간',
+      headerName: '인원 수 ',
     },
     {
       field: 'START_DT',
@@ -139,7 +139,9 @@ const ProjectList = () => {
       loading={isFetching}
       noRows={ProjectEmptyRows}
       onRowClick={(params) => {
-        navigate(`${PATHS.project.details}/${params.row.PJT_SN}`);
+        navigate(`${PATHS.project.details}/${params.row.PJT_SN}`, {
+          state: { projectData: params.row },
+        });
       }}
     />
   );
