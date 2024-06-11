@@ -3,6 +3,7 @@ import {
   Box,
   Container,
   IconButton,
+  Link,
   Stack,
   Toolbar,
   Typography,
@@ -36,14 +37,15 @@ const Header = () => {
         }}
       >
         <Container sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography
+          <Link
+            href={'/'}
             variant={'lg'}
             fontFamily={'Esamanru'}
+            underline={'none'}
             fontWeight={'fontWeightMedium'}
-            mr={5}
           >
             Project Matching
-          </Typography>
+          </Link>
 
           {/*<NavDesktop data={configNavigation} />*/}
 
