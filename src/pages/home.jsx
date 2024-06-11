@@ -23,7 +23,7 @@ const Home = () => {
               variant={'h2'}
               fontFamily={'sans-serif'}
               sx={{
-                fontWeight: 'fontWeightMedium',
+                fontWeight: 'fontWeightSemiBold',
                 mt: isSmallScreen ? 0 : 10,
               }}
             >
@@ -41,6 +41,8 @@ const Home = () => {
               }}
             >
               <Button
+                href={'/match'}
+                variant="contained"
                 sx={{
                   backgroundColor: theme.palette.login.main,
                   '&:hover': { backgroundColor: theme.palette.login.dark },
@@ -49,11 +51,11 @@ const Home = () => {
                   Pt: 1,
                   pb: 1,
                 }}
-                variant="contained"
               >
                 MATCHING
               </Button>
               <Button
+                href={'/project'}
                 variant="outlined"
                 sx={{
                   borderColor: theme.palette.login.main,
@@ -126,6 +128,7 @@ const Home = () => {
         <Grid item xs={isSmallScreen ? 12 : 4.5}>
           <Typography
             variant={'h3'}
+            fontWeight={'fontWeightMedium'}
             sx={{
               textAlign: isSmallScreen ? 'center' : '',
               mt: isSmallScreen ? 1 : 20,

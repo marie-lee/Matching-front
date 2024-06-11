@@ -33,13 +33,6 @@ export const button = (theme) => {
             backgroundColor: theme.palette.grey[700],
           },
         }),
-        // OUTLINED
-        ...(outlinedVariant && {
-          borderColor: alpha(theme.palette.grey[500], 0.32),
-          '&:hover': {
-            backgroundColor: theme.palette.action.hover,
-          },
-        }),
         // TEXT
         ...(textVariant && {
           '&:hover': {
@@ -55,7 +48,9 @@ export const button = (theme) => {
           },
         }),
       }),
+      // OUTLINED
       ...(outlinedVariant && {
+        backgroundColor: theme.palette.background.default,
         '&:hover': {
           borderColor: 'currentColor',
           boxShadow: '0 0 0 0.5px currentColor',
