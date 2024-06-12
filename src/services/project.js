@@ -13,3 +13,13 @@ export const URL_GET_PROJECT = '/project';
 export const getProject = (pjtSn) => {
   return instance.get(`${URL_GET_PROJECT}/${pjtSn}`);
 };
+
+export const URL_GET_STATUS = '/status';
+export const getSTATUS = () => {
+  return instance.get(URL_GET_STATUS);
+};
+
+export const URL_GET_Recommend = '/recommendation/project';
+export const getRecommend = (pjtSn) => {
+  return instance.get(`${URL_GET_Recommend}/${pjtSn}`);
+};

@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 
-const ResponsiveImg = ({ src, alt, height, width }) => {
+const ResponsiveImg = ({ src, alt, height, width, style }) => {
   return (
     <Box
       sx={{
@@ -19,6 +19,7 @@ const ResponsiveImg = ({ src, alt, height, width }) => {
           left: 0,
           width: '100%',
           height: '100%',
+          ...style,
         }}
       />
     </Box>

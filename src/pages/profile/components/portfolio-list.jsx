@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 import { instance } from '@/services/config';
 // ----------------------------------------------------------------------
 
-const PortfolioList = ({ hasProfile, hasPortfolio }) => {
+const PortfolioList = ({ hasProfile }) => {
   const navigate = useNavigate();
 
   const [portfolio, setPortfolio] = useState([]);
@@ -24,7 +24,7 @@ const PortfolioList = ({ hasProfile, hasPortfolio }) => {
       try {
         const response = await instance.get('member/profile');
         const data = response.data;
-        console.log('data', data.portfolioInfo);
+
         const PORTFOLIOS = data.portfolioInfo.map((item) => ({
           id: item.PFOL_SN,
           pfolNm: item.PFOL_NM,
@@ -35,7 +35,6 @@ const PortfolioList = ({ hasProfile, hasPortfolio }) => {
           stacks: item.stack.map((stackItem) => ({ stNm: stackItem.ST_NM })),
           img: item.IMG,
         }));
-        console.log('PORTFOLIOS', PORTFOLIOS);
         setPortfolio(PORTFOLIOS);
       } catch (error) {
         console.log('error', error);
@@ -52,8 +51,13 @@ const PortfolioList = ({ hasProfile, hasPortfolio }) => {
             <Stack spacing={0.5} sx={{ cursor: 'pointer' }}>
               {/* 대표 이미지 */}
               <ResponsiveImg
-                src={pfol.img}
-                alt={`${pfol.pfolNm}_image`}
+                src={
+                  ({
+                    /*pfol.img */
+                  },
+                  `https://via.placeholder.com/200x100?text=project ${pfol.id}`)
+                }
+                alt={`${pfol.pfolNm}`}
                 width={230}
                 height={150}
               />
@@ -101,10 +105,10 @@ const PortfolioList = ({ hasProfile, hasPortfolio }) => {
       </Stack>
 
       {/* 포트폴리오가 있는 경우 */}
-      {hasPortfolio && renderList()}
+      {portfolio && renderList()}
 
       {/* 포트폴리오가 없고, 프로필은 있는 경우 */}
-      {!hasPortfolio && hasProfile && (
+      {!portfolio.length && hasProfile && (
         <Stack spacing={2} p={3} bgcolor={'background.neutral'}>
           <Typography textAlign={'center'}>
             아직 등록한 포트폴리오가 없어요! 🥲

@@ -9,9 +9,12 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
-import { RECOMMEND_MEMBERS, STACKS_OPTIONS } from '@/pages/project/constants';
+import { STACKS_OPTIONS } from '@/pages/project/constants';
 import { ProjectDetailsMemberProfiles } from '@/pages/project/components';
+import { getRecommend } from '@/services/project';
 
 // ----------------------------------------------------------------------
 
@@ -35,13 +38,13 @@ const MemberItem = ({ member, ...other }) => {
           </Grid>
           <Grid item xs>
             <Typography component={'p'} fontWeight={'fontWeightMedium'}>
-              {member.name}
+              {member.userNm}
             </Typography>
             <Typography component={'p'} variant={'sm'} color={'text.secondary'}>
-              {member.introduction}
+              {member.profile.introduction}
             </Typography>
             <Stack direction={'row'} flexWrap={'wrap'} gap={1} mt={1}>
-              {member.skills.map((skill, index) => (
+              {member.profile.stack.split(',').map((skill, index) => (
                 <Chip
                   key={`member_skill_${index}`}
                   label={skill}
@@ -55,13 +58,29 @@ const MemberItem = ({ member, ...other }) => {
     </Grid>
   );
 };
-
 // ----------------------------------------------------------------------
 
 const ProjectDetailsRecommendMember = () => {
+  const { id } = useParams();
   const [profilesDialogOpen, setProfilesDialogOpen] = useState(false);
-
+  const [recommendList, setRecommendList] = useState([]);
   const [member, setMember] = useState({});
+
+  const fetchProject = async () => {
+    try {
+      console.log('Recommend - PJT_SN', id);
+
+      const recommendList = await getRecommend(id);
+      setRecommendList(recommendList.data);
+      console.log('recommendList', recommendList);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProject();
+  }, []);
 
   const handleClickMember = (member) => {
     setProfilesDialogOpen(true);
@@ -96,7 +115,7 @@ const ProjectDetailsRecommendMember = () => {
 
         {/* 추천된 멤버 목록 */}
         <Grid item container spacing={2}>
-          {RECOMMEND_MEMBERS.map((member, index) => (
+          {recommendList.map((member, index) => (
             <MemberItem
               key={`recommend-member-${index}`}
               member={member}
