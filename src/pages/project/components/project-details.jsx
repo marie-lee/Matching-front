@@ -40,8 +40,8 @@ const Group = ({ title, currentCnt, expectCnt, userInfo }) => {
             return (
               <Chip
                 key={index}
-                avatar={<Avatar alt={`${user.name} 프로필 이미지`} />}
-                label={user.name}
+                avatar={<Avatar alt={`${user.names} 프로필 이미지`} />}
+                label={user.names}
                 size={'small'}
                 clickable
               />
@@ -57,12 +57,11 @@ const Group = ({ title, currentCnt, expectCnt, userInfo }) => {
 
 // ----------------------------------------------------------------------
 
-const ProjectDetails = () => {
+const ProjectDetails = ({ onComplete }) => {
   const location = useLocation();
   const [projectData, setProjectData] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   const name = useSelector(selectName);
-  console.log('name', name);
 
   const fetchProject = async () => {
     try {
@@ -70,20 +69,21 @@ const ProjectDetails = () => {
 
       const res = await getProject(projectData.PJT_SN);
       const res1 = await getSTATUS();
+
       const targetItem = res1.data.projectReqList.find(
         (item) => item.PJT_SN === projectData.PJT_SN,
       );
-      console.log('targetItem', targetItem);
 
       const userInfo = targetItem.REQ_LIST.map((item) => ({
-        name: item.USER_NM,
+        names: item.USER_NM,
         part: item.PART,
       }));
       setUserInfo(userInfo);
-
-      setProjectData(res.data[0]);
+      setProjectData(res.data);
     } catch (error) {
       console.error(error);
+    } finally {
+      onComplete();
     }
   };
 
@@ -92,7 +92,7 @@ const ProjectDetails = () => {
   }, []);
 
   if (!projectData) {
-    return <div>Loading...</div>;
+    return <div>Loading.....</div>;
   }
 
   return (
@@ -118,7 +118,7 @@ const ProjectDetails = () => {
             </Stack>
           </Grid>
           {projectData.pjtImg && (
-            <Grid item xs={12} md>
+            <Grid item xs={8} md>
               <ResponsiveImg
                 src={projectData.img}
                 alt={'이미지'}

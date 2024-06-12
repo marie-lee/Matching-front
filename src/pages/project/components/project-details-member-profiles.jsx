@@ -8,47 +8,64 @@ import {
   Typography,
 } from '@mui/material';
 import { ResponsiveImg } from '@/components/img';
-import { PORTFOLIOS } from '@/pages/profile/constants';
 
 // ----------------------------------------------------------------------
 
-const PortfolioList = () => {
+const PortfolioList = (member) => {
+  console.log('member', member.member.portfolio);
   return (
     <Grid container columnSpacing={2} rowSpacing={3} pt={1}>
-      {PORTFOLIOS.map((pfol) => (
-        <Grid item xs={12} md={6} key={pfol.id}>
-          <Stack spacing={0.5} sx={{ cursor: 'pointer' }}>
-            {/* 대표 이미지 */}
-            <ResponsiveImg
-              src={pfol.img}
-              alt={`${pfol.pfolNm}_image`}
-              width={200}
-              height={120}
-            />
+      {member.member.portfolio?.length > 0 ?
+        member.member.portfolio.map((pfol) => (
+          <Grid item xs={12} md={6} key={pfol.name}>
+            <Stack spacing={0.5} sx={{ cursor: 'pointer' }}>
+              {/* 대표 이미지 */}
+              <ResponsiveImg
+                src={pfol.media}
+                alt={`${pfol.name}`}
+                width={200}
+                height={120}
+              />
 
-            {/* 포트폴리오 제목 */}
-            <Typography component={'p'} variant={'lg'}>
-              {pfol.pfolNm}
-            </Typography>
+              {/* 포트폴리오 제목 */}
+              <Typography component={'p'} variant={'lg'}>
+                {pfol.name}
+              </Typography>
 
-            {/* 프로젝트 기간 */}
-            <Typography component={'p'} variant={'sm'} color={'text.secondary'}>
-              {`${pfol.startDt} ~ ${pfol.endDt}`}
-            </Typography>
+              {/* 프로젝트 기간 */}
+              <Typography
+                component={'p'}
+                variant={'sm'}
+                color={'text.secondary'}
+              >
+                {`${pfol.startDt} ~ ${pfol.endDt}`}
+              </Typography>
 
-            {/* 사용 스킬 */}
-            <Stack useFlexGap flexWrap={'wrap'} direction={'row'} gap={0.7}>
-              {pfol.stacks.map((stack, index) => (
-                <Chip
-                  key={`${pfol.pfolNm}_stack_${index}`}
-                  label={stack.stNm}
-                  size={'small'}
-                />
-              ))}
+              {/* 사용 스킬 */}
+              <Stack useFlexGap flexWrap={'wrap'} direction={'row'} gap={0.7}>
+                {pfol.stack?.split(',').map((stack, index) => (
+                  <Chip
+                    key={`${pfol.name}_stack_${index}`}
+                    label={stack}
+                    size={'small'}
+                  />
+                ))}
+              </Stack>
             </Stack>
-          </Stack>
-        </Grid>
-      ))}
+          </Grid>
+        ))
+      : <Typography
+          container
+          columnSpacing={2}
+          rowSpacing={3}
+          pt={1}
+          component={'p'}
+          variant={'sm'}
+          color={'text.secondary'}
+        >
+          포트폴리오가 없습니다.
+        </Typography>
+      }
     </Grid>
   );
 };
@@ -80,13 +97,15 @@ const ProjectDetailsMemberProfiles = ({ member }) => {
               alignItems={'center'}
               justifyContent={'space-between'}
             >
-              <Typography variant={'xl'}>{member.name}</Typography>
+              <Typography variant={'xl'}>{member.userNm}</Typography>
               <Button>요청</Button>
             </Grid>
 
             {/* 한 줄 소개 */}
             <Grid item container mt={1}>
-              <Typography variant={'lg'}>{member.introduction}</Typography>
+              <Typography variant={'lg'}>
+                {member.profile.introduction}
+              </Typography>
             </Grid>
 
             {/* 링크 */}
@@ -96,15 +115,16 @@ const ProjectDetailsMemberProfiles = ({ member }) => {
               </Grid>
               <Grid item xs={12} md={11}>
                 <Typography size={'sm'} color={'text.secondary'}>
-                  {member.url}
+                  {member.profile.url}
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={1}>
+                {/* 이메일없어서 링크로 일단 대체*/}
                 <Typography fontWeight={'fontWeightMedium'}>이메일</Typography>
               </Grid>
               <Grid item xs={12} md={11}>
                 <Typography size={'sm'} color={'text.secondary'}>
-                  {member.url}
+                  {member.profile.url}
                 </Typography>
               </Grid>
             </Grid>
@@ -122,7 +142,7 @@ const ProjectDetailsMemberProfiles = ({ member }) => {
             주요 스킬
           </Typography>
           <Grid container spacing={1} pt={1}>
-            {member.skills.map((skill, index) => (
+            {member.profile.stack.split(',').map((skill, index) => (
               <Grid item key={`stack_${index}`}>
                 <Chip label={skill} />
               </Grid>
@@ -136,11 +156,11 @@ const ProjectDetailsMemberProfiles = ({ member }) => {
             경력
           </Typography>
           <Stack spacing={1} pt={1}>
-            {member.company_experience?.map((exp, index) => (
+            {member.profile.career?.map((exp, index) => (
               <Stack key={`career_${index}`}>
-                <Typography>{exp.company_name}</Typography>
+                <Typography>{exp.careerNm}</Typography>
                 <Typography variant={'sm'} color={'text.secondary'}>
-                  {exp.duration}
+                  {exp.enteringDt} ~ {exp.quitDt}
                 </Typography>
               </Stack>
             ))}
@@ -152,7 +172,7 @@ const ProjectDetailsMemberProfiles = ({ member }) => {
           <Typography variant={'lg'} fontWeight={'fontWeightSemiBold'}>
             포트폴리오
           </Typography>
-          <PortfolioList />
+          <PortfolioList member={member} />
         </Grid>
       </Grid>
     </Grid>
