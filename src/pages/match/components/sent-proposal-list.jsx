@@ -1,11 +1,23 @@
-import { Button, Chip, Grid, Stack, Typography } from '@mui/material';
+import {
+  Button,
+  Chip,
+  Dialog,
+  Grid,
+  Link,
+  Stack,
+  Typography,
+} from '@mui/material';
+import { useState } from 'react';
 import _ from 'lodash';
 
 import { ResponsiveImg } from '@/components/img';
+import { getStatusUser } from '@/services/status';
+import { UserInfo } from '@/pages/match/components';
+import { Icon } from '@iconify/react';
 
 // ----------------------------------------------------------------------
 
-const ProjectSection = ({ data }) => {
+const ProjectSection = ({ data, handleClickUser }) => {
   return (
     <Grid item xs={12}>
       <Grid container bgcolor={'background.default'}>
@@ -28,11 +40,13 @@ const ProjectSection = ({ data }) => {
               <Section
                 title={'제안 중인 요청'}
                 data={_.filter(data.REQ_LIST, { REQ_STTS: 'REQ' })}
+                handleClickUser={handleClickUser}
               />
 
               <Section
                 title={'개발자 승인'}
                 data={_.filter(data.REQ_LIST, { REQ_STTS: 'AGREE' })}
+                handleClickUser={handleClickUser}
               />
 
               <Section
@@ -50,7 +64,7 @@ const ProjectSection = ({ data }) => {
 
 // ----------------------------------------------------------------------
 
-const Section = ({ title, data, disabled }) => {
+const Section = ({ title, data, disabled, handleClickUser }) => {
   return (
     <Grid item xs={12}>
       <Grid container bgcolor={'grey.200'}>
@@ -74,7 +88,7 @@ const Section = ({ title, data, disabled }) => {
               key={`match-${index}`}
               value={item}
               disabled={disabled}
-              // handleClickProject={handleClickProject}
+              handleClickUser={handleClickUser}
             />
           ))}
         </Grid>
@@ -85,7 +99,7 @@ const Section = ({ title, data, disabled }) => {
 
 // ----------------------------------------------------------------------
 
-const Item = ({ value, disabled, handleClickProject }) => {
+const Item = ({ value, disabled, handleClickUser }) => {
   return (
     <Grid item xs={12} md={6}>
       <Grid container p={2} border={1} borderColor={'divider'} borderRadius={1}>
@@ -101,18 +115,21 @@ const Item = ({ value, disabled, handleClickProject }) => {
           </Grid>
           <Grid item xs={12} md>
             <Stack alignItems={'flex-start'} spacing={1}>
-              {/*<Link*/}
-              {/*  component={'button'}*/}
-              {/*  underline={'hover'}*/}
-              {/*  onClick={handleClickProject}*/}
-              {/*>*/}
-              <Stack direction={'row'} alignItems={'center'} spacing={0.5}>
-                <Typography variant={'lg'} fontWeight={'fontWeightSemiBold'}>
-                  {value.USER_NM}
-                </Typography>
-                {/*<Icon icon={'iconoir:google-docs'} />*/}
-              </Stack>
-              {/*</Link>*/}
+              <Link
+                component={handleClickUser !== undefined && 'button'}
+                underline={handleClickUser !== undefined ? 'hover' : 'none'}
+                onClick={() => handleClickUser(value.USER_SN)}
+              >
+                <Stack direction={'row'} alignItems={'center'} spacing={0.5}>
+                  <Typography variant={'lg'} fontWeight={'fontWeightSemiBold'}>
+                    {value.USER_NM}
+                  </Typography>
+
+                  {handleClickUser !== undefined && (
+                    <Icon icon={'iconoir:google-docs'} />
+                  )}
+                </Stack>
+              </Link>
 
               <Chip label={value.PART} size={'small'} />
             </Stack>
@@ -146,24 +163,46 @@ const Item = ({ value, disabled, handleClickProject }) => {
 // ----------------------------------------------------------------------
 
 const SentProposalList = ({ data }) => {
-  // const [profileDialogOpen, setProfileDialogOpen] = useState(false);
+  const [userDialogOpen, setUserDialogOpen] = useState(false);
 
-  // const [profile, setProfile] = useState();
+  const [user, setUser] = useState();
+
+  const fetchUserDetail = async (userSn) => {
+    try {
+      const res = await getStatusUser(userSn);
+      setUser(res?.data);
+      setUserDialogOpen(true);
+    } catch (error) {
+      console.dir(error);
+    }
+  };
+
+  const handleClickUser = (userSn) => {
+    fetchUserDetail(userSn);
+  };
 
   return (
     <Grid container spacing={3}>
       {data.map((item) => (
-        <ProjectSection key={`project_${item.PJT_SN}`} data={item} />
+        <ProjectSection
+          key={`project_${item.PJT_SN}`}
+          data={item}
+          handleClickUser={handleClickUser}
+        />
       ))}
 
       {/* 개발자 프로필/포트폴리오 상세 조회 Dialog */}
-      {/*<Dialog*/}
-      {/*  fullWidth*/}
-      {/*  maxWidth={'md'}*/}
-      {/*  open={profileDialogOpen}*/}
-      {/*  onClose={() => setProfileDialogOpen(false)}*/}
-      {/*>*/}
-      {/*</Dialog>*/}
+      <Dialog
+        fullWidth
+        maxWidth={'md'}
+        open={userDialogOpen}
+        onClose={() => setUserDialogOpen(false)}
+      >
+        <UserInfo
+          profile={user?.profile ? user?.profile[0] : {}}
+          portfolioInfo={user?.portfolioInfo}
+        />
+      </Dialog>
     </Grid>
   );
 };
