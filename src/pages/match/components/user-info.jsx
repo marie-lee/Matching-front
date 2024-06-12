@@ -15,7 +15,7 @@ const PortfolioList = ({ portfolioInfo }) => {
   return (
     <Grid container columnSpacing={2} rowSpacing={3} pt={1}>
       {portfolioInfo?.map((pfol) => {
-        if (pfol.PFOL_SN !== null) {
+        if (pfol.PFOL_SN === null) {
           return (
             <Grid item xs={12} key={pfol.PFOL_SN}>
               <Typography color={'text.secondary'}>
@@ -36,7 +36,7 @@ const PortfolioList = ({ portfolioInfo }) => {
               {/* 대표 이미지 */}
               <ResponsiveImg
                 src={pfol?.IMG}
-                alt={`${pfol.pfolNm}_image`}
+                alt={`${pfol.PFOL_NM}_image`}
                 width={200}
                 height={120}
               />
@@ -59,7 +59,7 @@ const PortfolioList = ({ portfolioInfo }) => {
               <Stack useFlexGap flexWrap={'wrap'} direction={'row'} gap={0.7}>
                 {stack?.map((item, index) => (
                   <Chip
-                    key={`${pfol.pfolNm}_stack_${index}`}
+                    key={`${pfol.PFOL_NM}_stack_${index}`}
                     label={item.ST_NM}
                     size={'small'}
                   />
