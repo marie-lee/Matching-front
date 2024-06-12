@@ -12,8 +12,8 @@ import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/routes/paths';
 import { instance } from '@/services/config';
-import { useDispatch, useSelector } from 'react-redux';
-import { setName, selectName } from '@/store/name-reducer';
+import { useSelector } from 'react-redux';
+import { selectName } from '@/store/name-reducer';
 
 const Career = ({ data }) => {
   return (
@@ -102,8 +102,6 @@ const ProfileDetails = () => {
   const [stack, setStack] = useState([]);
   const [interest, setInterest] = useState([]);
   const [url, setUrl] = useState([]);
-
-  const dispatch = useDispatch();
   const name = useSelector(selectName);
 
   useEffect(() => {
@@ -111,8 +109,6 @@ const ProfileDetails = () => {
       try {
         const response = await instance.get('member/profile');
         const data = response.data;
-
-        dispatch(setName(data.profile[0].USER_NM));
 
         const careersData = data.profile[0].carrer.map((career) => ({
           careerName: career.CARRER_NM,
@@ -143,7 +139,7 @@ const ProfileDetails = () => {
     };
 
     fetchData();
-  }, [dispatch]);
+  }, []);
 
   return (
     <Stack spacing={3} p={3} bgcolor={'background.default'}>

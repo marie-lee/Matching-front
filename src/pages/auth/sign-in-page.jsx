@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { signIn } from '@/store/auth-slice';
+import { setName } from '@/store/name-reducer';
 import { PATHS } from '@/routes/paths';
 import Google from '@/assets/google.png';
 import { RhfFormProvider, RhfTextField } from '@/components/hook-form';
@@ -50,7 +51,9 @@ const SignInPage = () => {
     setIsPending(true);
     try {
       const res = await postMemberLogin(data);
+      console.log('res', res.data.USER_NM);
       setIsPending(false);
+      dispatch(setName(res.data.USER_NM));
       dispatch(signIn({ token: res?.data?.accessToken }));
       navigate(PATHS.root);
     } catch (error) {
