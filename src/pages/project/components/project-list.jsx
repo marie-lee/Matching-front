@@ -84,7 +84,12 @@ const ProjectList = () => {
     try {
       const res = await getProjectList();
       setIsFetching(false);
-      setData(res?.data);
+
+      // TODO: 응답데이터 형식 바뀔 경우 수정 필요함
+      // 데이터가 없을 경우 빈 배열이 아닌, 0번째 인덱스에 값 null로 내려와서 다음과 같이 처리
+      if (res?.data[0].PJT_SN !== null) {
+        setData(res?.data);
+      }
     } catch (error) {
       console.log(error);
       setIsFetching(false);
@@ -116,7 +121,8 @@ const ProjectList = () => {
       field: 'START_DT',
       headerName: '기간',
       sortable: false,
-      // valueGetter: (params) => `${params.row.START_DT} ~ ${params.row?.END_DT}`,
+      valueGetter: (params) =>
+        `${params.row.START_DT} ~ ${params.row.END_DT || ''}`,
       width: 250,
     },
     {
@@ -135,7 +141,7 @@ const ProjectList = () => {
       autoHeight
       columns={columns}
       rows={data}
-      getRowId={(row) => row.PJT_SN}
+      getRowId={(row) => row?.PJT_SN}
       loading={isFetching}
       noRows={ProjectEmptyRows}
       onRowClick={(params) => {

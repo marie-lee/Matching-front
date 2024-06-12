@@ -33,14 +33,15 @@ const HeaderGuest = () => {
         }}
       >
         <Container sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography
+          <Link
+            href={'/'}
             variant={'lg'}
             fontFamily={'Esamanru'}
-            fontWeight={'fontWeightBold'}
-            mr={5}
+            underline={'none'}
+            fontWeight={'fontWeightMedium'}
           >
             Project Matching
-          </Typography>
+          </Link>
 
           <Box sx={{ flexGrow: 1 }} />
 
