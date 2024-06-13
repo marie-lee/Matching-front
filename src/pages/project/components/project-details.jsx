@@ -11,8 +11,6 @@ import { useState, useEffect } from 'react';
 import { getProject } from '@/services/project';
 import { ResponsiveImg } from '@/components/img';
 import { useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { selectName } from '@/store/name-reducer';
 
 const Group = ({ title, currentCnt, expectCnt, userInfo }) => {
   return (
@@ -63,7 +61,6 @@ const ProjectDetails = ({ onComplete }) => {
   const location = useLocation();
   const [projectDatas, setProjectDatas] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
-  const name = useSelector(selectName);
 
   const fetchProject = async () => {
     try {
