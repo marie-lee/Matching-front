@@ -12,7 +12,7 @@ import {
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { STACKS_OPTIONS } from '@/pages/project/constants';
+import { STACKS_OPTIONS } from '@/pages/project/components/constants';
 import { ProjectDetailsMemberProfiles } from '@/pages/project/components';
 import { getRecommend } from '@/services/project';
 

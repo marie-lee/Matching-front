@@ -12,8 +12,6 @@ import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/routes/paths';
 import { instance } from '@/services/config';
-import { useSelector } from 'react-redux';
-import { selectName } from '@/store/name-reducer';
 
 const Career = ({ data }) => {
   return (
@@ -102,20 +100,23 @@ const ProfileDetails = () => {
   const [stack, setStack] = useState([]);
   const [interest, setInterest] = useState([]);
   const [url, setUrl] = useState([]);
-  const name = useSelector(selectName);
+  const [intro, setIntro] = useState([]);
+  const [name, setName] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await instance.get('member/profile');
         const data = response.data;
-
+        console.log('data', data);
         const careersData = data.profile[0].carrer.map((career) => ({
           careerName: career.CARRER_NM,
           enteringDt: career.ENTERING_DT,
           quitDt: career.QUIT_DT,
         }));
         setCareers(careersData);
+        setName(data.profile[0].USER_NM);
+        setIntro(data.profile[0].PF_INTRO);
 
         const stacksData = data.profile[0].stack.map((stack) => ({
           stNm: stack.ST_NM,
@@ -159,9 +160,7 @@ const ProfileDetails = () => {
         </IconButton>
       </Stack>
       <Stack>
-        <Typography variant={'lg'}>
-          나를 표현하는 한줄 소개에 불러올 데이터가 없어요.
-        </Typography>
+        <Typography variant={'lg'}>{intro}</Typography>
       </Stack>
       <Divider />
       <Career data={careers} />

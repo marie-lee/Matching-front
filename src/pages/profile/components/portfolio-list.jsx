@@ -24,7 +24,7 @@ const PortfolioList = ({ hasProfile }) => {
       try {
         const response = await instance.get('member/profile');
         const data = response.data;
-
+        console.log('data', data);
         const PORTFOLIOS = data.portfolioInfo.map((item) => ({
           id: item.PFOL_SN,
           pfolNm: item.PFOL_NM,
@@ -51,12 +51,7 @@ const PortfolioList = ({ hasProfile }) => {
             <Stack spacing={0.5} sx={{ cursor: 'pointer' }}>
               {/* 대표 이미지 */}
               <ResponsiveImg
-                src={
-                  ({
-                    /*pfol.img */
-                  },
-                  `https://via.placeholder.com/200x100?text=project ${pfol.id}`)
-                }
+                src={pfol.img}
                 alt={`${pfol.pfolNm}`}
                 width={230}
                 height={150}
