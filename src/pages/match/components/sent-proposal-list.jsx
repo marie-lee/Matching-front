@@ -41,6 +41,7 @@ const ProjectSection = ({ data, handleClickUser }) => {
                 title={'제안 중인 요청'}
                 data={_.filter(data.REQ_LIST, { REQ_STTS: 'REQ' })}
                 handleClickUser={handleClickUser}
+                confirmDisabled
               />
 
               <Section
@@ -64,7 +65,13 @@ const ProjectSection = ({ data, handleClickUser }) => {
 
 // ----------------------------------------------------------------------
 
-const Section = ({ title, data, disabled, handleClickUser }) => {
+const Section = ({
+  title,
+  data,
+  disabled,
+  confirmDisabled,
+  handleClickUser,
+}) => {
   return (
     <Grid item xs={12}>
       <Grid container bgcolor={'grey.200'}>
@@ -88,6 +95,7 @@ const Section = ({ title, data, disabled, handleClickUser }) => {
               key={`match-${index}`}
               value={item}
               disabled={disabled}
+              confirmDisabled={confirmDisabled}
               handleClickUser={handleClickUser}
             />
           ))}
@@ -99,7 +107,7 @@ const Section = ({ title, data, disabled, handleClickUser }) => {
 
 // ----------------------------------------------------------------------
 
-const Item = ({ value, disabled, handleClickUser }) => {
+const Item = ({ value, disabled, confirmDisabled, handleClickUser }) => {
   return (
     <Grid item xs={12} md={6}>
       <Grid container p={2} border={1} borderColor={'divider'} borderRadius={1}>
@@ -137,11 +145,14 @@ const Item = ({ value, disabled, handleClickUser }) => {
 
           {!disabled && (
             <Grid item container xs={12} md={2} spacing={1}>
-              <Grid item xs={6} md={12}>
-                <Button fullWidth size={'small'}>
-                  수락
-                </Button>
-              </Grid>
+              {!confirmDisabled && (
+                <Grid item xs={6} md={12}>
+                  <Button fullWidth size={'small'}>
+                    수락
+                  </Button>
+                </Grid>
+              )}
+
               <Grid item xs={6} md={12}>
                 <Button
                   fullWidth

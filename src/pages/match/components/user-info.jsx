@@ -76,9 +76,6 @@ const PortfolioList = ({ portfolioInfo }) => {
 // ----------------------------------------------------------------------
 
 const UserInfo = ({ profile, portfolioInfo }) => {
-  console.log('profile: ', profile);
-  console.log('portfolioInfo: ', portfolioInfo);
-
   const stack = profile?.stack?.[0].ST_NM === null ? [] : profile?.stack;
 
   return (
