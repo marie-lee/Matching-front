@@ -68,8 +68,6 @@ const ProjectDetailsRecommendMember = () => {
 
   const fetchProject = async () => {
     try {
-      console.log('Recommend - PJT_SN', id);
-
       const recommendList = await getRecommend(id);
       setRecommendList(recommendList.data);
       console.log('recommendList', recommendList);
