@@ -105,7 +105,7 @@ const ProjectDetails = ({ onComplete }) => {
               {/* 팀장, 기간 */}
               <Stack direction={'row'} spacing={1} mt={1}>
                 <Typography>팀장</Typography>
-                <Typography>{name}</Typography>
+                <Typography>{projectDatas.teamLeader}</Typography>
               </Stack>
               <Stack direction={'row'} spacing={1}>
                 <Typography>기간</Typography>
