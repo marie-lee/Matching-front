@@ -46,6 +46,10 @@ export const success = {
   darker: '#266405',
   contrastText: '#FFFFFF',
 };
+export const basicButton = {
+  main: '#2196F3',
+  contrastText: '#FFFFFF',
+};
 
 export const info = {
   lighter: '#D9FEFE',
@@ -106,6 +110,7 @@ export const palette = {
   warning,
   login,
   error,
+  basicButton,
   //
   LOW: low,
   MEDIUM: { ...secondary },

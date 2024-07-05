@@ -26,4 +26,7 @@ export const PATHS = {
   match: {
     root: '/match',
   },
+  wbs: {
+    root: '/wbs',
+  },
 };
