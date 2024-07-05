@@ -108,7 +108,6 @@ const ProfileDetails = () => {
       try {
         const response = await instance.get('member/profile');
         const data = response.data;
-        console.log('data', data);
         const careersData = data.profile[0].carrer.map((career) => ({
           careerName: career.CARRER_NM,
           enteringDt: career.ENTERING_DT,

@@ -24,7 +24,6 @@ const PortfolioList = ({ hasProfile }) => {
       try {
         const response = await instance.get('member/profile');
         const data = response.data;
-        console.log('data', data);
         const PORTFOLIOS = data.portfolioInfo.map((item) => ({
           id: item.PFOL_SN,
           pfolNm: item.PFOL_NM,
