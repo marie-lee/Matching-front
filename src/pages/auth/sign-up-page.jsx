@@ -1,5 +1,4 @@
 import { Box, Stack, Typography, useTheme } from '@mui/material';
-
 import { LoadingButton } from '@mui/lab';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -156,29 +155,31 @@ const SignUpPage = () => {
           {currentStep === 3 && <StepThree />}
 
           <Box sx={{ mb: 10 }} />
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              width: '100%',
-              mx: 'auto',
-            }}
-          >
-            <LoadingButton
-              loading={isPending}
-              onClick={handleSubmit(onSubmit)}
-              variant="contained"
+          {currentStep !== 3 && (
+            <Box
               sx={{
-                backgroundColor: theme.palette.primary.main,
-                '&:hover': {
-                  backgroundColor: theme.palette.primary.dark,
-                },
-                width: '6vw',
+                display: 'flex',
+                justifyContent: 'center',
+                width: '100%',
+                mx: 'auto',
               }}
             >
-              확인
-            </LoadingButton>
-          </Box>
+              <LoadingButton
+                loading={isPending}
+                onClick={handleSubmit(onSubmit)}
+                variant="contained"
+                sx={{
+                  backgroundColor: theme.palette.primary.main,
+                  '&:hover': {
+                    backgroundColor: theme.palette.primary.dark,
+                  },
+                  width: '6vw',
+                }}
+              >
+                확인
+              </LoadingButton>
+            </Box>
+          )}
         </RhfFormProvider>
         <Box sx={{ mb: 10 }} />
       </Box>
