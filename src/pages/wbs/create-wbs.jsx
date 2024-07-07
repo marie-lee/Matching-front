@@ -1,10 +1,17 @@
 import { Button, Stack, Typography, Box } from '@mui/material';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { PATHS } from '@/routes/paths';
+
 // ----------------------------------------------------------------------
 
 const CreateWbsPage = () => {
   const [projectName, setProjectName] = useState('참새 방앗간');
+  const navigate = useNavigate();
 
+  const handleCreateWbs = () => {
+    navigate(PATHS.wbs.createWbs);
+  };
   // ----------------------------------------------------------------------
 
   return (
@@ -23,6 +30,7 @@ const CreateWbsPage = () => {
           variant="contained"
           color="basicButton"
           sx={{ width: '250px', fontWeight: 500 }}
+          onClick={handleCreateWbs}
         >
           WBS 작성하기
         </Button>

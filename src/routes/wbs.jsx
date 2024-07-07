@@ -6,6 +6,9 @@ import MainLayout from '@/layouts/main/main-layout';
 
 const CreateWbsPage = lazy(() => import('@/pages/wbs/create-wbs'));
 
+const CreateWbsTemplatePage = lazy(
+  () => import('@/pages/wbs/create-wbs-template'),
+);
 // ----------------------------------------------------------------------
 
 const wbs = {
@@ -15,6 +18,10 @@ const wbs = {
     {
       index: true,
       element: <CreateWbsPage />,
+    },
+    {
+      path: 'create-wbs',
+      element: <CreateWbsTemplatePage />,
     },
   ],
 };
