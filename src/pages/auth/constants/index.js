@@ -16,3 +16,15 @@ export const signInFormSchema = yup.object().shape({
     .required('이메일을 입력해주세요'),
   password: yup.string().required('비밀번호를 입력해주세요'),
 });
+
+// ----------------------------------------------------------------------
+// 회원가입
+// ----------------------------------------------------------------------
+
+export const signUpFormDefualtValues = {
+
+};
+
+export const signUpFormSchema = yup.object().shape({
+
+});
