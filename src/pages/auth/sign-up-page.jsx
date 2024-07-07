@@ -1,30 +1,20 @@
-import {
-  Box,
-  Stack,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Box, Stack, Typography, useTheme } from '@mui/material';
 
 import { LoadingButton } from '@mui/lab';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { signIn } from '@/store/auth-slice';
-import { setName } from '@/store/name-reducer';
-import { PATHS } from '@/routes/paths';
-import Google from '@/assets/google.png';
-import { RhfFormProvider, RhfTextField } from '@/components/hook-form';
+import { RhfFormProvider } from '@/components/hook-form';
 import {
   signUpFormDefualtValues,
   signUpFormSchema,
 } from '@/pages/auth/constants';
 import { useState } from 'react';
-import { postMemberLogin } from '@/services/member';
 import { StepOne, StepThree, StepTwo } from '@/pages/auth/components';
 
 // ----------------------------------------------------------------------
-// 로그인 화면
+// 회원가입 화면
 // ----------------------------------------------------------------------
 
 const SignUpPage = () => {
@@ -57,19 +47,18 @@ const SignUpPage = () => {
   const { handleSubmit } = signUpForm;
 
   const onSubmit = async (data) => {
-    console.log("Form submitted:", data); // 콘솔에 폼 데이터를 출력
+    console.log('Form submitted:', data);
     await fetchSignUp(data);
     if (currentStep === 1) {
-      setCurrentStep(2); // StepOne에서 StepTwo로 이동
+      setCurrentStep(2);
     } else if (currentStep === 2) {
-      setCurrentStep(3); // StepTwo에서 StepThree로 이동
+      setCurrentStep(3);
     }
   };
 
   const fetchSignUp = async (data) => {
     setIsPending(true);
     try {
-      // Your sign-up logic here
       setIsPending(false);
     } catch (error) {
       setIsPending(false);
@@ -83,7 +72,6 @@ const SignUpPage = () => {
       sx={{
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center',
         minHeight: '100vh',
         width: '100%',
         mt: 5,
@@ -112,10 +100,10 @@ const SignUpPage = () => {
             <Stack
               key={step.value}
               onClick={() => setCurrentStep(step.value)}
-              direction="row" // direction을 "row"로 설정
+              direction="row"
               spacing={1}
               sx={{ textAlign: 'center', cursor: 'pointer', minWidth: 150 }}
-              alignItems="center" // alignItems를 "center"로 설정
+              alignItems="center"
             >
               <Box
                 sx={{
@@ -149,10 +137,21 @@ const SignUpPage = () => {
 
         <RhfFormProvider form={signUpForm}>
           {currentStep === 1 && (
-            <StepOne signUpForm={signUpForm} fetchSignUp={fetchSignUp} setCurrentStep={setCurrentStep} isPending={isPending} theme={theme} />
+            <StepOne
+              signUpForm={signUpForm}
+              fetchSignUp={fetchSignUp}
+              setCurrentStep={setCurrentStep}
+              isPending={isPending}
+              theme={theme}
+            />
           )}
           {currentStep === 2 && (
-            <StepTwo signUpForm={signUpForm} setCurrentStep={setCurrentStep} isPending={isPending} theme={theme} />
+            <StepTwo
+              signUpForm={signUpForm}
+              setCurrentStep={setCurrentStep}
+              isPending={isPending}
+              theme={theme}
+            />
           )}
           {currentStep === 3 && <StepThree />}
 
@@ -160,7 +159,7 @@ const SignUpPage = () => {
           <Box
             sx={{
               display: 'flex',
-              justifyContent: 'center', // 수평 중앙 정렬
+              justifyContent: 'center',
               width: '100%',
               mx: 'auto',
             }}
@@ -174,7 +173,7 @@ const SignUpPage = () => {
                 '&:hover': {
                   backgroundColor: theme.palette.primary.dark,
                 },
-                width: '6vw', // 너비를 10vw로 설정
+                width: '6vw',
               }}
             >
               확인
