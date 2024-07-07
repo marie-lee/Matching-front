@@ -41,7 +41,7 @@ const CreateWbsTemplatePage = () => {
           borderRadius: '1px',
           cursor: 'pointer',
           boxShadow:
-            selectedBox === item.id ? '0 0 10px rgba(0, 0, 0, 0.2)' : 'none',
+            selectedBox === item.id ? '0 0 20px rgba(0, 0, 0, 0.3)' : 'none',
         }}
         onClick={() => handleBoxClick(item.id)}
       >
@@ -88,8 +88,8 @@ const CreateWbsTemplatePage = () => {
             </Step>
           ))}
         </Stepper>
-        <Button color="greyButton" variant="contained">
-          Contained
+        <Button color="greyButton" sx={{ width: '100px' }} variant="contained">
+          NEXT
         </Button>
       </Stack>
       <Stack ml={5} direction="row">
