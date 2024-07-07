@@ -1,19 +1,22 @@
 import { Navigate } from 'react-router-dom';
 import { lazy } from 'react';
-
 import { PATHS } from '@/routes/paths';
 
 import CenteredLayout from '@/layouts/centerd/centered-layout';
+import MainLayout from '@/layouts/main/main-layout';
 
 // ----------------------------------------------------------------------
 
+// 로그인
 const SignInPage = lazy(() => import('@/pages/auth/sign-in-page'));
+
+//회원가입
+const SignUpPage = lazy(() => import('@/pages/auth/sign-up-page'));
 
 // ----------------------------------------------------------------------
 
 const auth = {
   path: 'auth',
-  element: <CenteredLayout />,
   children: [
     {
       index: true,
@@ -21,7 +24,23 @@ const auth = {
     },
     {
       path: 'sign-in',
-      element: <SignInPage />,
+      element: <CenteredLayout />,
+      children: [
+        {
+          index: true,
+          element: <SignInPage />,
+        },
+      ],
+    },
+    {
+      path: 'sign-up',
+      element: <MainLayout />,
+      children: [
+        {
+          index: true,
+          element: <SignUpPage />,
+        }
+      ]
     },
   ],
 };

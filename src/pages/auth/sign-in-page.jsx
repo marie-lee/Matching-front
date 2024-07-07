@@ -212,7 +212,7 @@ const SignInPage = () => {
         </Typography>
         <Link
           color={theme.palette.login.main}
-          href="#"
+          href={PATHS.auth.signUp}
           underline="hover"
           variant={'xs'}
           sx={{ ml: 0.5 }}
