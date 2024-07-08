@@ -19,10 +19,13 @@ const CreateWbsPage = () => {
       <Stack spacing={5} alignItems={'center'}>
         <Typography
           variant={'h6'}
-          fontWeight={'fontWeightBold'}
+          fontWeight={'fontWeightMedium'}
           textAlign={'center'}
         >
-          `{projectName}` 프로젝트의 WBS 작성 전입니다.
+          <Box component="span" fontWeight="fontWeightBold" mx={0.5}>
+            '{projectName} '
+          </Box>
+          프로젝트의 WBS 작성 전입니다.
           <br />
           지금 작성하러 가시겠습니까?
         </Typography>
@@ -49,7 +52,7 @@ const CreateWbsPage = () => {
         >
           <Typography variant={'base'} color={'text.disabled'}>
             <span style={{ color: '#2196F3' }}>
-              wbs(Work Breakdown Structure)
+              WBS(Work Breakdown Structure)
             </span>
             란?
           </Typography>
