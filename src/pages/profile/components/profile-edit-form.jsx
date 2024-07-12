@@ -29,7 +29,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add'; // Add 아이콘 임포트
 import ImageIcon from '@mui/icons-material/Image';
 import PersonalVideoIcon from '@mui/icons-material/PersonalVideo';
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { set } from 'react-hook-form';
 
 const FormGroup = ({ title, children }) => {
   return (
@@ -46,7 +47,7 @@ const FormGroup = ({ title, children }) => {
   );
 };
 
-const ProfileForm = () => {
+const ProfileForm = ({ onChange }) => {
   return (
     <Stack spacing={2}>
       <Stack alignItems={'center'}>
@@ -54,64 +55,137 @@ const ProfileForm = () => {
       </Stack>
       <Stack>
         <TextField
+          name="name"
           id="outlined-helperText"
           label="이름"
           defaultValue=""
           helperText="이름을 입력해주세요"
           fullWidth
+          onChange={onChange}
         />
       </Stack>
       <Stack>
         <TextField
+          name="intro"
           id="outlined-helperText"
           label="한 줄 소개"
           defaultValue=""
           helperText="나를 표현할 수 있는 한 줄 소개를 적어주세요"
           fullWidth
+          onChange={onChange}
         />
       </Stack>
     </Stack>
   );
 };
 
-const CarreerForm = () => {
+const CareerForm = ({ onChange }) => {
   const theme = useTheme();
+  const [entries, setEntries] = useState([
+    { companyName: '', startDate: null, endDate: null, isEmployed: true },
+  ]);
+
+  // Call this function whenever there's a change in entries
+  const notifyChange = (newEntries) => {
+    setEntries(newEntries);
+    onChange(newEntries); // Propagate changes to parent component
+  };
+
+  const handleDateChange = (date, name, index) => {
+    const newEntries = [...entries];
+    newEntries[index][name] = date;
+    notifyChange(newEntries); // Update state and notify parent
+  };
+
+  const handleEmploymentChange = (index, event) => {
+    const newEntries = [...entries];
+    newEntries[index].isEmployed = event.target.checked;
+    notifyChange(newEntries); // Update state and notify parent
+  };
+
+  const addEntry = () => {
+    const newEntries = [
+      ...entries,
+      { companyName: '', startDate: null, endDate: null, isEmployed: true },
+    ];
+    notifyChange(newEntries); // Update state and notify parent
+  };
+
+  const removeEntry = (index) => {
+    const newEntries = entries.filter((_, i) => i !== index);
+    notifyChange(newEntries); // Update state and notify parent
+  };
+
   return (
     <Stack spacing={2}>
-      <Stack direction={'row'} spacing={1} alignItems={'center'}>
-        <Box sx={{ flexGrow: 1 }}>
-          <TextField
-            id="outlined-helperText"
-            label="회사명"
-            defaultValue=""
-            fullWidth
-          />
-        </Box>
-        <Box>
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
-            <DatePicker
-              label="시작일"
-              views={['year', 'month']}
-              format="YYYY-MM"
+      {entries.map((entry, index) => (
+        <Stack key={index} direction={'row'} spacing={1} alignItems={'center'}>
+          <Box sx={{ flexGrow: 1 }}>
+            <TextField
+              name={`companyName-${index}`}
+              label="회사명"
+              defaultValue={entry.companyName}
+              fullWidth
+              onChange={(e) => {
+                const newEntries = [...entries];
+                newEntries[index].companyName = e.target.value;
+                setEntries(newEntries);
+                // Optionally call onChange to propagate changes
+              }}
             />
-          </LocalizationProvider>
-        </Box>
-        <Box>
-          <FormControlLabel
-            control={<Switch defaultChecked />}
-            label="재직 중"
-          />
-          <IconButton>
-            <CloseIcon />
-          </IconButton>
-        </Box>
-      </Stack>
+          </Box>
+          <Box>
+            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
+              <DatePicker
+                name={`startDate-${index}`}
+                label="시작일"
+                views={['year', 'month']}
+                format="YYYY-MM"
+                value={entry.startDate}
+                onChange={(date) => handleDateChange(date, 'startDate', index)}
+              />
+            </LocalizationProvider>
+          </Box>
+          {!entry.isEmployed && (
+            <Box>
+              <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                adapterLocale="ko"
+              >
+                <DatePicker
+                  name={`endDate-${index}`}
+                  label="종료일"
+                  views={['year', 'month']}
+                  format="YYYY-MM"
+                  value={entry.endDate}
+                  onChange={(date) => handleDateChange(date, 'endDate', index)}
+                />
+              </LocalizationProvider>
+            </Box>
+          )}
+          <Box>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={entry.isEmployed}
+                  onChange={(event) => handleEmploymentChange(index, event)}
+                />
+              }
+              label="재직 중"
+            />
+            {entries.length > 1 && (
+              <IconButton onClick={() => removeEntry(index)}>
+                <CloseIcon />
+              </IconButton>
+            )}
+          </Box>
+        </Stack>
+      ))}
       <Button
         color="primary"
-        variant={'outlined'}
-        startIcon={
-          <AddIcon sx={{ color: theme.palette.text.primary }}></AddIcon>
-        }
+        variant="outlined"
+        startIcon={<AddIcon sx={{ color: theme.palette.text.primary }} />}
+        onClick={addEntry}
       >
         추가하기
       </Button>
@@ -304,6 +378,7 @@ const PortfolioForm = () => {
       // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
+    console.log(personName);
   };
   return (
     <Stack
@@ -524,26 +599,39 @@ const PortfolioForm = () => {
   );
 };
 
-const ProfileEditForm = () => {
+const ProfileEditForm = ({ onChange }) => {
+  const handleChange = useCallback(
+    (e) => {
+      const {
+        target: { name, value },
+      } = e;
+      // Call onChange with the updated state
+      onChange((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    },
+    [onChange], // Correctly depend on onChange prop
+  );
   return (
     <Stack spacing={4}>
       <FormGroup title={'프로필'}>
-        <ProfileForm />
+        <ProfileForm onChange={handleChange} />
       </FormGroup>
       <FormGroup title={'경력'}>
-        <CarreerForm />
+        <CareerForm onChange={handleChange} />
       </FormGroup>
       <FormGroup title={'주요 스킬'}>
-        <SkillForm />
+        <SkillForm onChange={handleChange} />
       </FormGroup>
       <FormGroup title={'관심분야'}>
-        <InterestForm />
+        <InterestForm onChange={handleChange} />
       </FormGroup>
       <FormGroup title={'링크'}>
-        <LinkForm />
+        <LinkForm onChange={handleChange} />
       </FormGroup>
       <FormGroup title={'포트폴리오'}>
-        <PortfolioForm />
+        <PortfolioForm onChange={handleChange} />
         <Button
           color="primary"
           variant={'outlined'}

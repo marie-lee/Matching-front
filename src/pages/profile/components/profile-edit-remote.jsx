@@ -1,7 +1,8 @@
 import React from 'react';
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Button, Stack } from '@mui/material';
+import ProfilePreview from './profile-edit-preview';
 
-const RemoteControlBox = () => {
+const RemoteControlBox = ({ onOpen }) => {
   return (
     <Stack p={2} spacing={4} bgcolor={'background.default'}>
       <Stack spacing={1}>
@@ -23,13 +24,7 @@ const RemoteControlBox = () => {
       </Stack>
 
       <Stack spacing={1}>
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{ borderRadius: '4px' }}
-        >
-          미리보기
-        </Button>
+        <ProfilePreview onOpen={onOpen}></ProfilePreview>
         <Button
           variant="contained"
           color="primary"

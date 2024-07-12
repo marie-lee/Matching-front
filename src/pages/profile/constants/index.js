@@ -14,23 +14,23 @@ export const CAREERS = [
 export const STACKS = [
   {
     stNm: 'Java',
-    level: 'low',
+    level: 'primary',
   },
   {
     stNm: 'JavaScript',
-    level: 'middle',
+    level: 'secondary',
   },
   {
     stNm: 'React',
-    level: 'middle',
+    level: 'primary',
   },
   {
     stNm: 'ReactNative',
-    level: 'middle',
+    level: 'secondary',
   },
   {
     stNm: 'Android',
-    level: 'high',
+    level: 'primary',
   },
 ];
 
@@ -46,6 +46,15 @@ export const URLS = [
     desc: 'Notion 포트폴리오',
   },
 ];
+
+export const PROFILE = {
+  name: '홍길동',
+  intro: '안녕하세요. 홍길동입니다. 잘 부탁드립니다.',
+  career: CAREERS,
+  stack: STACKS,
+  interest: INTRSTS,
+  url: URLS,
+};
 
 export const PORTFOLIOS = [
   {
