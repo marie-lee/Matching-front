@@ -1,6 +1,6 @@
 import { lazy } from 'react';
 
-import MainLayout from '@/layouts/main/main-layout';
+import SidebarLayout from '@/layouts/main/sidebar-layout';
 
 // ----------------------------------------------------------------------
 
@@ -14,7 +14,7 @@ const BasicInfoPage = lazy(() => import('@/pages/wbs/basic-info'));
 
 const wbs = {
   path: 'wbs',
-  element: <MainLayout />,
+  element: <SidebarLayout />,
   children: [
     {
       index: true,
