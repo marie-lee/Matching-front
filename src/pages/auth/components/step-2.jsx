@@ -10,21 +10,17 @@ import {
 import { LoadingButton } from '@mui/lab';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {
-  signUpFormDefualtValues,
-  signUpFormSchema,
-} from '@/pages/auth/constants';
+import { userInfoDefaultValues, userInfoSchema } from '@/pages/auth/constants';
 
 const StepTwo = ({ setCurrentStep }) => {
   const theme = useTheme();
 
   const {
     control,
-    handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(signUpFormSchema),
-    defaultValues: signUpFormDefualtValues,
+    resolver: yupResolver(userInfoSchema),
+    defaultValues: userInfoDefaultValues,
   });
 
   const onSubmit = (data) => {
@@ -33,30 +29,30 @@ const StepTwo = ({ setCurrentStep }) => {
   };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        width: '100%',
-        mt: 5,
-      }}
-    >
+    <>
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'center',
-          width: '80%',
-          border: '1px solid #e0e0e0',
+          width: '100%',
+          mt: 5,
         }}
       >
         <Box
           sx={{
-            width: '65%',
-            mt: 7,
-            mb: 7,
+            display: 'flex',
+            justifyContent: 'center',
+            width: '80%',
+            border: '1px solid #e0e0e0',
           }}
         >
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <Box
+            sx={{
+              width: '65%',
+              mt: 7,
+              mb: 7,
+            }}
+          >
             <Stack spacing={3}>
               <Stack direction="row" spacing={4} alignItems="center">
                 <Typography sx={{ minWidth: 100 }}>이름</Typography>
@@ -174,10 +170,10 @@ const StepTwo = ({ setCurrentStep }) => {
                 </LoadingButton>
               </Stack>
             </Stack>
-          </form>
+          </Box>
         </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 

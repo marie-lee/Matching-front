@@ -7,9 +7,14 @@ import {
   FormControlLabel,
   useTheme,
 } from '@mui/material';
+import { useFormContext, Controller } from 'react-hook-form';
 
 const StepOne = () => {
   const theme = useTheme();
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext();
 
   return (
     <>
@@ -20,7 +25,6 @@ const StepOne = () => {
         <Box
           sx={{
             border: '1px solid #e0e0e0',
-            //borderRadius: 1,
             padding: 2,
             mt: 2,
             height: 300,
@@ -39,18 +43,30 @@ const StepOne = () => {
             }
           </Typography>
         </Box>
-        <RadioGroup row sx={{ ml: 2 }}>
-          <FormControlLabel
-            value="agreeService"
-            control={<Radio />}
-            label="동의함"
-          />
-          <FormControlLabel
-            value="disagreeService"
-            control={<Radio />}
-            label="동의안함"
-          />
-        </RadioGroup>
+        <Controller
+          name="agreeService"
+          control={control}
+          defaultValue={false}
+          render={({ field }) => (
+            <RadioGroup row {...field}>
+              <FormControlLabel
+                value={true}
+                control={<Radio />}
+                label="동의함"
+              />
+              <FormControlLabel
+                value={false}
+                control={<Radio />}
+                label="동의안함"
+              />
+            </RadioGroup>
+          )}
+        />
+        {errors.agreeService && (
+          <Typography color="error" variant="body2" sx={{ ml: 2 }}>
+            {errors.agreeService.message}
+          </Typography>
+        )}
       </Box>
 
       <Box sx={{ mb: 6, width: '100%', mx: 'auto' }}>
@@ -60,11 +76,10 @@ const StepOne = () => {
         <Box
           sx={{
             border: '1px solid #e0e0e0',
-            //borderRadius: 1,
             padding: 2,
             mt: 2,
             height: 300,
-            overflowY: 'auto', // 수직 스크롤 활성화
+            overflowY: 'auto',
           }}
         >
           <div
@@ -96,36 +111,60 @@ const StepOne = () => {
             }}
           />
         </Box>
-        <RadioGroup row sx={{ ml: 2 }}>
-          <FormControlLabel
-            value="agreePrivacy"
-            control={<Radio />}
-            label="동의함"
-          />
-          <FormControlLabel
-            value="disagreePrivacy"
-            control={<Radio />}
-            label="동의안함"
-          />
-        </RadioGroup>
+        <Controller
+          name="agreePrivacy"
+          control={control}
+          defaultValue={false}
+          render={({ field }) => (
+            <RadioGroup row {...field}>
+              <FormControlLabel
+                value={true}
+                control={<Radio />}
+                label="동의함"
+              />
+              <FormControlLabel
+                value={false}
+                control={<Radio />}
+                label="동의안함"
+              />
+            </RadioGroup>
+          )}
+        />
+        {errors.agreePrivacy && (
+          <Typography color="error" variant="body2" sx={{ ml: 2 }}>
+            {errors.agreePrivacy.message}
+          </Typography>
+        )}
       </Box>
 
       <Box sx={{ mb: 6, width: '100%', mx: 'auto' }}>
         <Typography variant="h6" fontWeight="bold" sx={{ ml: 1 }}>
           만 14세 확인 여부
         </Typography>
-        <RadioGroup row sx={{ ml: 2 }}>
-          <FormControlLabel
-            value="over14"
-            control={<Radio />}
-            label="만 14세 이상"
-          />
-          <FormControlLabel
-            value="under14"
-            control={<Radio />}
-            label="만 14세 미만"
-          />
-        </RadioGroup>
+        <Controller
+          name="over14"
+          control={control}
+          defaultValue={false}
+          render={({ field }) => (
+            <RadioGroup row {...field}>
+              <FormControlLabel
+                value={true}
+                control={<Radio />}
+                label="만 14세 이상"
+              />
+              <FormControlLabel
+                value={false}
+                control={<Radio />}
+                label="만 14세 미만"
+              />
+            </RadioGroup>
+          )}
+        />
+        {errors.over14 && (
+          <Typography color="error" variant="body2" sx={{ ml: 2 }}>
+            {errors.over14.message}
+          </Typography>
+        )}
       </Box>
     </>
   );
