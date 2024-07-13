@@ -6,11 +6,13 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { RhfFormProvider } from '@/components/hook-form';
 import {
-  signUpFormDefualtValues,
-  signUpFormSchema,
+  termsDefaultValues,
+  userInfoDefaultValues,
+  termsSchema,
+  userInfoSchema,
 } from '@/pages/auth/constants';
-import { useState } from 'react';
-import { StepOne, StepThree, StepTwo } from '@/pages/auth/components';
+import { useState, useEffect } from 'react';
+import { StepOne, StepTwo, StepThree } from '@/pages/auth/components';
 
 // ----------------------------------------------------------------------
 // 회원가입 화면
@@ -23,6 +25,10 @@ const SignUpPage = () => {
 
   const [isPending, setIsPending] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentStep]);
 
   const steps = [
     { label: '이용약관 동의', value: 1 },
@@ -39,19 +45,24 @@ const SignUpPage = () => {
   };
 
   const signUpForm = useForm({
-    defaultValues: signUpFormDefualtValues,
-    resolver: yupResolver(signUpFormSchema),
+    defaultValues:
+      currentStep === 1 ? termsDefaultValues : userInfoDefaultValues,
+    resolver: yupResolver(currentStep === 1 ? termsSchema : userInfoSchema),
   });
 
-  const { handleSubmit } = signUpForm;
+  const { handleSubmit, trigger } = signUpForm;
 
   const onSubmit = async (data) => {
-    console.log('Form submitted:', data);
-    await fetchSignUp(data);
     if (currentStep === 1) {
-      setCurrentStep(2);
+      const valid = await trigger(['agreeService', 'agreePrivacy', 'over14']);
+      if (valid) {
+        setCurrentStep(2);
+      }
     } else if (currentStep === 2) {
-      setCurrentStep(3);
+      const valid = await trigger();
+      if (valid) {
+        setCurrentStep(3);
+      }
     }
   };
 
@@ -83,12 +94,16 @@ const SignUpPage = () => {
           padding: 4,
         }}
       >
+        {/* title */}
         <Stack alignItems={'center'} mb={7}>
           <Typography variant={'h5'} fontFamily={'Pretendard'}>
             Sign up
           </Typography>
         </Stack>
+
         <Box sx={{ mb: 8 }} />
+
+        {/* navigation */}
         <Stack
           direction="row"
           justifyContent="center"
@@ -98,7 +113,6 @@ const SignUpPage = () => {
           {steps.map((step) => (
             <Stack
               key={step.value}
-              onClick={() => setCurrentStep(step.value)}
               direction="row"
               spacing={1}
               sx={{ textAlign: 'center', cursor: 'pointer', minWidth: 150 }}
@@ -134,27 +148,14 @@ const SignUpPage = () => {
 
         <Box sx={{ mb: 6 }} />
 
+        {/* step content */}
         <RhfFormProvider form={signUpForm}>
-          {currentStep === 1 && (
-            <StepOne
-              signUpForm={signUpForm}
-              fetchSignUp={fetchSignUp}
-              setCurrentStep={setCurrentStep}
-              isPending={isPending}
-              theme={theme}
-            />
-          )}
-          {currentStep === 2 && (
-            <StepTwo
-              signUpForm={signUpForm}
-              setCurrentStep={setCurrentStep}
-              isPending={isPending}
-              theme={theme}
-            />
-          )}
+          {currentStep === 1 && <StepOne />}
+          {currentStep === 2 && <StepTwo />}
           {currentStep === 3 && <StepThree />}
 
           <Box sx={{ mb: 10 }} />
+
           {currentStep !== 3 && (
             <Box
               sx={{

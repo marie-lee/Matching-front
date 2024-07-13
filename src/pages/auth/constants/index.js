@@ -21,7 +21,13 @@ export const signInFormSchema = yup.object().shape({
 // 회원가입
 // ----------------------------------------------------------------------
 
-export const signUpFormDefualtValues = {
+export const termsDefaultValues = {
+  agreeService: false,
+  agreePrivacy: false,
+  over14: false,
+};
+
+export const userInfoDefaultValues = {
   name: '',
   email: '',
   authCode: '',
@@ -29,7 +35,22 @@ export const signUpFormDefualtValues = {
   confirmPassword: '',
 };
 
-export const signUpFormSchema = yup.object().shape({
+export const termsSchema = yup.object().shape({
+  agreeService: yup
+    .boolean()
+    .oneOf([true], '서비스 이용 약관에 동의해야 합니다.')
+    .required('서비스 이용 약관에 동의해야 합니다.'),
+  agreePrivacy: yup
+    .boolean()
+    .oneOf([true], '개인정보 처리 방침에 동의해야 합니다.')
+    .required('개인정보 처리 방침에 동의해야 합니다.'),
+  over14: yup
+    .boolean()
+    .oneOf([true], '만 14세 이상이어야 합니다.')
+    .required('만 14세 이상이어야 합니다.'),
+});
+
+export const userInfoSchema = yup.object().shape({
   name: yup.string().required('이름을 입력해주세요.'),
   email: yup
     .string()
