@@ -14,11 +14,11 @@ export const projectAddFormDefaultValues = {
   STACKS: [],
   WANTED: [],
   ROLES: [{ PART: '', TOTAL_CNT: '' }],
+  PJT_DETAIL: '',
 };
 
 export const projectAddFormSchema = yup.object().shape({
   PJT_NM: yup.string().required('프로젝트 제목을 입력해주세요'),
-  PJT_IMG: yup.mixed().required('프로젝트 이미지를 첨부해주세요'),
   PJT_INTRO: yup.string().required('프로젝트 간단 소개를 입력해주세요'),
   PJT_OPEN_YN: yup.mixed().required('본인의 역할을 작성해주세요'),
   CONSTRUCTOR_ROLE: yup
@@ -78,6 +78,11 @@ export const projectAddFormSchema = yup.object().shape({
     }),
   ),
 });
+
+export const DURATION_UNIT_OPTIONS = [
+  { label: '일', value: 'DAY' },
+  { label: '개월', value: 'MONTH' },
+];
 
 export const STACK_OPTIONS = [
   'Java',

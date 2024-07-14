@@ -23,6 +23,7 @@ import {
   RhfTextField,
 } from '@/components/hook-form';
 import {
+  DURATION_UNIT_OPTIONS,
   EXPERIENCE_OPTIONS,
   PART_OPTIONS,
   projectAddFormDefaultValues,
@@ -48,15 +49,10 @@ const SelectedSection = ({ title, children }) => (
 
 // ----------------------------------------------------------------------
 
-const ProjectAddForm = () => {
+const ProjectAddForm = ({ projectAddForm, handleOpenPreview }) => {
   const theme = useTheme();
 
   const imgInputRef = useRef();
-
-  const projectAddForm = useForm({
-    defaultValues: projectAddFormDefaultValues,
-    resolver: yupResolver(projectAddFormSchema),
-  });
 
   // 프로젝트 참여 인원
   const rolesFieldArray = useFieldArray({
@@ -64,10 +60,17 @@ const ProjectAddForm = () => {
     name: 'ROLES',
   });
 
+  const {
+    formState: { errors },
+  } = projectAddForm;
+  console.log(errors);
+
   const projectAddFormValues = projectAddForm.watch();
 
-  // 프로젝트 등록
-  const onSubmit = projectAddForm.handleSubmit((_payload) => {});
+  // 미리보기
+  const onSubmit = projectAddForm.handleSubmit(() => {
+    handleOpenPreview();
+  });
 
   // 모집 분야 추가
   const handleAppendRole = () => {
@@ -187,7 +190,7 @@ const ProjectAddForm = () => {
 
           <RhfTextField
             label={'프로젝트 간단 소개'}
-            name={'PJT_NM'}
+            name={'PJT_INTRO'}
             variant={'outlined'}
             helperText={'전체 공개용 프로젝트 소개 내용을 간단히 작성해주세요'}
           />
@@ -212,7 +215,7 @@ const ProjectAddForm = () => {
           />
         </Section>
 
-        <Section title={'프로젝트 참여 인원'}>
+        <Section title={'프로젝트 모집 인원'}>
           {rolesFieldArray.fields.map((field, index) => (
             <Grid container key={field.id} columnGap={1}>
               <Grid item xs={2.5}>
@@ -275,10 +278,7 @@ const ProjectAddForm = () => {
                 </Box>
                 <RhfRadioGroup
                   name={'DURATION_UNIT'}
-                  options={[
-                    { label: '일', value: 'DAY' },
-                    { label: '개월', value: 'MONTH' },
-                  ]}
+                  options={DURATION_UNIT_OPTIONS}
                 />
               </Stack>
             </Stack>
@@ -323,17 +323,17 @@ const ProjectAddForm = () => {
           />
           <SelectedSection title={'현재 선택한 관련 경험'}>
             <Stack direction={'row'} flexWrap spacing={1}>
-              {projectAddFormValues.WANTED.map((item) => (
+              {projectAddFormValues.WANTED.map((exp) => (
                 <Chip
-                  key={item}
+                  key={exp}
                   size={'small'}
-                  label={item}
+                  label={exp}
                   onDelete={() => {
                     let newWantedList = _.cloneDeep(
                       projectAddFormValues.WANTED,
                     );
                     newWantedList = newWantedList.filter(
-                      (item) => item !== item,
+                      (item) => item !== exp,
                     );
                     projectAddForm.setValue('WANTED', newWantedList);
                   }}
