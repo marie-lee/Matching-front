@@ -7,7 +7,7 @@ export const projectAddFormDefaultValues = {
   PJT_INTRO: '',
   PJT_OPEN_YN: null,
   CONSTRUCTOR_ROLE: null,
-  SELECTED_DT_YN: false,
+  SELECTED_DT_YN: null,
   START_DT: null,
   PERIOD: '',
   DURATION_UNIT: '',
@@ -78,6 +78,11 @@ export const projectAddFormSchema = yup.object().shape({
     }),
   ),
 });
+
+export const OPEN_OPTIONS = [
+  { label: '상세 공개', value: 'false' },
+  { label: '일부 공개', value: 'true' },
+];
 
 export const DURATION_UNIT_OPTIONS = [
   { label: '일', value: 'DAY' },

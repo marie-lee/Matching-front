@@ -25,6 +25,7 @@ import {
 import {
   DURATION_UNIT_OPTIONS,
   EXPERIENCE_OPTIONS,
+  OPEN_OPTIONS,
   PART_OPTIONS,
   projectAddFormDefaultValues,
   projectAddFormSchema,
@@ -197,13 +198,7 @@ const ProjectAddForm = ({ projectAddForm, handleOpenPreview }) => {
         </Section>
 
         <Section title={'프로젝트 상세 공개 여부'}>
-          <RhfRadioGroup
-            name={'PJT_OPEN_YN'}
-            options={[
-              { label: '상세 공개', value: false },
-              { label: '일부 공개', value: true },
-            ]}
-          />
+          <RhfRadioGroup name={'PJT_OPEN_YN'} options={OPEN_OPTIONS} />
         </Section>
 
         <Section title={'프로젝트 등록자 역할'}>
