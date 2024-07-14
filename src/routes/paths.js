@@ -6,6 +6,7 @@ export const PATHS = {
     root: '/auth',
     signIn: '/auth/sign-in',
     signUp: '/auth/sign-up',
+    findId: '/auth/find-id',
     resetPassword: '/auth/reset-password',
   },
   // 프로필&포트폴리오
