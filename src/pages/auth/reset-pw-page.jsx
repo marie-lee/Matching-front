@@ -111,7 +111,7 @@ const ResetPwPage = () => {
               fullWidth
               type="submit"
               variant="contained"
-              sx={{ mt: 3, height: '6vh' }}
+              sx={{ mt: 3, height: '4vh' }}
             >
               변경하기
             </LoadingButton>

@@ -109,7 +109,7 @@ const FindPwPage = () => {
                     loading={isCodePending}
                     variant="contained"
                     onClick={handleRequestCode}
-                    sx={{ height: '6vh', width: '15vh' }}
+                    sx={{ height: '4.2vh', width: '15vh' }}
                   >
                     인증번호 요청
                   </LoadingButton>
@@ -126,7 +126,7 @@ const FindPwPage = () => {
               fullWidth
               type="submit"
               variant="contained"
-              sx={{ mt: 3, height: '5vh' }}
+              sx={{ mt: 3, height: '4vh' }}
             >
               다음
             </LoadingButton>
