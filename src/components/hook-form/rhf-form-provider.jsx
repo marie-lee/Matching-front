@@ -13,7 +13,7 @@ const RhfFormProvider = ({
   children,
   form,
   onSubmit,
-  disabledEnterKeyDown = false,
+  disabledEnterKeyDown = true,
 }) => {
   const handleKeyDown = (event) => {
     if (disabledEnterKeyDown) {

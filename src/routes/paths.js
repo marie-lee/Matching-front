@@ -20,6 +20,7 @@ export const PATHS = {
   project: {
     root: '/project',
     details: '/project/details',
+    add: '/project/add',
   },
   recommend: {
     root: '/recommend',
