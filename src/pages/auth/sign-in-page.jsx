@@ -123,7 +123,7 @@ const SignInPage = () => {
           />
           <Link
             color={theme.palette.login.main}
-            href="#"
+            href={PATHS.auth.findPw}
             underline="hover"
             variant={'xs'}
           >

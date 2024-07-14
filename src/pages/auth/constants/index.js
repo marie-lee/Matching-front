@@ -63,3 +63,50 @@ export const userInfoSchema = yup.object().shape({
     .oneOf([yup.ref('password'), null], '비밀번호가 일치하지 않습니다.')
     .required('비밀번호 확인을 입력해주세요.'),
 });
+
+// ----------------------------------------------------------------------
+// 아이디 찾기
+// ----------------------------------------------------------------------
+
+export const findIdFormDefaultValues = {
+  name: '',
+  phone: '',
+};
+
+export const findIdFormSchema = yup.object().shape({
+  name: yup.string().required('이름을 입력해 주세요'),
+  phone: yup.string().required('전화번호를 입력해 주세요'),
+});
+
+// ----------------------------------------------------------------------
+// 비밀번호 찾기
+// ----------------------------------------------------------------------
+
+export const findPwFormDefaultValues = {
+  name: '',
+  email: '',
+  authCode: '',
+};
+
+export const findPwFormSchema = yup.object().shape({
+  name: yup.string().required('이름을 입력해 주세요'),
+  email: yup.string().email('유효한 이메일을 입력해 주세요').required('이메일을 입력해 주세요'),
+  authCode: yup.string().required('인증번호를 입력해 주세요'),
+});
+
+// ———————————————————————————————————
+// 비밀번호 재설정
+// ———————————————————————————————————
+
+export const resetPwFormDefaultValues = {
+  newPassword: '',
+  confirmPassword: '',
+};
+
+export const resetPwFormSchema = yup.object().shape({
+  newPassword: yup.string().required('새 비밀번호를 입력해 주세요'),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref('newPassword'), null], '비밀번호가 일치하지 않습니다.')
+    .required('비밀번호 확인을 입력해 주세요'),
+});

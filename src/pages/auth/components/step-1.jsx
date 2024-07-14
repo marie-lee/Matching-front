@@ -18,7 +18,7 @@ const StepOne = () => {
 
   return (
     <>
-      <Box sx={{ mb: 4, width: '100%', mx: 'auto' }}>
+      <Box sx={{ mb: 4, width: '100%', mx: 'auto'}}>
         <Typography variant="h6" fontWeight="bold" sx={{ ml: 1 }}>
           서비스 이용 약관
         </Typography>
