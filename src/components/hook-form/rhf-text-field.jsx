@@ -30,6 +30,7 @@ const RhfTextField = ({ name, helperText, type = 'text', ...other }) => {
             {...field}
             fullWidth
             variant="standard"
+            size={'small'}
             type={
               type === 'password' ?
                 password.value ?
