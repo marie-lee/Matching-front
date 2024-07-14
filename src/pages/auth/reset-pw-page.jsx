@@ -1,53 +1,43 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Stack,
-  Typography,
-  useTheme,
-  Link,
-  Button,
-  Modal,
-} from '@mui/material';
+import { Box, Stack, Typography, useTheme, Button, Modal } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { RhfFormProvider, RhfTextField } from '@/components/hook-form';
 import {
-  findIdFormDefaultValues,
-  findIdFormSchema,
+  resetPwFormDefaultValues,
+  resetPwFormSchema,
 } from '@/pages/auth/constants';
 import { PATHS } from '@/routes/paths';
 
 // ----------------------------------------------------------------------
-// 아이디 찾기 화면
+// 비밀번호 재설정 화면
 // ----------------------------------------------------------------------
 
-const FindIdPage = () => {
+const ResetPwPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
 
   const [isPending, setIsPending] = useState(false);
   const [open, setOpen] = useState(false);
-  const [email, setEmail] = useState('');
 
-  const findIdForm = useForm({
-    defaultValues: findIdFormDefaultValues,
-    resolver: yupResolver(findIdFormSchema),
+  const resetPwForm = useForm({
+    defaultValues: resetPwFormDefaultValues,
+    resolver: yupResolver(resetPwFormSchema),
   });
 
-  const { handleSubmit } = findIdForm;
+  const { handleSubmit } = resetPwForm;
 
   const onSubmit = handleSubmit(async (data) => {
     setIsPending(true);
     try {
-      // 팝업에 넣을 임시 이메일
-      setEmail('dkdkdkdkdk@gmail.com');
+      // 비밀번호 변경
       setOpen(true);
       setIsPending(false);
     } catch (error) {
       setIsPending(false);
-      findIdForm.setError('name', { message: error?.data });
+      resetPwForm.setError('password', { message: error?.data });
     }
   });
 
@@ -60,7 +50,7 @@ const FindIdPage = () => {
 
   return (
     <>
-      <RhfFormProvider form={findIdForm} onSubmit={onSubmit}>
+      <RhfFormProvider form={resetPwForm} onSubmit={onSubmit}>
         <Stack
           sx={{
             m: 'auto',
@@ -88,45 +78,43 @@ const FindIdPage = () => {
                 textAlign="center"
                 color={theme.palette.text.primary}
               >
-                아이디 찾기
-              </Typography>
-              <Typography
-                variant="body2"
-                textAlign="center"
-                color={theme.palette.text.secondary}
-              >
-                계정에서 사용하는 이름과 전화번호를 입력해 주세요.
+                비밀번호 재설정
               </Typography>
             </Stack>
             <Stack spacing={3}>
               <RhfTextField
-                name="name"
-                label="이름을 입력해 주세요"
+                name="newPassword"
+                label="새 비밀번호"
+                type="password"
                 variant="outlined"
               />
               <RhfTextField
-                name="phone"
-                label="전화번호를 입력해 주세요 (-없이)"
+                name="confirmPassword"
+                label="새 비밀번호 확인"
+                type="password"
                 variant="outlined"
               />
             </Stack>
+            <Typography
+              variant="body2"
+              textAlign="left"
+              color={theme.palette.text.secondary}
+              sx={{ mt: 2 }}
+            >
+              • 다른 사이트에서 사용하는 것과 동일하거나 쉬운 비밀번호는
+              사용하지 마세요.
+              <br />• 안전한 계정 사용을 위해 비밀번호는 주기적으로 변경해
+              주세요.
+            </Typography>
             <LoadingButton
               loading={isPending}
               fullWidth
               type="submit"
               variant="contained"
-              sx={{ mt: 3, height: '5vh' }}
+              sx={{ mt: 3, height: '6vh' }}
             >
-              아이디 찾기
+              변경하기
             </LoadingButton>
-            <Link
-              href={PATHS.auth.signIn}
-              variant="body2"
-              sx={{ display: 'block', textAlign: 'center', mt: 2 }}
-              color={theme.palette.text.secondary}
-            >
-              로그인하러 가기
-            </Link>
           </Box>
         </Stack>
       </RhfFormProvider>
@@ -137,6 +125,7 @@ const FindIdPage = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          backdropFilter: 'blur(5px)',
         }}
       >
         <Box
@@ -151,7 +140,7 @@ const FindIdPage = () => {
           }}
         >
           <Typography variant="h6" gutterBottom>
-            아이디는 {email} 입니다.
+            비밀번호가 성공적으로 변경되었습니다.
           </Typography>
           <Button
             variant="contained"
@@ -173,4 +162,4 @@ const FindIdPage = () => {
   );
 };
 
-export default FindIdPage;
+export default ResetPwPage;

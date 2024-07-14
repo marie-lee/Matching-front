@@ -7,7 +7,8 @@ export const PATHS = {
     signIn: '/auth/sign-in',
     signUp: '/auth/sign-up',
     findId: '/auth/find-id',
-    resetPassword: '/auth/reset-password',
+    findPw: '/auth/find-pw',
+    resetPw: '/auth/reset-pw',
   },
   // 프로필&포트폴리오
   profiles: {

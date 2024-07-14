@@ -17,6 +17,12 @@ const SignUpPage = lazy(() => import('@/pages/auth/sign-up-page'));
 // 아이디 찾기
 const FindIdPage = lazy(() => import ('@/pages/auth/find-id-page'));
 
+//비밀번호 찾기
+const FindPwPage = lazy(() => import ('@/pages/auth/find-pw-page'));
+
+//비밀번호 재설정
+const ResetPwPage = lazy(() => import ('@/pages/auth/reset-pw-page'));
+
 // ----------------------------------------------------------------------
 
 const auth = {
@@ -53,6 +59,26 @@ const auth = {
         {
           index: true,
           element: <FindIdPage />,
+        }
+      ]
+    },
+    {
+      path: 'find-pw',
+      element: <AuthLayout />,
+      children: [
+        {
+          index: true,
+          element: <FindPwPage />,
+        }
+      ]
+    },
+    {
+      path: 'reset-pw',
+      element: <AuthLayout />,
+      children: [
+        {
+          index: true,
+          element: <ResetPwPage />,
         }
       ]
     },

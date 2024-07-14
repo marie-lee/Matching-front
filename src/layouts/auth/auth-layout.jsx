@@ -8,8 +8,8 @@ const AuthLayout = () => {
     <Box
       sx={{
         backgroundColor: (theme) => theme.palette.background.neutral,
-        height: '100vh',
-        overflow: 'hidden',
+        //height: '100vh',
+        //overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
       }}
