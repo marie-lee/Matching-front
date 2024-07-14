@@ -7,6 +7,7 @@ const ProjectListPage = lazy(() => import('@/pages/project/project-list-page'));
 const ProjectDetailsPage = lazy(
   () => import('@/pages/project/project-details-page'),
 );
+const ProjectAddPage = lazy(() => import('@/pages/project/project-add-page'));
 
 // ----------------------------------------------------------------------
 
@@ -21,6 +22,10 @@ const project = {
     {
       path: 'details/:id',
       element: <ProjectDetailsPage />,
+    },
+    {
+      path: 'add',
+      element: <ProjectAddPage />,
     },
   ],
 };
