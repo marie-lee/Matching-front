@@ -25,6 +25,7 @@ import {
 } from '@mui/material';
 import 'dayjs/locale/ko';
 const label = { inputProps: { 'aria-label': 'Switch demo' } };
+import { v4 as uuidv4 } from 'uuid';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add'; // Add 아이콘 임포트
 import ImageIcon from '@mui/icons-material/Image';
@@ -79,59 +80,72 @@ const ProfileForm = ({ onChange }) => {
   );
 };
 
-const CareerForm = ({ onChange }) => {
+const CareerForm = ({ onChange, onRemoveEntry }) => {
   const theme = useTheme();
+  const [entryIdCounter, setEntryIdCounter] = useState(1);
   const [entries, setEntries] = useState([
-    { companyName: '', startDate: null, endDate: null, isEmployed: true },
+    {
+      id: 0,
+      companyName: '',
+      startDate: null,
+      endDate: null,
+      isEmployed: true,
+    },
   ]);
 
-  // Call this function whenever there's a change in entries
-  const notifyChange = (newEntries) => {
-    setEntries(newEntries);
-    onChange(newEntries); // Propagate changes to parent component
-  };
-
-  const handleDateChange = (date, name, index) => {
-    const newEntries = [...entries];
-    newEntries[index][name] = date;
-    notifyChange(newEntries); // Update state and notify parent
-  };
-
-  const handleEmploymentChange = (index, event) => {
-    const newEntries = [...entries];
-    newEntries[index].isEmployed = event.target.checked;
-    notifyChange(newEntries); // Update state and notify parent
-  };
-
-  const addEntry = () => {
-    const newEntries = [
+  const handleAddEntry = () => {
+    setEntries([
       ...entries,
-      { companyName: '', startDate: null, endDate: null, isEmployed: true },
-    ];
-    notifyChange(newEntries); // Update state and notify parent
+      {
+        id: entryIdCounter,
+        companyName: '',
+        startDate: null,
+        endDate: null,
+        isEmployed: true,
+      },
+    ]);
+    setEntryIdCounter(entryIdCounter + 1);
   };
 
-  const removeEntry = (index) => {
-    const newEntries = entries.filter((_, i) => i !== index);
-    notifyChange(newEntries); // Update state and notify parent
+  const handleDateChange = (date, id, name) => {
+    onChange({
+      target: {
+        key: 'career',
+        name: `${name}-${id}`,
+        value: date,
+      },
+    });
+  };
+
+  const handleRemoveEntry = (id) => {
+    setEntries(entries.filter((entry) => entry.id !== id));
+    onRemoveEntry(id);
   };
 
   return (
     <Stack spacing={2}>
       {entries.map((entry, index) => (
-        <Stack key={index} direction={'row'} spacing={1} alignItems={'center'}>
+        <Stack
+          key={entry.id}
+          direction={'row'}
+          spacing={1}
+          alignItems={'center'}
+        >
           <Box sx={{ flexGrow: 1 }}>
             <TextField
               name={`companyName-${index}`}
               label="회사명"
               defaultValue={entry.companyName}
               fullWidth
-              onChange={(e) => {
-                const newEntries = [...entries];
-                newEntries[index].companyName = e.target.value;
-                setEntries(newEntries);
-                // Optionally call onChange to propagate changes
-              }}
+              onChange={(e) =>
+                onChange({
+                  target: {
+                    key: 'career',
+                    name: `companyName-${index}`,
+                    value: e.target.value,
+                  },
+                })
+              }
             />
           </Box>
           <Box>
@@ -142,9 +156,22 @@ const CareerForm = ({ onChange }) => {
                 views={['year', 'month']}
                 format="YYYY-MM"
                 value={entry.startDate}
-                onChange={(date) => handleDateChange(date, 'startDate', index)}
+                onChange={(date) =>
+                  handleDateChange(date, entry.id, 'startDate')
+                }
               />
             </LocalizationProvider>
+          </Box>
+          <Box>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={entry.isEmployed}
+                  onChange={(event) => handleEmploymentChange(entry.id, event)}
+                />
+              }
+              label="재직 중"
+            />
           </Box>
           {!entry.isEmployed && (
             <Box>
@@ -158,34 +185,23 @@ const CareerForm = ({ onChange }) => {
                   views={['year', 'month']}
                   format="YYYY-MM"
                   value={entry.endDate}
-                  onChange={(date) => handleDateChange(date, 'endDate', index)}
+                  onChange={(date) =>
+                    handleDateChange(date, entry.id, 'endDate')
+                  }
                 />
               </LocalizationProvider>
             </Box>
           )}
-          <Box>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={entry.isEmployed}
-                  onChange={(event) => handleEmploymentChange(index, event)}
-                />
-              }
-              label="재직 중"
-            />
-            {entries.length > 1 && (
-              <IconButton onClick={() => removeEntry(index)}>
-                <CloseIcon />
-              </IconButton>
-            )}
-          </Box>
+          <IconButton onClick={() => handleRemoveEntry(entry.id)}>
+            <CloseIcon />
+          </IconButton>
         </Stack>
       ))}
       <Button
         color="primary"
         variant="outlined"
         startIcon={<AddIcon sx={{ color: theme.palette.text.primary }} />}
-        onClick={addEntry}
+        onClick={handleAddEntry}
       >
         추가하기
       </Button>
@@ -197,7 +213,41 @@ const data = [
   { stNm: 'React', level: 'secondary' },
 ];
 
-const SkillForm = () => {
+const SkillForm = ({ onChange }) => {
+  // Step 1: Initialize state
+  const [data, setData] = useState([]);
+  const [skill, setSkill] = useState('');
+  const [level, setLevel] = useState('');
+
+  // Step 2: Handle input changes
+  const handleSkillChange = (event, value) => setSkill(value);
+  const handleLevelChange = (event) => setLevel(event.target.value);
+
+  // Step 3: Add new skill function
+  const addSkill = () => {
+    if (skill && level) {
+      // Check if both skill and level are selected
+      const newSkill = { stNm: skill, level: level };
+      setData([...data, newSkill]);
+
+      onChange({
+        target: {
+          key: 'skill',
+          name: 'skill',
+          value: { stNm: skill, level: level },
+        },
+      });
+
+      setSkill(''); // Reset skill input
+      setLevel(''); // Reset level input
+    }
+  };
+
+  const handleDelete = (index) => {
+    const newData = data.filter((_, i) => i !== index);
+    setData(newData);
+  };
+
   return (
     <Stack spacing={2}>
       <Stack direction={'row'} spacing={1} alignItems={'center'}>
@@ -206,18 +256,25 @@ const SkillForm = () => {
           id="combo-box-demo"
           options={['js', 'node.js']}
           sx={{ flexGrow: 1 }}
+          value={skill}
+          onChange={handleSkillChange}
           renderInput={(params) => <TextField {...params} label="기술스택" />}
           fullWidth
         />
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">난이도</InputLabel>
-          <Select labelId="demo-simple-select-label" id="demo-simple-select">
-            <MenuItem value={'상'}>상</MenuItem>
-            <MenuItem value={'중'}>중</MenuItem>
-            <MenuItem value={'하'}>하</MenuItem>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={level}
+            onChange={handleLevelChange}
+          >
+            <MenuItem value={'primary'}>상</MenuItem>
+            <MenuItem value={'secondary'}>중</MenuItem>
+            <MenuItem value={'secondary'}>하</MenuItem>
           </Select>
         </FormControl>
-        <IconButton>
+        <IconButton onClick={addSkill}>
           <AddIcon />
         </IconButton>
       </Stack>
@@ -234,7 +291,7 @@ const SkillForm = () => {
               label={stack.stNm}
               size={'small'}
               color={`${stack.level}`}
-              onDelete={() => {}}
+              onDelete={() => handleDelete(index)}
             />
           ))}
         </Stack>
@@ -590,7 +647,6 @@ const PortfolioForm = () => {
       {/* 비디오 URL이 있을 때만 비디오 컴포넌트 표시 */}
       {videoUrl && (
         <Box mt={2}>
-          {' '}
           {/* 상단 버튼에서 마진을 주어 간격 조정 */}
           <video src={videoUrl.url} controls width="100%"></video>
         </Box>
@@ -599,7 +655,7 @@ const PortfolioForm = () => {
   );
 };
 
-const ProfileEditForm = ({ onChange }) => {
+const ProfileEditForm = ({ onChange, onRemoveEntry }) => {
   const handleChange = useCallback(
     (e) => {
       const {
@@ -613,16 +669,23 @@ const ProfileEditForm = ({ onChange }) => {
     },
     [onChange], // Correctly depend on onChange prop
   );
+  const handleRemoveEntry = useCallback(
+    (id) => {
+      // Call onRemoveEntry with the ID to remove
+      onRemoveEntry(id);
+    },
+    [onRemoveEntry], // Correctly depend on onRemoveEntry prop
+  );
   return (
     <Stack spacing={4}>
       <FormGroup title={'프로필'}>
-        <ProfileForm onChange={handleChange} />
+        <ProfileForm onChange={onChange} />
       </FormGroup>
       <FormGroup title={'경력'}>
-        <CareerForm onChange={handleChange} />
+        <CareerForm onChange={onChange} onRemoveEntry={handleRemoveEntry} />
       </FormGroup>
       <FormGroup title={'주요 스킬'}>
-        <SkillForm onChange={handleChange} />
+        <SkillForm onChange={onChange} />
       </FormGroup>
       <FormGroup title={'관심분야'}>
         <InterestForm onChange={handleChange} />
