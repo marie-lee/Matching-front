@@ -304,7 +304,33 @@ const SkillForm = ({ onChange, onRemoveEntry }) => {
   );
 };
 
-const InterestForm = () => {
+const InterestForm = ({ onChange, onRemoveEntry }) => {
+  const [interests, setInterests] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleAddInterest = () => {
+    if (inputValue.trim() !== '') {
+      setInterests([...interests, { stNm: inputValue, level: 'primary' }]);
+      onChange({
+        target: {
+          key: 'interest',
+          name: 'interest',
+          value: { itNm: inputValue, level: 'primary' },
+        },
+      });
+      setInputValue('');
+    }
+  };
+
+  const handleDeleteInterest = (index) => {
+    const newInterests = interests.filter((_, i) => i !== index);
+    setInterests(newInterests);
+    onRemoveEntry(index, 'interest');
+  };
   return (
     <Stack spacing={2}>
       <Stack direction={'row'} spacing={1} alignItems={'center'}>
@@ -312,8 +338,10 @@ const InterestForm = () => {
           id="outlined-helperText"
           placeholder="관심 있는 스킬, 분야, 프로젝트 주제 등 자유롭게 입력하세요"
           fullWidth
+          value={inputValue}
+          onChange={handleInputChange}
         />
-        <IconButton>
+        <IconButton onClick={handleAddInterest}>
           <AddIcon />
         </IconButton>
       </Stack>
@@ -322,13 +350,13 @@ const InterestForm = () => {
           현재 관심분야
         </Typography>
         <Stack flexWrap={'wrap'} direction={'row'} useFlexGap spacing={0.5}>
-          {data.map((stack, index) => (
+          {interests.map((stack, index) => (
             <Chip
               key={`stack_${index}`}
               label={stack.stNm}
               size={'small'}
               color={`${stack.level}`}
-              onDelete={() => {}}
+              onDelete={() => handleDeleteInterest(index)}
             />
           ))}
         </Stack>
@@ -685,7 +713,7 @@ const ProfileEditForm = ({ onChange, onRemoveEntry }) => {
         <SkillForm onChange={onChange} onRemoveEntry={onRemoveEntry} />
       </FormGroup>
       <FormGroup title={'관심분야'}>
-        <InterestForm onChange={handleChange} />
+        <InterestForm onChange={onChange} onRemoveEntry={onRemoveEntry} />
       </FormGroup>
       <FormGroup title={'링크'}>
         <LinkForm onChange={handleChange} />

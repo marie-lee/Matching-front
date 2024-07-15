@@ -60,6 +60,18 @@ const ProfileEditPage = () => {
         ...prev,
         skill: updatedSkills,
       }));
+    } else if (newData.target.key === 'interest') {
+      // interest 정보 업데이트
+      let updatedInterests = [...profileData.interest];
+      // 새로운 interestData를 배열에 추가
+      const newInterestData = {
+        itNm: newData.target.value.itNm,
+      };
+      updatedInterests.push(newInterestData);
+      setProfileData((prev) => ({
+        ...prev,
+        interest: updatedInterests,
+      }));
     } else {
       setProfileData((prev) => ({
         ...prev,
@@ -83,6 +95,14 @@ const ProfileEditPage = () => {
       setProfileData((prev) => ({
         ...prev,
         skill: updatedSkills,
+      }));
+    } else if (type === 'interest') {
+      const updatedInterests = profileData.interest.filter(
+        (item, index) => index !== id,
+      );
+      setProfileData((prev) => ({
+        ...prev,
+        interest: updatedInterests,
       }));
     }
   };
