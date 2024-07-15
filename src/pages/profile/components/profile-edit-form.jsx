@@ -119,7 +119,7 @@ const CareerForm = ({ onChange, onRemoveEntry }) => {
 
   const handleRemoveEntry = (id) => {
     setEntries(entries.filter((entry) => entry.id !== id));
-    onRemoveEntry(id);
+    onRemoveEntry(id, 'company');
   };
 
   return (
@@ -213,9 +213,10 @@ const data = [
   { stNm: 'React', level: 'secondary' },
 ];
 
-const SkillForm = ({ onChange }) => {
+const SkillForm = ({ onChange, onRemoveEntry }) => {
   // Step 1: Initialize state
   const [data, setData] = useState([]);
+  const [entryIdCounter, setEntryIdCounter] = useState(1);
   const [skill, setSkill] = useState('');
   const [level, setLevel] = useState('');
 
@@ -227,25 +228,28 @@ const SkillForm = ({ onChange }) => {
   const addSkill = () => {
     if (skill && level) {
       // Check if both skill and level are selected
-      const newSkill = { stNm: skill, level: level };
+      const newSkill = { id: entryIdCounter, stNm: skill, level: level };
       setData([...data, newSkill]);
 
       onChange({
         target: {
           key: 'skill',
           name: 'skill',
-          value: { stNm: skill, level: level },
+          value: { id: entryIdCounter, stNm: skill, level: level },
         },
       });
 
       setSkill(''); // Reset skill input
       setLevel(''); // Reset level input
+      setEntryIdCounter(entryIdCounter + 1);
     }
   };
 
-  const handleDelete = (index) => {
-    const newData = data.filter((_, i) => i !== index);
+  const handleDelete = (id) => {
+    const newData = data.filter((item) => item.id !== id);
     setData(newData);
+    console.log(id);
+    onRemoveEntry(id, 'skill');
   };
 
   return (
@@ -291,7 +295,7 @@ const SkillForm = ({ onChange }) => {
               label={stack.stNm}
               size={'small'}
               color={`${stack.level}`}
-              onDelete={() => handleDelete(index)}
+              onDelete={() => handleDelete(stack.id)}
             />
           ))}
         </Stack>
@@ -669,23 +673,16 @@ const ProfileEditForm = ({ onChange, onRemoveEntry }) => {
     },
     [onChange], // Correctly depend on onChange prop
   );
-  const handleRemoveEntry = useCallback(
-    (id) => {
-      // Call onRemoveEntry with the ID to remove
-      onRemoveEntry(id);
-    },
-    [onRemoveEntry], // Correctly depend on onRemoveEntry prop
-  );
   return (
     <Stack spacing={4}>
       <FormGroup title={'프로필'}>
         <ProfileForm onChange={onChange} />
       </FormGroup>
       <FormGroup title={'경력'}>
-        <CareerForm onChange={onChange} onRemoveEntry={handleRemoveEntry} />
+        <CareerForm onChange={onChange} onRemoveEntry={onRemoveEntry} />
       </FormGroup>
       <FormGroup title={'주요 스킬'}>
-        <SkillForm onChange={onChange} />
+        <SkillForm onChange={onChange} onRemoveEntry={onRemoveEntry} />
       </FormGroup>
       <FormGroup title={'관심분야'}>
         <InterestForm onChange={handleChange} />

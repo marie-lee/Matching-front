@@ -51,6 +51,7 @@ const ProfileEditPage = () => {
       let updatedSkills = [...profileData.skill];
       // 새로운 skillData를 배열에 추가
       const newSkillData = {
+        id: newData.target.value.id,
         stNm: newData.target.value.stNm,
         level: newData.target.value.level,
       };
@@ -67,14 +68,23 @@ const ProfileEditPage = () => {
     }
   };
 
-  const handleRemoveEntry = (id) => {
-    const updatedCompanies = profileData.company.filter(
-      (item) => item.id !== id,
-    );
-    setProfileData((prev) => ({
-      ...prev,
-      company: updatedCompanies,
-    }));
+  const handleRemoveEntry = (id, type) => {
+    if (type === 'company') {
+      const updatedCompanies = profileData.company.filter(
+        (item) => item.id !== id,
+      );
+      setProfileData((prev) => ({
+        ...prev,
+        company: updatedCompanies,
+      }));
+    } else if (type === 'skill') {
+      const updatedSkills = profileData.skill.filter((item) => item.id !== id);
+      console.log(updatedSkills);
+      setProfileData((prev) => ({
+        ...prev,
+        skill: updatedSkills,
+      }));
+    }
   };
 
   return (
