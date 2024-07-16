@@ -365,8 +365,42 @@ const InterestForm = ({ onChange, onRemoveEntry }) => {
   );
 };
 
-const LinkForm = () => {
+const LinkForm = ({ onChange, onRemoveEntry }) => {
   const theme = useTheme();
+  const [links, setLinks] = useState([]);
+  const [entryIdCounter, setEntryIdCounter] = useState(0);
+
+  const addLink = () => {
+    setLinks([...links, { id: entryIdCounter, url: '', description: '' }]);
+    setEntryIdCounter(entryIdCounter + 1);
+  };
+
+  const removeLink = (linkId) => {
+    setLinks(links.filter((link) => link.id !== linkId));
+    onRemoveEntry(linkId, 'link');
+  };
+
+  const handleChange = (e) => {
+    const {
+      target: { id, value },
+    } = e;
+    const [key, linkId] = id.split('-');
+    const newLinks = links.map((link) => {
+      if (link.id.toString() === linkId) {
+        return { ...link, [key]: value };
+      }
+      return link;
+    });
+    setLinks(newLinks);
+    onChange({
+      target: {
+        key: 'link',
+        name: 'link',
+        value: newLinks.find((link) => link.id.toString() === linkId),
+      },
+    });
+  };
+
   return (
     <Stack spacing={2}>
       <Alert severity="info" variant="standard">
@@ -375,36 +409,43 @@ const LinkForm = () => {
           수 있는 링크가 있다면 작성해주세요.
         </AlertTitle>
       </Alert>
-      <Stack direction={'row'} spacing={1} alignItems={'center'}>
-        <Box>
-          <TextField
-            id="outlined-helperText"
-            label="URL"
-            defaultValue=""
-            fullWidth
-          />
-        </Box>
-        <Box sx={{ flexGrow: 1 }}>
-          <TextField
-            id="outlined-helperText"
-            label="링크 설명"
-            defaultValue=""
-            fullWidth
-          />
-        </Box>
-        <Box>
-          <IconButton>
-            <AddIcon />
+      {links.map((link) => (
+        <Stack
+          key={link.id}
+          direction={'row'}
+          spacing={1}
+          alignItems={'center'}
+        >
+          <Box>
+            <TextField
+              id={`url-${link.id}`}
+              label="URL"
+              defaultValue={link.url}
+              fullWidth
+              onChange={handleChange}
+            />
+          </Box>
+          <Box sx={{ flexGrow: 1 }}>
+            <TextField
+              id={`description-${link.id}`}
+              label="링크 설명"
+              defaultValue={link.description}
+              fullWidth
+              onChange={handleChange}
+            />
+          </Box>
+          <IconButton onClick={() => removeLink(link.id)}>
+            <CloseIcon />
           </IconButton>
-        </Box>
-      </Stack>
-
+        </Stack>
+      ))}
       <Button
         color="primary"
         variant={'outlined'}
         startIcon={
           <AddIcon sx={{ color: theme.palette.text.primary }}></AddIcon>
         }
+        onClick={addLink}
       >
         추가하기
       </Button>
@@ -716,7 +757,7 @@ const ProfileEditForm = ({ onChange, onRemoveEntry }) => {
         <InterestForm onChange={onChange} onRemoveEntry={onRemoveEntry} />
       </FormGroup>
       <FormGroup title={'링크'}>
-        <LinkForm onChange={handleChange} />
+        <LinkForm onChange={onChange} onRemoveEntry={onRemoveEntry} />
       </FormGroup>
       <FormGroup title={'포트폴리오'}>
         <PortfolioForm onChange={handleChange} />

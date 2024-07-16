@@ -72,6 +72,31 @@ const ProfileEditPage = () => {
         ...prev,
         interest: updatedInterests,
       }));
+    } else if (newData.target.key === 'link') {
+      // link 정보 업데이트
+      let updatedLinks = [...profileData.link];
+      const { id, url, description } = newData.target.value;
+
+      // id와 일치하는 링크 찾기
+      const linkIndex = updatedLinks.findIndex((link) => link.id === id);
+
+      if (linkIndex !== -1) {
+        // 일치하는 id가 있는 경우, 링크 업데이트
+        updatedLinks[linkIndex] = {
+          ...updatedLinks[linkIndex],
+          url,
+          description,
+        };
+      } else {
+        // 일치하는 id가 없는 경우, 새로운 링크 데이터 추가
+        const newLinkData = { id, url, description }; // id도 함께 저장
+        updatedLinks.push(newLinkData);
+      }
+
+      setProfileData((prev) => ({
+        ...prev,
+        link: updatedLinks,
+      }));
     } else {
       setProfileData((prev) => ({
         ...prev,
@@ -91,7 +116,6 @@ const ProfileEditPage = () => {
       }));
     } else if (type === 'skill') {
       const updatedSkills = profileData.skill.filter((item) => item.id !== id);
-      console.log(updatedSkills);
       setProfileData((prev) => ({
         ...prev,
         skill: updatedSkills,
@@ -103,6 +127,13 @@ const ProfileEditPage = () => {
       setProfileData((prev) => ({
         ...prev,
         interest: updatedInterests,
+      }));
+    } else if (type === 'link') {
+      const updatedLinks = profileData.link.filter((item) => item.id != id);
+      console.log(updatedLinks);
+      setProfileData((prev) => ({
+        ...prev,
+        link: updatedLinks,
       }));
     }
   };
