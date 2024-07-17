@@ -10,6 +10,7 @@ import {
   Chip,
   FormControl,
   FormControlLabel,
+  Icon,
   IconButton,
   ImageList,
   ImageListItem,
@@ -208,7 +209,7 @@ const CareerForm = ({ onChange, onRemoveEntry }) => {
     </Stack>
   );
 };
-const data = [
+const stack = [
   { stNm: 'Node.js', level: 'primary' },
   { stNm: 'React', level: 'secondary' },
 ];
@@ -496,126 +497,48 @@ const videoUrl = {
   url: 'https://assets.codepen.io/6093409/river.mp4',
 };
 
-const PortfolioForm = () => {
+const PortfolioForm = ({ onChange, onRemoveEntry }) => {
   const theme = useTheme();
-  const [personName, setPersonName] = React.useState([]);
+  const [data, setData] = useState([]);
+  const [entries, setEntries] = useState([]);
+  const [entryIdCounter, setEntryIdCounter] = useState(0);
+  const [personName, setPersonName] = useState([]);
+
+  const handleAddEntry = () => {
+    setEntries([...entries, { id: entryIdCounter }]); // Add a new entry with a unique id
+    onChange({
+      target: {
+        key: 'portfolio',
+        name: 'id',
+        value: entryIdCounter,
+      },
+    });
+    setEntryIdCounter(entryIdCounter + 1); // Increment the entry id counter
+  };
+
+  const handleRemoveEntry = (id) => {
+    setEntries(entries.filter((entry) => entry.id !== id));
+    onRemoveEntry(id, 'portfolio');
+  };
 
   const handleChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setPersonName(
-      // On autofill we get a stringified value.
-      typeof value === 'string' ? value.split(',') : value,
-    );
-    console.log(personName);
+    const { key, name, value } = event.target;
+    console.log(key, name, value);
+    onChange({
+      target: {
+        key: 'portfolio',
+        name: name,
+        id: entryIdCounter,
+        value: value,
+      },
+    });
   };
-  return (
-    <Stack
-      spacing={2}
-      sx={{
-        p: 2,
-        border: '1px solid',
-        borderColor: 'divider',
-        borderRadius: '4px',
-      }}
-    >
-      <Typography variant="lg" fontWeight={'fontWeightMedium'}>
-        프로젝트1
-      </Typography>
-      <TextField
-        id="outlined-helperText"
-        label="프로젝트명"
-        defaultValue=""
-        fullWidth
-      />
-      <Stack direction={'row'} spacing={1} alignItems={'center'}>
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
-          <DatePicker
-            label="시작일"
-            views={['year', 'month']}
-            format="YYYY-MM"
-            sx={{ flexGrow: 1 }}
-          />
-        </LocalizationProvider>
-        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
-          <DatePicker
-            label="종료일"
-            views={['year', 'month']}
-            format="YYYY-MM"
-            sx={{ flexGrow: 1 }}
-          />
-        </LocalizationProvider>
-      </Stack>
-      <TextField
-        id="outlined-multiline-static"
-        label="프로젝트 설명"
-        multiline
-        rows={4}
-      />
-      <Stack direction={'row'} spacing={1} alignItems={'center'}>
-        <TextField id="outlined-helperText" label="참여인원" fullWidth />
-        <FormControl fullWidth>
-          <InputLabel id="demo-multiple-chip-label">역할</InputLabel>
-          <Select
-            labelId="demo-multiple-chip-label"
-            id="demo-multiple-chip"
-            multiple
-            value={personName}
-            onChange={handleChange}
-            input={<OutlinedInput id="select-multiple-chip" label="chip" />}
-            renderValue={(selected) => (
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                {selected.map((value) => (
-                  <Chip key={value} label={value} />
-                ))}
-              </Box>
-            )}
-            MenuProps={MenuProps}
-          >
-            {names.map((name) => (
-              <MenuItem
-                key={name}
-                value={name}
-                style={getStyles(name, personName, theme)}
-              >
-                {name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <TextField id="outlined-helperText" label="기여도(%)" fullWidth />
-      </Stack>
-      <Stack direction={'row'} spacing={1} alignItems={'center'}>
-        <Autocomplete
-          disablePortal
-          id="combo-box-demo"
-          options={['js', 'node.js']}
-          sx={{ flexGrow: 1 }}
-          renderInput={(params) => <TextField {...params} label="기술스택" />}
-          fullWidth
-        />
-        <IconButton>
-          <AddIcon />
-        </IconButton>
-      </Stack>
-      <Stack spacing={2} p={3} bgcolor={'background.neutral'}>
-        <Typography variant="lg" fontWeight={'fontWeightBold'}>
-          현재 선택한 스택
-        </Typography>
-        <Stack flexWrap={'wrap'} direction={'row'} useFlexGap spacing={0.5}>
-          {data.map((stack, index) => (
-            <Chip
-              key={`stack_${index}`}
-              label={stack.stNm}
-              size={'small'}
-              color={`${stack.level}`}
-              onDelete={() => {}}
-            />
-          ))}
-        </Stack>
-      </Stack>
-      <Box
+
+  const renderEntries = () => {
+    return entries.map((entry, index) => (
+      <Stack
+        key={entry.id}
+        spacing={2}
         sx={{
           p: 2,
           border: '1px solid',
@@ -623,125 +546,259 @@ const PortfolioForm = () => {
           borderRadius: '4px',
         }}
       >
-        <Stack direction={'row'} spacing={1} alignItems={'center'}>
-          <Box>
-            <TextField
-              id="outlined-helperText"
-              label="URL"
-              defaultValue=""
-              fullWidth
-            />
-          </Box>
-          <Box sx={{ flexGrow: 1 }}>
-            <TextField
-              id="outlined-helperText"
-              label="링크 설명"
-              defaultValue=""
-              fullWidth
-            />
-          </Box>
-          <Box>
-            <IconButton>
-              <AddIcon />
-            </IconButton>
-          </Box>
-        </Stack>
-        <Button
-          color="primary"
-          variant={'outlined'}
-          fullWidth
-          sx={{ mt: 2 }}
-          startIcon={
-            <AddIcon sx={{ color: theme.palette.text.primary }}></AddIcon>
-          }
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
         >
-          추가하기
-        </Button>
-      </Box>
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">서비스 상태</InputLabel>
-        <Select labelId="demo-simple-select-label" id="demo-simple-select">
-          <MenuItem value={'상'}>배포 중</MenuItem>
-          <MenuItem value={'중'}>중단</MenuItem>
-          <MenuItem value={'하'}>완료</MenuItem>
-        </Select>
-      </FormControl>
-      <TextField
-        id="outlined-helperText"
-        label="성과"
-        defaultValue=""
-        fullWidth
-      />
-      <Button color="primary" variant={'outlined'}>
-        <ImageIcon sx={{ mr: 1 }}></ImageIcon>
-        이미지 추가 (2/4)
-      </Button>
-      <ImageList
-        sx={{ width: '100%', height: 'auto' }}
-        cols={4}
-        rowHeight={'auto'}
-      >
-        {itemData.map((item, index) => (
-          <ImageListItem key={item.img}>
-            <img
-              srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-              src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
-              alt={item.title}
-              loading="lazy"
-            />
-            <IconButton
-              onClick={() => handleRemoveImage(item.img)}
-              sx={{ position: 'absolute', top: 0, right: 0, color: 'white' }}
-            >
-              <CloseIcon />
-            </IconButton>
-            {index === 0 && (
-              <Box
-                sx={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                  color: 'white',
-                  padding: '2px 8px',
-                  fontSize: '0.875rem',
-                }}
-              >
-                대표 이미지
-              </Box>
-            )}
-          </ImageListItem>
-        ))}
-      </ImageList>
-      <Button color="primary" variant={'outlined'}>
-        <PersonalVideoIcon sx={{ mr: 1 }}></PersonalVideoIcon>
-        동영상 추가 (1/1)
-      </Button>
-      {/* 비디오 URL이 있을 때만 비디오 컴포넌트 표시 */}
-      {videoUrl && (
-        <Box mt={2}>
-          {/* 상단 버튼에서 마진을 주어 간격 조정 */}
-          <video src={videoUrl.url} controls width="100%"></video>
+          <Typography variant="lg" fontWeight={'fontWeightMedium'}>
+            프로젝트{index + 1}
+          </Typography>
+          <IconButton onClick={() => handleRemoveEntry(entry.id)}>
+            <CloseIcon />
+          </IconButton>
         </Box>
-      )}
+        <TextField
+          id={`project-name-${entry.id}`}
+          label="프로젝트명"
+          defaultValue=""
+          fullWidth
+          onChange={(e) => {
+            handleChange({
+              target: {
+                key: 'portfolio',
+                name: 'title',
+                value: e.target.value,
+              },
+            });
+          }}
+        />
+        <Stack direction={'row'} spacing={1} alignItems={'center'}>
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
+            <DatePicker
+              label="시작일"
+              views={['year', 'month']}
+              format="YYYY-MM"
+              sx={{ flexGrow: 1 }}
+              onChange={(date) =>
+                handleChange({
+                  target: {
+                    key: 'portfolio',
+                    name: 'startDate',
+                    value: date,
+                  },
+                })
+              }
+            />
+          </LocalizationProvider>
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
+            <DatePicker
+              label="종료일"
+              views={['year', 'month']}
+              format="YYYY-MM"
+              sx={{ flexGrow: 1 }}
+            />
+          </LocalizationProvider>
+        </Stack>
+        <TextField
+          id="outlined-multiline-static"
+          label="프로젝트 설명"
+          multiline
+          rows={4}
+        />
+        <Stack direction={'row'} spacing={1} alignItems={'center'}>
+          <TextField id="outlined-helperText" label="참여인원" fullWidth />
+          <FormControl fullWidth>
+            <InputLabel id="demo-multiple-chip-label">역할</InputLabel>
+            <Select
+              labelId="demo-multiple-chip-label"
+              id="demo-multiple-chip"
+              multiple
+              value={personName}
+              onChange={handleChange}
+              input={<OutlinedInput id="select-multiple-chip" label="chip" />}
+              renderValue={(selected) => (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {selected.map((value) => (
+                    <Chip key={value} label={value} />
+                  ))}
+                </Box>
+              )}
+              MenuProps={MenuProps}
+            >
+              {names.map((name) => (
+                <MenuItem
+                  key={name}
+                  value={name}
+                  style={getStyles(name, personName, theme)}
+                >
+                  {name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <TextField id="outlined-helperText" label="기여도(%)" fullWidth />
+        </Stack>
+        <Stack direction={'row'} spacing={1} alignItems={'center'}>
+          <Autocomplete
+            disablePortal
+            id="combo-box-demo"
+            options={['js', 'node.js']}
+            sx={{ flexGrow: 1 }}
+            renderInput={(params) => <TextField {...params} label="기술스택" />}
+            fullWidth
+          />
+          <IconButton>
+            <AddIcon />
+          </IconButton>
+        </Stack>
+        <Stack spacing={2} p={3} bgcolor={'background.neutral'}>
+          <Typography variant="lg" fontWeight={'fontWeightBold'}>
+            현재 선택한 스택
+          </Typography>
+          <Stack flexWrap={'wrap'} direction={'row'} useFlexGap spacing={0.5}>
+            {stack.map((stack, index) => (
+              <Chip
+                key={`stack_${index}`}
+                label={stack.stNm}
+                size={'small'}
+                color={`${stack.level}`}
+                onDelete={() => {}}
+              />
+            ))}
+          </Stack>
+        </Stack>
+        <Box
+          sx={{
+            p: 2,
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: '4px',
+          }}
+        >
+          <Stack direction={'row'} spacing={1} alignItems={'center'}>
+            <Box>
+              <TextField
+                id="outlined-helperText"
+                label="URL"
+                defaultValue=""
+                fullWidth
+              />
+            </Box>
+            <Box sx={{ flexGrow: 1 }}>
+              <TextField
+                id="outlined-helperText"
+                label="링크 설명"
+                defaultValue=""
+                fullWidth
+              />
+            </Box>
+            <Box>
+              <IconButton>
+                <AddIcon />
+              </IconButton>
+            </Box>
+          </Stack>
+          <Button
+            color="primary"
+            variant={'outlined'}
+            fullWidth
+            sx={{ mt: 2 }}
+            startIcon={
+              <AddIcon sx={{ color: theme.palette.text.primary }}></AddIcon>
+            }
+          >
+            추가하기
+          </Button>
+        </Box>
+        <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">서비스 상태</InputLabel>
+          <Select labelId="demo-simple-select-label" id="demo-simple-select">
+            <MenuItem value={'상'}>배포 중</MenuItem>
+            <MenuItem value={'중'}>중단</MenuItem>
+            <MenuItem value={'하'}>완료</MenuItem>
+          </Select>
+        </FormControl>
+        <TextField
+          id="outlined-helperText"
+          label="성과"
+          defaultValue=""
+          fullWidth
+        />
+        <Button color="primary" variant={'outlined'}>
+          <ImageIcon sx={{ mr: 1 }}></ImageIcon>
+          이미지 추가 (2/4)
+        </Button>
+        <ImageList
+          sx={{ width: '100%', height: 'auto' }}
+          cols={4}
+          rowHeight={'auto'}
+        >
+          {itemData.map((item, index) => (
+            <ImageListItem key={item.img}>
+              <img
+                srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
+                alt={item.title}
+                loading="lazy"
+              />
+              <IconButton
+                onClick={() => handleRemoveImage(item.img)}
+                sx={{ position: 'absolute', top: 0, right: 0, color: 'white' }}
+              >
+                <CloseIcon />
+              </IconButton>
+              {index === 0 && (
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    color: 'white',
+                    padding: '2px 8px',
+                    fontSize: '0.875rem',
+                  }}
+                >
+                  대표 이미지
+                </Box>
+              )}
+            </ImageListItem>
+          ))}
+        </ImageList>
+        <Button color="primary" variant={'outlined'}>
+          <PersonalVideoIcon sx={{ mr: 1 }}></PersonalVideoIcon>
+          동영상 추가 (1/1)
+        </Button>
+        {/* 비디오 URL이 있을 때만 비디오 컴포넌트 표시 */}
+        {videoUrl && (
+          <Box mt={2}>
+            {/* 상단 버튼에서 마진을 주어 간격 조정 */}
+            <video src={videoUrl.url} controls width="100%"></video>
+          </Box>
+        )}
+      </Stack>
+    ));
+  };
+
+  return (
+    <Stack spacing={2}>
+      {renderEntries()}
+      <Button
+        color="primary"
+        variant={'outlined'}
+        startIcon={<AddIcon />}
+        onClick={handleAddEntry}
+      >
+        추가하기
+      </Button>
     </Stack>
   );
 };
 
 const ProfileEditForm = ({ onChange, onRemoveEntry }) => {
-  const handleChange = useCallback(
-    (e) => {
-      const {
-        target: { name, value },
-      } = e;
-      // Call onChange with the updated state
-      onChange((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    },
-    [onChange], // Correctly depend on onChange prop
-  );
   return (
     <Stack spacing={4}>
       <FormGroup title={'프로필'}>
@@ -760,14 +817,7 @@ const ProfileEditForm = ({ onChange, onRemoveEntry }) => {
         <LinkForm onChange={onChange} onRemoveEntry={onRemoveEntry} />
       </FormGroup>
       <FormGroup title={'포트폴리오'}>
-        <PortfolioForm onChange={handleChange} />
-        <Button
-          color="primary"
-          variant={'outlined'}
-          startIcon={<AddIcon></AddIcon>}
-        >
-          추가하기
-        </Button>
+        <PortfolioForm onChange={onChange} onRemoveEntry={onRemoveEntry} />
       </FormGroup>
     </Stack>
   );

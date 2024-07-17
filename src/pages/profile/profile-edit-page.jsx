@@ -97,6 +97,32 @@ const ProfileEditPage = () => {
         ...prev,
         link: updatedLinks,
       }));
+    } else if (newData.target.key === 'portfolio') {
+      // portfolio 정보 업데이트
+      let updatedPortfolios = [...profileData.portfolio];
+      const { key, id, name, value } = newData.target;
+
+      // id를 기준으로 포트폴리오 찾기
+      const portfolioIndex = updatedPortfolios.findIndex(
+        (portfolio) => portfolio.id === id,
+      );
+
+      if (portfolioIndex !== -1) {
+        // 일치하는 id가 있는 경우, 해당 필드(name) 업데이트
+        updatedPortfolios[portfolioIndex] = {
+          ...updatedPortfolios[portfolioIndex],
+          [name]: value, // 동적으로 필드 업데이트
+        };
+      } else {
+        // 일치하는 id가 없는 경우, 새로운 포트폴리오 데이터 추가
+        const newPortfolioData = { id, [name]: value }; // 동적으로 필드 추가
+        updatedPortfolios.push(newPortfolioData);
+      }
+
+      setProfileData((prev) => ({
+        ...prev,
+        portfolio: updatedPortfolios,
+      }));
     } else {
       setProfileData((prev) => ({
         ...prev,
