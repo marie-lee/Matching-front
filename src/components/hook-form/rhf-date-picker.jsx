@@ -2,7 +2,14 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
-const RhfDatePicker = ({ name, label, helperText, format = 'YYYY-MM-DD' }) => {
+const RhfDatePicker = ({
+  name,
+  label,
+  helperText,
+  format = 'YYYY-MM-DD',
+  size,
+  views,
+}) => {
   const { control } = useFormContext();
 
   return (
@@ -15,10 +22,11 @@ const RhfDatePicker = ({ name, label, helperText, format = 'YYYY-MM-DD' }) => {
             {...field}
             label={label}
             format={format}
+            views={views || ['year', 'month', 'day']}
             slotProps={{
               textField: {
                 fullWidth: true,
-                size: 'small',
+                size: size || 'small',
                 error: !!error,
                 helperText: error ? error?.message : helperText,
               },

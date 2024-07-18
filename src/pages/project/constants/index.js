@@ -1,6 +1,18 @@
 import * as yup from 'yup';
 import _ from 'lodash';
 
+export const profileEditFormDefaultValues = {
+  USER_NM: '',
+  USER_INTRO: '',
+  CAREER: [
+    { CAREER_NM: '', ENTERING_DT: null, QUIT_DT: null, IS_EMPLOYED: true },
+  ],
+};
+
+export const profileEditFormSchema = yup.object().shape({
+  USER_NM: yup.string().required('이름을 입력해주세요'),
+});
+
 export const projectAddFormDefaultValues = {
   PJT_NM: '',
   PJT_IMG: null,

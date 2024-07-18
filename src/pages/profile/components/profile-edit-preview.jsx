@@ -15,12 +15,14 @@ import CloseIcon from '@mui/icons-material/Close';
 import RealPortfolioList from './portfolio';
 import RealProfile from './profile';
 
-const ProfilePreview = ({ onOpen }) => {
+const ProfilePreview = ({ onOpen, profileEditForm }) => {
   const theme = useTheme();
   const [open, setOpen] = useState(false); // 팝업 상태 관리
 
   const handleClickOpen = () => {
     setOpen(true); // 팝업 열기
+
+    console.log('profileEditForm', profileEditForm.getValues());
 
     if (onOpen) {
       onOpen(); // 부모 컴포넌트로 이벤트 전달

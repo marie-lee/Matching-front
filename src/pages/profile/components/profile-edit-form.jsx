@@ -32,7 +32,13 @@ import AddIcon from '@mui/icons-material/Add'; // Add 아이콘 임포트
 import ImageIcon from '@mui/icons-material/Image';
 import PersonalVideoIcon from '@mui/icons-material/PersonalVideo';
 import React, { useCallback, useEffect, useState } from 'react';
-import { set } from 'react-hook-form';
+import {
+  RhfDatePicker,
+  RhfFormProvider,
+  RhfTextField,
+} from '@/components/hook-form';
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
+import RhfSwitch from '@/components/hook-form/rhf-switch';
 
 const FormGroup = ({ title, children }) => {
   return (
@@ -49,83 +55,55 @@ const FormGroup = ({ title, children }) => {
   );
 };
 
-const ProfileForm = ({ onChange }) => {
+const ProfileForm = () => {
   return (
     <Stack spacing={2}>
       <Stack alignItems={'center'}>
         <Avatar alt={'프로필 이미지'} sx={{ width: 100, height: 100 }} />
       </Stack>
       <Stack>
-        <TextField
-          name="name"
-          id="outlined-helperText"
-          label="이름"
-          defaultValue=""
-          helperText="이름을 입력해주세요"
-          fullWidth
-          onChange={onChange}
+        <RhfTextField
+          name={'USER_NM'}
+          label={'프로필 이름'}
+          variant={'outlined'}
+          size={'medium'}
         />
       </Stack>
       <Stack>
-        <TextField
-          name="intro"
-          id="outlined-helperText"
-          label="한 줄 소개"
-          defaultValue=""
-          helperText="나를 표현할 수 있는 한 줄 소개를 적어주세요"
-          fullWidth
-          onChange={onChange}
+        <RhfTextField
+          name={'USER_INTRO'}
+          label={'한 줄 소개'}
+          variant={'outlined'}
+          helperText={'나를 표현할 수 있는 한 줄 소개를 적어주세요'}
+          size={'medium'}
         />
       </Stack>
     </Stack>
   );
 };
 
-const CareerForm = ({ onChange, onRemoveEntry }) => {
+const CareerForm = ({ profileEditForm }) => {
   const theme = useTheme();
-  const [entryIdCounter, setEntryIdCounter] = useState(1);
-  const [entries, setEntries] = useState([
-    {
-      id: 0,
-      companyName: '',
-      startDate: null,
-      endDate: null,
-      isEmployed: true,
-    },
-  ]);
+  // 프로필 커리어
+  const careerFieldArray = useFieldArray({
+    control: profileEditForm.control,
+    name: 'CAREER',
+  });
 
-  const handleAddEntry = () => {
-    setEntries([
-      ...entries,
-      {
-        id: entryIdCounter,
-        companyName: '',
-        startDate: null,
-        endDate: null,
-        isEmployed: true,
-      },
-    ]);
-    setEntryIdCounter(entryIdCounter + 1);
-  };
-
-  const handleDateChange = (date, id, name) => {
-    onChange({
-      target: {
-        key: 'career',
-        name: `${name}-${id}`,
-        value: date,
-      },
+  const handleAppendCareer = () => {
+    careerFieldArray.append({
+      CAREER_NM: '',
+      ENTERING_DT: null,
+      QUIT_DT: null,
+      IS_EMPLOYED: true,
     });
   };
 
-  const handleRemoveEntry = (id) => {
-    setEntries(entries.filter((entry) => entry.id !== id));
-    onRemoveEntry(id, 'company');
-  };
+  const profileAddFormValues = profileEditForm.watch();
 
   return (
     <Stack spacing={2}>
-      {entries.map((entry, index) => (
+      {careerFieldArray.fields.map((entry, index) => (
         <Stack
           key={entry.id}
           direction={'row'}
@@ -133,67 +111,48 @@ const CareerForm = ({ onChange, onRemoveEntry }) => {
           alignItems={'center'}
         >
           <Box sx={{ flexGrow: 1 }}>
-            <TextField
-              name={`companyName-${index}`}
-              label="회사명"
-              defaultValue={entry.companyName}
-              fullWidth
-              onChange={(e) =>
-                onChange({
-                  target: {
-                    key: 'career',
-                    name: `companyName-${index}`,
-                    value: e.target.value,
-                  },
-                })
-              }
+            <RhfTextField
+              name={`CAREER[${index}].CAREER_NM`}
+              label={'회사명'}
+              variant={'outlined'}
+              size={'medium'}
             />
           </Box>
           <Box>
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
-              <DatePicker
-                name={`startDate-${index}`}
-                label="시작일"
+              <RhfDatePicker
+                name={`CAREER[${index}].ENTERING_DT`}
+                label={'시작일'}
                 views={['year', 'month']}
-                format="YYYY-MM"
-                value={entry.startDate}
-                onChange={(date) =>
-                  handleDateChange(date, entry.id, 'startDate')
-                }
+                size={'medium'}
+                format={'YYYY-MM'}
               />
             </LocalizationProvider>
           </Box>
-          <Box>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={entry.isEmployed}
-                  onChange={(event) => handleEmploymentChange(entry.id, event)}
-                />
-              }
-              label="재직 중"
-            />
-          </Box>
-          {!entry.isEmployed && (
+          {/* 재직 중인 경우에만 종료일을 보여줌 */}
+          {profileAddFormValues['CAREER'][index].IS_EMPLOYED === true ?
             <Box>
+              <RhfSwitch
+                name={`CAREER[${index}].IS_EMPLOYED`}
+                label={'재직 중'}
+              />
+            </Box>
+          : <Box>
               <LocalizationProvider
                 dateAdapter={AdapterDayjs}
                 adapterLocale="ko"
               >
-                <DatePicker
-                  name={`endDate-${index}`}
-                  label="종료일"
+                <RhfDatePicker
+                  name={`CAREER[${index}].QUIT_DT`}
+                  label={'종료일'}
                   views={['year', 'month']}
-                  format="YYYY-MM"
-                  value={entry.endDate}
-                  onChange={(date) =>
-                    handleDateChange(date, entry.id, 'endDate')
-                  }
+                  size={'medium'}
+                  format={'YYYY-MM'}
                 />
               </LocalizationProvider>
             </Box>
-          )}
-          <IconButton onClick={() => handleRemoveEntry(entry.id)}>
+          }
+          <IconButton onClick={() => careerFieldArray.remove(index)}>
             <CloseIcon />
           </IconButton>
         </Stack>
@@ -202,7 +161,7 @@ const CareerForm = ({ onChange, onRemoveEntry }) => {
         color="primary"
         variant="outlined"
         startIcon={<AddIcon sx={{ color: theme.palette.text.primary }} />}
-        onClick={handleAddEntry}
+        onClick={handleAppendCareer}
       >
         추가하기
       </Button>
@@ -214,45 +173,7 @@ const stack = [
   { stNm: 'React', level: 'secondary' },
 ];
 
-const SkillForm = ({ onChange, onRemoveEntry }) => {
-  // Step 1: Initialize state
-  const [data, setData] = useState([]);
-  const [entryIdCounter, setEntryIdCounter] = useState(1);
-  const [skill, setSkill] = useState('');
-  const [level, setLevel] = useState('');
-
-  // Step 2: Handle input changes
-  const handleSkillChange = (event, value) => setSkill(value);
-  const handleLevelChange = (event) => setLevel(event.target.value);
-
-  // Step 3: Add new skill function
-  const addSkill = () => {
-    if (skill && level) {
-      // Check if both skill and level are selected
-      const newSkill = { id: entryIdCounter, stNm: skill, level: level };
-      setData([...data, newSkill]);
-
-      onChange({
-        target: {
-          key: 'skill',
-          name: 'skill',
-          value: { id: entryIdCounter, stNm: skill, level: level },
-        },
-      });
-
-      setSkill(''); // Reset skill input
-      setLevel(''); // Reset level input
-      setEntryIdCounter(entryIdCounter + 1);
-    }
-  };
-
-  const handleDelete = (id) => {
-    const newData = data.filter((item) => item.id !== id);
-    setData(newData);
-    console.log(id);
-    onRemoveEntry(id, 'skill');
-  };
-
+const SkillForm = () => {
   return (
     <Stack spacing={2}>
       <Stack direction={'row'} spacing={1} alignItems={'center'}>
@@ -798,28 +719,40 @@ const PortfolioForm = ({ onChange, onRemoveEntry }) => {
   );
 };
 
-const ProfileEditForm = ({ onChange, onRemoveEntry }) => {
+const ProfileEditForm = ({ profileEditForm }) => {
+  const onSubmit = (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget); // Assuming you want to collect the form data
+    const data = {
+      USER_NM: formData.get('USER_NM'),
+      USER_INTRO: formData.get('USER_INTRO'),
+    };
+    console.log(data);
+  };
+
   return (
-    <Stack spacing={4}>
-      <FormGroup title={'프로필'}>
-        <ProfileForm onChange={onChange} />
-      </FormGroup>
-      <FormGroup title={'경력'}>
-        <CareerForm onChange={onChange} onRemoveEntry={onRemoveEntry} />
-      </FormGroup>
-      <FormGroup title={'주요 스킬'}>
-        <SkillForm onChange={onChange} onRemoveEntry={onRemoveEntry} />
-      </FormGroup>
-      <FormGroup title={'관심분야'}>
-        <InterestForm onChange={onChange} onRemoveEntry={onRemoveEntry} />
-      </FormGroup>
-      <FormGroup title={'링크'}>
-        <LinkForm onChange={onChange} onRemoveEntry={onRemoveEntry} />
-      </FormGroup>
-      <FormGroup title={'포트폴리오'}>
-        <PortfolioForm onChange={onChange} onRemoveEntry={onRemoveEntry} />
-      </FormGroup>
-    </Stack>
+    <RhfFormProvider form={profileEditForm} onSubmit={onSubmit}>
+      <Stack spacing={4}>
+        <FormGroup title={'프로필'}>
+          <ProfileForm />
+        </FormGroup>
+        <FormGroup title={'경력'}>
+          <CareerForm profileEditForm={profileEditForm} />
+        </FormGroup>
+        <FormGroup title={'주요 스킬'}>
+          <SkillForm />
+        </FormGroup>
+        <FormGroup title={'관심분야'}>
+          <InterestForm />
+        </FormGroup>
+        <FormGroup title={'링크'}>
+          <LinkForm />
+        </FormGroup>
+        <FormGroup title={'포트폴리오'}>
+          <PortfolioForm />
+        </FormGroup>
+      </Stack>
+    </RhfFormProvider>
   );
 };
 

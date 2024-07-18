@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Stack } from '@mui/material';
 import ProfilePreview from './profile-edit-preview';
 
-const RemoteControlBox = ({ onOpen }) => {
+const RemoteControlBox = ({ profileEditForm, onOpen }) => {
   return (
     <Stack p={2} spacing={4} bgcolor={'background.default'}>
       <Stack spacing={1}>
@@ -24,7 +24,10 @@ const RemoteControlBox = ({ onOpen }) => {
       </Stack>
 
       <Stack spacing={1}>
-        <ProfilePreview onOpen={onOpen}></ProfilePreview>
+        <ProfilePreview
+          onOpen={onOpen}
+          profileEditForm={profileEditForm}
+        ></ProfilePreview>
         <Button
           variant="contained"
           color="primary"
