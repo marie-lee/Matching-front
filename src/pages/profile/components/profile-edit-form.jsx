@@ -40,6 +40,7 @@ import {
 } from '@/components/hook-form';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import RhfSwitch from '@/components/hook-form/rhf-switch';
+import { lime } from '@mui/material/colors';
 
 const FormGroup = ({ title, children }) => {
   return (
@@ -173,12 +174,6 @@ const stack = [
   { stNm: 'Node.js', level: 'primary' },
   { stNm: 'React', level: 'secondary' },
 ];
-const data = [
-  { stNm: 'Node.js', level: 'primary' },
-  { stNm: 'React', level: 'secondary' },
-];
-
-const level = 'primary';
 const SkillForm = ({ profileEditForm }) => {
   const [stackName, setStackName] = useState('');
   const [level, setLevel] = useState('');
@@ -264,33 +259,22 @@ const SkillForm = ({ profileEditForm }) => {
   );
 };
 
-const InterestForm = ({ onChange, onRemoveEntry }) => {
-  const [interests, setInterests] = useState([]);
-  const [inputValue, setInputValue] = useState('');
+const InterestForm = ({ profileEditForm }) => {
+  const [interest, setInterest] = useState('');
 
-  const handleInputChange = (event) => {
-    setInputValue(event.target.value);
-  };
+  // 프로필 관심사
+  const interestFieldArray = useFieldArray({
+    control: profileEditForm.control,
+    name: 'INTEREST',
+  });
 
-  const handleAddInterest = () => {
-    if (inputValue.trim() !== '') {
-      setInterests([...interests, { stNm: inputValue, level: 'primary' }]);
-      onChange({
-        target: {
-          key: 'interest',
-          name: 'interest',
-          value: { itNm: inputValue, level: 'primary' },
-        },
-      });
-      setInputValue('');
+  const handleAppendInterest = () => {
+    if (interest) {
+      interestFieldArray.append({ interest });
+      setInterest('');
     }
   };
 
-  const handleDeleteInterest = (index) => {
-    const newInterests = interests.filter((_, i) => i !== index);
-    setInterests(newInterests);
-    onRemoveEntry(index, 'interest');
-  };
   return (
     <Stack spacing={2}>
       <Stack direction={'row'} spacing={1} alignItems={'center'}>
@@ -298,10 +282,10 @@ const InterestForm = ({ onChange, onRemoveEntry }) => {
           id="outlined-helperText"
           placeholder="관심 있는 스킬, 분야, 프로젝트 주제 등 자유롭게 입력하세요"
           fullWidth
-          value={inputValue}
-          onChange={handleInputChange}
+          value={interest}
+          onChange={(e) => setInterest(e.target.value)}
         />
-        <IconButton onClick={handleAddInterest}>
+        <IconButton onClick={handleAppendInterest}>
           <AddIcon />
         </IconButton>
       </Stack>
@@ -310,13 +294,12 @@ const InterestForm = ({ onChange, onRemoveEntry }) => {
           현재 관심분야
         </Typography>
         <Stack flexWrap={'wrap'} direction={'row'} useFlexGap spacing={0.5}>
-          {interests.map((stack, index) => (
+          {interestFieldArray.fields.map((interest, index) => (
             <Chip
               key={`stack_${index}`}
-              label={stack.stNm}
+              label={interest.interest}
               size={'small'}
-              color={`${stack.level}`}
-              onDelete={() => handleDeleteInterest(index)}
+              onDelete={() => interestFieldArray.remove(index)}
             />
           ))}
         </Stack>
@@ -325,39 +308,19 @@ const InterestForm = ({ onChange, onRemoveEntry }) => {
   );
 };
 
-const LinkForm = ({ onChange, onRemoveEntry }) => {
+const LinkForm = ({ profileEditForm }) => {
   const theme = useTheme();
-  const [links, setLinks] = useState([]);
-  const [entryIdCounter, setEntryIdCounter] = useState(0);
 
-  const addLink = () => {
-    setLinks([...links, { id: entryIdCounter, url: '', description: '' }]);
-    setEntryIdCounter(entryIdCounter + 1);
-  };
+  // 프로필 링크
+  const linkFieldArray = useFieldArray({
+    control: profileEditForm.control,
+    name: 'LINK',
+  });
 
-  const removeLink = (linkId) => {
-    setLinks(links.filter((link) => link.id !== linkId));
-    onRemoveEntry(linkId, 'link');
-  };
-
-  const handleChange = (e) => {
-    const {
-      target: { id, value },
-    } = e;
-    const [key, linkId] = id.split('-');
-    const newLinks = links.map((link) => {
-      if (link.id.toString() === linkId) {
-        return { ...link, [key]: value };
-      }
-      return link;
-    });
-    setLinks(newLinks);
-    onChange({
-      target: {
-        key: 'link',
-        name: 'link',
-        value: newLinks.find((link) => link.id.toString() === linkId),
-      },
+  const handleAppendLink = () => {
+    linkFieldArray.append({
+      URL: '',
+      DESCRIPTION: '',
     });
   };
 
@@ -369,7 +332,7 @@ const LinkForm = ({ onChange, onRemoveEntry }) => {
           수 있는 링크가 있다면 작성해주세요.
         </AlertTitle>
       </Alert>
-      {links.map((link) => (
+      {linkFieldArray.fields.map((link, index) => (
         <Stack
           key={link.id}
           direction={'row'}
@@ -377,24 +340,24 @@ const LinkForm = ({ onChange, onRemoveEntry }) => {
           alignItems={'center'}
         >
           <Box>
-            <TextField
-              id={`url-${link.id}`}
-              label="URL"
-              defaultValue={link.url}
+            <RhfTextField
+              label={'URL'}
+              name={`LINK[${index}].URL`}
+              variant={'outlined'}
+              size={'medium'}
               fullWidth
-              onChange={handleChange}
             />
           </Box>
           <Box sx={{ flexGrow: 1 }}>
-            <TextField
-              id={`description-${link.id}`}
-              label="링크 설명"
-              defaultValue={link.description}
+            <RhfTextField
+              label={'링크 설명'}
+              name={`LINK[${index}].DESCRIPTION`}
+              variant={'outlined'}
+              size={'medium'}
               fullWidth
-              onChange={handleChange}
             />
           </Box>
-          <IconButton onClick={() => removeLink(link.id)}>
+          <IconButton onClick={() => linkFieldArray.remove(index)}>
             <CloseIcon />
           </IconButton>
         </Stack>
@@ -405,7 +368,7 @@ const LinkForm = ({ onChange, onRemoveEntry }) => {
         startIcon={
           <AddIcon sx={{ color: theme.palette.text.primary }}></AddIcon>
         }
-        onClick={addLink}
+        onClick={handleAppendLink}
       >
         추가하기
       </Button>
@@ -781,10 +744,10 @@ const ProfileEditForm = ({ profileEditForm }) => {
           <SkillForm profileEditForm={profileEditForm} />
         </FormGroup>
         <FormGroup title={'관심분야'}>
-          <InterestForm />
+          <InterestForm profileEditForm={profileEditForm} />
         </FormGroup>
         <FormGroup title={'링크'}>
-          <LinkForm />
+          <LinkForm profileEditForm={profileEditForm} />
         </FormGroup>
         <FormGroup title={'포트폴리오'}>
           <PortfolioForm />

@@ -6,6 +6,8 @@ export const profileEditFormDefaultValues = {
   USER_INTRO: '',
   CAREER: [],
   STACK: [],
+  INTEREST: [],
+  LINK: [],
 };
 
 export const profileEditFormSchema = yup.object().shape({
