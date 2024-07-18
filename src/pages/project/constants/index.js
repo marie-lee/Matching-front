@@ -4,9 +4,8 @@ import _ from 'lodash';
 export const profileEditFormDefaultValues = {
   USER_NM: '',
   USER_INTRO: '',
-  CAREER: [
-    { CAREER_NM: '', ENTERING_DT: null, QUIT_DT: null, IS_EMPLOYED: true },
-  ],
+  CAREER: [],
+  STACK: [],
 };
 
 export const profileEditFormSchema = yup.object().shape({

@@ -33,6 +33,7 @@ import ImageIcon from '@mui/icons-material/Image';
 import PersonalVideoIcon from '@mui/icons-material/PersonalVideo';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
+  RhfAutocomplete,
   RhfDatePicker,
   RhfFormProvider,
   RhfTextField,
@@ -172,20 +173,48 @@ const stack = [
   { stNm: 'Node.js', level: 'primary' },
   { stNm: 'React', level: 'secondary' },
 ];
+const data = [
+  { stNm: 'Node.js', level: 'primary' },
+  { stNm: 'React', level: 'secondary' },
+];
 
-const SkillForm = () => {
+const level = 'primary';
+const SkillForm = ({ profileEditForm }) => {
+  const [stackName, setStackName] = useState('');
+  const [level, setLevel] = useState('');
+  // 프로필 스택
+  const stackFieldArray = useFieldArray({
+    control: profileEditForm.control,
+    name: 'STACK',
+  });
+
+  const handleAppendStack = () => {
+    if (stackName && level) {
+      stackFieldArray.append({
+        STACK_NM: stackName,
+        LEVEL: level,
+      });
+      // 스택 추가 후 상태 초기화
+      setStackName('');
+      setLevel('');
+    }
+  };
+
+  const profileAddFormValues = profileEditForm.watch();
+
   return (
     <Stack spacing={2}>
       <Stack direction={'row'} spacing={1} alignItems={'center'}>
         <Autocomplete
           disablePortal
           id="combo-box-demo"
-          options={['js', 'node.js']}
           sx={{ flexGrow: 1 }}
-          value={skill}
-          onChange={handleSkillChange}
+          options={['js', 'node.js']}
           renderInput={(params) => <TextField {...params} label="기술스택" />}
           fullWidth
+          onInputChange={(event, newValue) => {
+            setStackName(newValue);
+          }}
         />
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">난이도</InputLabel>
@@ -193,14 +222,14 @@ const SkillForm = () => {
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             value={level}
-            onChange={handleLevelChange}
+            onChange={(event) => setLevel(event.target.value)}
           >
             <MenuItem value={'primary'}>상</MenuItem>
             <MenuItem value={'secondary'}>중</MenuItem>
             <MenuItem value={'secondary'}>하</MenuItem>
           </Select>
         </FormControl>
-        <IconButton onClick={addSkill}>
+        <IconButton onClick={handleAppendStack}>
           <AddIcon />
         </IconButton>
       </Stack>
@@ -209,18 +238,27 @@ const SkillForm = () => {
           현재 선택한 스킬과 난이도
         </Typography>
         <Typography>난이도는 상, 중, 하에 따라 색상으로 나뉘어져요</Typography>
-
         <Stack flexWrap={'wrap'} direction={'row'} useFlexGap spacing={0.5}>
-          {data.map((stack, index) => (
-            <Chip
-              key={`stack_${index}`}
-              label={stack.stNm}
-              size={'small'}
-              color={`${stack.level}`}
-              onDelete={() => handleDelete(stack.id)}
-            />
-          ))}
+          {profileAddFormValues.STACK.map(
+            (stack, index) =>
+              stack.STACK_NM &&
+              stack.LEVEL && (
+                <Chip
+                  key={`stack_${index}`}
+                  label={stack.STACK_NM}
+                  size={'small'}
+                  color={`${stack.LEVEL}`}
+                  onDelete={() => stackFieldArray.remove(index)}
+                />
+              ),
+          )}
         </Stack>
+        <Stack
+          flexWrap={'wrap'}
+          direction={'row'}
+          useFlexGap
+          spacing={0.5}
+        ></Stack>
       </Stack>
     </Stack>
   );
@@ -740,7 +778,7 @@ const ProfileEditForm = ({ profileEditForm }) => {
           <CareerForm profileEditForm={profileEditForm} />
         </FormGroup>
         <FormGroup title={'주요 스킬'}>
-          <SkillForm />
+          <SkillForm profileEditForm={profileEditForm} />
         </FormGroup>
         <FormGroup title={'관심분야'}>
           <InterestForm />
