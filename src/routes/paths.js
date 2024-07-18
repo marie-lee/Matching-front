@@ -26,4 +26,9 @@ export const PATHS = {
   match: {
     root: '/match',
   },
+  // 비밀번호 변경
+  authpassw:{
+    root: '/authpassw',
+    
+  },
 };

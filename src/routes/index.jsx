@@ -13,6 +13,8 @@ import NotFoundPage from '@/pages/error/404';
 import GuestLayout from '@/layouts/guest/guest-layout';
 import MainLayout from '@/layouts/main/main-layout';
 
+import ChPassWord from '@/routes/chpassword';
+
 // ----------------------------------------------------------------------
 
 const GuestPage = lazy(() => import('@/pages/guest/guest-page'));
@@ -54,6 +56,9 @@ const Router = () => {
     recommend,
     // 매칭
     match,
+    
+    //비밀번호 변경
+    ChPassWord,
 
     {
       path: '*',
