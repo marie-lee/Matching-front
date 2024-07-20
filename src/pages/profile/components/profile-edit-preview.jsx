@@ -14,6 +14,7 @@ import { PORTFOLIOS, PROFILE } from '@/pages/profile/constants';
 import CloseIcon from '@mui/icons-material/Close';
 import RealPortfolioList from './portfolio';
 import RealProfile from './profile';
+import ProfilePreviewDetail from './profile';
 
 const ProfilePreview = ({ onOpen, profileEditForm }) => {
   const theme = useTheme();
@@ -28,7 +29,6 @@ const ProfilePreview = ({ onOpen, profileEditForm }) => {
       onOpen(); // 부모 컴포넌트로 이벤트 전달
     }
   };
-
   const handleClose = () => {
     setOpen(false); // 팝업 닫기
   };
@@ -62,7 +62,7 @@ const ProfilePreview = ({ onOpen, profileEditForm }) => {
         >
           <Grid container spacing={3}>
             <Grid item xs={12} md={4}>
-              <RealProfile profile={PROFILE} />
+              <ProfilePreviewDetail profileEditForm={profileEditForm} />
             </Grid>
             <Grid item xs={12} md={8}>
               <RealPortfolioList portfolio={PORTFOLIOS} />

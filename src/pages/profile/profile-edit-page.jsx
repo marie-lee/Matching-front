@@ -3,13 +3,10 @@ import { AppBar, Grid } from '@mui/material';
 import { ProfileEditForm } from '@/pages/profile/components';
 import RemoteControlBox from './components/profile-edit-remote';
 import { HEADER } from '@/layouts/config-layout';
-import {
-  profileEditFormDefaultValues,
-  profileEditFormSchema,
-} from '../project/constants';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { profileEditFormDefaultValues } from './constants';
 
 const ProfileEditPage = () => {
   const profileEditForm = useForm({

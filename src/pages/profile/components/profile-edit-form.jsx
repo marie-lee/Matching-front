@@ -68,7 +68,7 @@ const ProfileForm = () => {
       </Stack>
       <Stack>
         <RhfTextField
-          name={'USER_NM'}
+          name={'NAME'}
           label={'프로필 이름'}
           variant={'outlined'}
           size={'medium'}
@@ -76,7 +76,7 @@ const ProfileForm = () => {
       </Stack>
       <Stack>
         <RhfTextField
-          name={'USER_INTRO'}
+          name={'INTRO'}
           label={'한 줄 소개'}
           variant={'outlined'}
           helperText={'나를 표현할 수 있는 한 줄 소개를 적어주세요'}
@@ -97,9 +97,9 @@ const CareerForm = ({ profileEditForm }) => {
 
   const handleAppendCareer = () => {
     careerFieldArray.append({
-      CAREER_NM: '',
-      ENTERING_DT: null,
-      QUIT_DT: null,
+      careerName: '',
+      enteringDt: null,
+      quitDt: null,
       IS_EMPLOYED: true,
     });
   };
@@ -117,7 +117,7 @@ const CareerForm = ({ profileEditForm }) => {
         >
           <Box sx={{ flexGrow: 1 }}>
             <RhfTextField
-              name={`CAREER[${index}].CAREER_NM`}
+              name={`CAREER[${index}].careerName`}
               label={'회사명'}
               variant={'outlined'}
               size={'medium'}
@@ -125,7 +125,7 @@ const CareerForm = ({ profileEditForm }) => {
           </Box>
           <Box>
             <RhfDatePicker
-              name={`CAREER[${index}].ENTERING_DT`}
+              name={`CAREER[${index}].enteringDt`}
               label={'시작일'}
               views={['year', 'month']}
               size={'medium'}
@@ -142,7 +142,7 @@ const CareerForm = ({ profileEditForm }) => {
             </Box>
           : <Box>
               <RhfDatePicker
-                name={`CAREER[${index}].QUIT_DT`}
+                name={`CAREER[${index}].quitDt`}
                 label={'종료일'}
                 views={['year', 'month']}
                 size={'medium'}
@@ -166,10 +166,7 @@ const CareerForm = ({ profileEditForm }) => {
     </Stack>
   );
 };
-const stack = [
-  { stNm: 'Node.js', level: 'primary' },
-  { stNm: 'React', level: 'secondary' },
-];
+
 const SkillForm = ({ profileEditForm }) => {
   const [stackName, setStackName] = useState('');
   const [level, setLevel] = useState('');
@@ -182,8 +179,8 @@ const SkillForm = ({ profileEditForm }) => {
   const handleAppendStack = () => {
     if (stackName && level) {
       stackFieldArray.append({
-        STACK_NM: stackName,
-        LEVEL: level,
+        stNm: stackName,
+        level: level,
       });
       // 스택 추가 후 상태 초기화
       setStackName('');
@@ -232,13 +229,13 @@ const SkillForm = ({ profileEditForm }) => {
         <Stack flexWrap={'wrap'} direction={'row'} useFlexGap spacing={0.5}>
           {profileAddFormValues.STACK.map(
             (stack, index) =>
-              stack.STACK_NM &&
-              stack.LEVEL && (
+              stack.stNm &&
+              stack.level && (
                 <Chip
                   key={`stack_${index}`}
-                  label={stack.STACK_NM}
+                  label={stack.stNm}
                   size={'small'}
-                  color={`${stack.LEVEL}`}
+                  color={`${stack.level}`}
                   onDelete={() => stackFieldArray.remove(index)}
                 />
               ),
@@ -310,13 +307,13 @@ const LinkForm = ({ profileEditForm }) => {
   // 프로필 링크
   const linkFieldArray = useFieldArray({
     control: profileEditForm.control,
-    name: 'LINK',
+    name: 'URL',
   });
 
   const handleAppendLink = () => {
     linkFieldArray.append({
-      URL: '',
-      DESCRIPTION: '',
+      addr: '',
+      intro: '',
     });
   };
 
@@ -338,7 +335,7 @@ const LinkForm = ({ profileEditForm }) => {
           <Box>
             <RhfTextField
               label={'URL'}
-              name={`LINK[${index}].URL`}
+              name={`URL[${index}].addr`}
               variant={'outlined'}
               size={'medium'}
               fullWidth
@@ -347,7 +344,7 @@ const LinkForm = ({ profileEditForm }) => {
           <Box sx={{ flexGrow: 1 }}>
             <RhfTextField
               label={'링크 설명'}
-              name={`LINK[${index}].DESCRIPTION`}
+              name={`URL[${index}].intro`}
               variant={'outlined'}
               size={'medium'}
               fullWidth

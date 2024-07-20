@@ -1,3 +1,19 @@
+import * as yup from 'yup';
+
+export const profileEditFormDefaultValues = {
+  NAME: '',
+  INTRO: '',
+  CAREER: [],
+  STACK: [],
+  INTEREST: [],
+  URL: [],
+  PORTFOLIO: [],
+};
+
+export const profileEditFormSchema = yup.object().shape({
+  USER_NM: yup.string().required('이름을 입력해주세요'),
+});
+
 export const CAREERS = [
   {
     careerNm: '토스페이먼츠',

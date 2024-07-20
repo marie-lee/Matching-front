@@ -1,29 +1,25 @@
-import {
-  Avatar,
-  Chip,
-  Divider,
-  IconButton,
-  Link,
-  Stack,
-  Typography,
-} from '@mui/material';
-import { Icon } from '@iconify/react';
-import { PATHS } from '@/routes/paths';
+import { Avatar, Chip, Divider, Link, Stack, Typography } from '@mui/material';
 
 const Career = ({ data }) => {
+  console.log(data);
   return (
     <Stack spacing={1}>
       <Typography variant={'lg'}>경력</Typography>
-      {data.map((career, index) => (
-        <Stack key={`career_${index}`} spacing={0.5}>
-          <Typography>{career.careerName}</Typography>
-          <Stack direction={'row'} alignItems={'center'}>
-            <Typography variant={'xs'} color={'text.secondary'}>
-              {`${career.enteringDt} ~ ${career.quitDt != null ? career.quitDt : '재직중'}`}
-            </Typography>
-          </Stack>
-        </Stack>
-      ))}
+      {data.map(
+        (career, index) => (
+          console.log(career),
+          (
+            <Stack key={`career_${index}`} spacing={0.5}>
+              <Typography>{career.careerName}</Typography>
+              <Stack direction={'row'} alignItems={'center'}>
+                <Typography variant={'xs'} color={'text.secondary'}>
+                  {`${career.enteringDt} ~ ${career.quitDt != null ? career.quitDt : '재직중'}`}
+                </Typography>
+              </Stack>
+            </Stack>
+          )
+        ),
+      )}
     </Stack>
   );
 };
@@ -62,7 +58,11 @@ const Intrst = ({ data }) => {
       </Stack>
       <Stack flexWrap direction={'row'} spacing={0.5}>
         {data.map((intrst, index) => (
-          <Chip key={`intrst_${index}`} label={intrst} size={'small'} />
+          <Chip
+            key={`intrst_${index}`}
+            label={intrst.interest}
+            size={'small'}
+          />
         ))}
       </Stack>
     </Stack>
@@ -70,6 +70,7 @@ const Intrst = ({ data }) => {
 };
 
 const Url = ({ data }) => {
+  console.log(data);
   return (
     <Stack spacing={1}>
       <Typography variant={'lg'}>링크</Typography>
@@ -91,7 +92,9 @@ const Url = ({ data }) => {
   );
 };
 
-const RealProfile = ({ profile }) => {
+const ProfilePreviewDetail = ({ profileEditForm }) => {
+  const profile = profileEditForm.getValues();
+
   return (
     <Stack spacing={3} p={3} bgcolor={'background.default'}>
       <Typography variant={'xl'}>프로필</Typography>
@@ -104,23 +107,20 @@ const RealProfile = ({ profile }) => {
         justifyContent={'space-between'}
         spacing={1}
       >
-        <Typography variant={'xl'}>{profile.name}</Typography>
-        <IconButton onClick={() => navigate(PATHS.profiles.editProfile)}>
-          <Icon icon={'akar-icons:edit'} fontSize={24} />
-        </IconButton>
+        <Typography variant={'xl'}>{profile.NAME}</Typography>
       </Stack>
       <Stack>
-        <Typography variant={'lg'}>{profile.intro}</Typography>
+        <Typography variant={'lg'}>{profile.INTRO}</Typography>
       </Stack>
       <Divider />
-      <Career data={profile.career} />
+      <Career data={profile.CAREER} />
       <Divider />
-      <MajorStack data={profile.stack} />
-      <Intrst data={profile.interest} />
+      <MajorStack data={profile.STACK} />
+      <Intrst data={profile.INTEREST} />
       <Divider />
-      <Url data={profile.url} />
+      <Url data={profile.URL} />
     </Stack>
   );
 };
 
-export default RealProfile;
+export default ProfilePreviewDetail;
