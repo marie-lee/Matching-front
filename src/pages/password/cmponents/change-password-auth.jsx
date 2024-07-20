@@ -63,13 +63,13 @@ const AuthPassword = () => {
       };
 
     return(
-        <Box sx={{display:'flex',justifyContent:'center'}}>
+        <Box sx={{ maxWidth: 800, margin: '0 auto', mt: 10}}>
             <Box
                 sx={{
                     border: '0px solid #D1D1D1',
                     padding: 5,
                     borderRadius: 2,
-                    boxShadow: '0px 6px 20px rgba(0, 0, 0, 0.1)',                    
+                    boxShadow: '0px 6px 20px rgba(0, 0, 0, 0.1)',                 
                 }}
             >
                 <Stack alignItems={'center'} mb={4}>
