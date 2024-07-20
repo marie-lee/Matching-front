@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import _ from 'lodash';
 
-import { PROJECTS } from 'pages/project/constants';
+import { PROJECTS } from '@/pages/project/constants';
 import {
   ProjectDetails,
   ProjectDetailsRecommendMember,
