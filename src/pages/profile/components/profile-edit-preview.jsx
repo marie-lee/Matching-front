@@ -10,11 +10,9 @@ import {
   IconButton,
   useTheme,
 } from '@mui/material';
-import { PORTFOLIOS, PROFILE } from '@/pages/profile/constants';
 import CloseIcon from '@mui/icons-material/Close';
-import RealPortfolioList from './portfolio';
-import RealProfile from './profile';
 import ProfilePreviewDetail from './profile';
+import PortfolioListPreview from './portfolio';
 
 const ProfilePreview = ({ onOpen, profileEditForm }) => {
   const theme = useTheme();
@@ -65,7 +63,7 @@ const ProfilePreview = ({ onOpen, profileEditForm }) => {
               <ProfilePreviewDetail profileEditForm={profileEditForm} />
             </Grid>
             <Grid item xs={12} md={8}>
-              <RealPortfolioList portfolio={PORTFOLIOS} />
+              <PortfolioListPreview profileEditForm={profileEditForm} />
             </Grid>
           </Grid>
         </DialogContent>

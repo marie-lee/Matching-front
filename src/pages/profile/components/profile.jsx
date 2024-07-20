@@ -1,25 +1,19 @@
 import { Avatar, Chip, Divider, Link, Stack, Typography } from '@mui/material';
 
 const Career = ({ data }) => {
-  console.log(data);
   return (
     <Stack spacing={1}>
       <Typography variant={'lg'}>경력</Typography>
-      {data.map(
-        (career, index) => (
-          console.log(career),
-          (
-            <Stack key={`career_${index}`} spacing={0.5}>
-              <Typography>{career.careerName}</Typography>
-              <Stack direction={'row'} alignItems={'center'}>
-                <Typography variant={'xs'} color={'text.secondary'}>
-                  {`${career.enteringDt} ~ ${career.quitDt != null ? career.quitDt : '재직중'}`}
-                </Typography>
-              </Stack>
-            </Stack>
-          )
-        ),
-      )}
+      {data.map((career, index) => (
+        <Stack key={`career_${index}`} spacing={0.5}>
+          <Typography>{career.careerName}</Typography>
+          <Stack direction={'row'} alignItems={'center'}>
+            <Typography variant={'xs'} color={'text.secondary'}>
+              {`${career.enteringDt} ~ ${career.quitDt != null ? career.quitDt : '재직중'}`}
+            </Typography>
+          </Stack>
+        </Stack>
+      ))}
     </Stack>
   );
 };
@@ -70,7 +64,6 @@ const Intrst = ({ data }) => {
 };
 
 const Url = ({ data }) => {
-  console.log(data);
   return (
     <Stack spacing={1}>
       <Typography variant={'lg'}>링크</Typography>

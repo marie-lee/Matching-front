@@ -416,7 +416,8 @@ const PortfolioForm = ({ profileEditForm }) => {
   const theme = useTheme();
   const { control } = useFormContext();
   const [stackName, setStackName] = useState('');
-  const fileInputRef = useRef(null);
+  const imagefileInputRef = useRef(null);
+  const videofileInputRef = useRef(null);
 
   // 프로필 포트폴리오
   const portfolioFieldArray = useFieldArray({
@@ -426,9 +427,9 @@ const PortfolioForm = ({ profileEditForm }) => {
 
   const handleAppendPortfolio = () => {
     portfolioFieldArray.append({
-      PROJECT_NM: '',
-      START_DT: null,
-      END_DT: null,
+      pfolNm: '',
+      startDt: null,
+      endDt: null,
       DESCRIPTION: '',
       ROLE: [],
       CONTRIBUTION: '',
@@ -463,11 +464,11 @@ const PortfolioForm = ({ profileEditForm }) => {
   };
 
   const handleAddImageClick = () => {
-    fileInputRef.current.click();
+    imagefileInputRef.current.click();
   };
 
   const handleAddVideoClick = () => {
-    fileInputRef.current.click();
+    videofileInputRef.current.click();
   };
 
   const handleImageFileChange = (index) => (event) => {
@@ -546,13 +547,13 @@ const PortfolioForm = ({ profileEditForm }) => {
           </Box>
           <RhfTextField
             label={'프로젝트명'}
-            name={`PORTFOLIO[${index}].PROJECT_NM`}
+            name={`PORTFOLIO[${index}].pfolNm`}
             variant={'outlined'}
             size={'medium'}
           />
           <Stack direction={'row'} spacing={1} alignItems={'center'}>
             <RhfDatePicker
-              name={`PORTFOLIO[${index}].START_DT`}
+              name={`PORTFOLIO[${index}].startDt`}
               label={'시작일'}
               views={['year', 'month']}
               size={'medium'}
@@ -560,7 +561,7 @@ const PortfolioForm = ({ profileEditForm }) => {
               sx={{ flexGrow: 1 }}
             />
             <RhfDatePicker
-              name={`PORTFOLIO[${index}].END_DT`}
+              name={`PORTFOLIO[${index}].endDt`}
               label={'종료일'}
               views={['year', 'month']}
               size={'medium'}
@@ -758,10 +759,11 @@ const PortfolioForm = ({ profileEditForm }) => {
             이미지 추가 ({portfolioFieldArray.fields[index].IMAGE_URL.length}/4)
           </Button>
           <input
+            key={`image_${index}`}
             type="file"
             accept="image/*"
             hidden
-            ref={fileInputRef}
+            ref={imagefileInputRef}
             onChange={handleImageFileChange(index)}
           />
           <ImageList
@@ -804,8 +806,9 @@ const PortfolioForm = ({ profileEditForm }) => {
             )}
           </ImageList>
           <input
+            key={`video_${index}`}
             type="file"
-            ref={fileInputRef}
+            ref={videofileInputRef}
             onChange={handleVideoFileChange(index)}
             style={{ display: 'none' }} // 파일 입력 요소 숨기기
             accept="video/*" // 오직 비디오 파일만 허용
