@@ -25,20 +25,23 @@ import {
   useTheme,
 } from '@mui/material';
 import 'dayjs/locale/ko';
-const label = { inputProps: { 'aria-label': 'Switch demo' } };
-import { v4 as uuidv4 } from 'uuid';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add'; // Add 아이콘 임포트
 import ImageIcon from '@mui/icons-material/Image';
 import PersonalVideoIcon from '@mui/icons-material/PersonalVideo';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   RhfAutocomplete,
   RhfDatePicker,
   RhfFormProvider,
   RhfTextField,
 } from '@/components/hook-form';
-import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
+import {
+  Controller,
+  set,
+  useFieldArray,
+  useFormContext,
+} from 'react-hook-form';
 import RhfSwitch from '@/components/hook-form/rhf-switch';
 import { lime } from '@mui/material/colors';
 
@@ -121,15 +124,13 @@ const CareerForm = ({ profileEditForm }) => {
             />
           </Box>
           <Box>
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
-              <RhfDatePicker
-                name={`CAREER[${index}].ENTERING_DT`}
-                label={'시작일'}
-                views={['year', 'month']}
-                size={'medium'}
-                format={'YYYY-MM'}
-              />
-            </LocalizationProvider>
+            <RhfDatePicker
+              name={`CAREER[${index}].ENTERING_DT`}
+              label={'시작일'}
+              views={['year', 'month']}
+              size={'medium'}
+              format={'YYYY-MM'}
+            />
           </Box>
           {/* 재직 중인 경우에만 종료일을 보여줌 */}
           {profileAddFormValues['CAREER'][index].IS_EMPLOYED === true ?
@@ -140,18 +141,13 @@ const CareerForm = ({ profileEditForm }) => {
               />
             </Box>
           : <Box>
-              <LocalizationProvider
-                dateAdapter={AdapterDayjs}
-                adapterLocale="ko"
-              >
-                <RhfDatePicker
-                  name={`CAREER[${index}].QUIT_DT`}
-                  label={'종료일'}
-                  views={['year', 'month']}
-                  size={'medium'}
-                  format={'YYYY-MM'}
-                />
-              </LocalizationProvider>
+              <RhfDatePicker
+                name={`CAREER[${index}].QUIT_DT`}
+                label={'종료일'}
+                views={['year', 'month']}
+                size={'medium'}
+                format={'YYYY-MM'}
+              />
             </Box>
           }
           <IconButton onClick={() => careerFieldArray.remove(index)}>
@@ -419,180 +415,117 @@ const videoUrl = {
   url: 'https://assets.codepen.io/6093409/river.mp4',
 };
 
-const PortfolioForm = ({ onChange, onRemoveEntry }) => {
+const PortfolioForm = ({ profileEditForm }) => {
   const theme = useTheme();
-  const [data, setData] = useState([]);
-  const [entries, setEntries] = useState([]);
-  const [entryIdCounter, setEntryIdCounter] = useState(0);
-  const [personName, setPersonName] = useState([]);
+  const { control } = useFormContext();
+  const [stackName, setStackName] = useState('');
+  const fileInputRef = useRef(null);
 
-  const handleAddEntry = () => {
-    setEntries([...entries, { id: entryIdCounter }]); // Add a new entry with a unique id
-    onChange({
-      target: {
-        key: 'portfolio',
-        name: 'id',
-        value: entryIdCounter,
-      },
-    });
-    setEntryIdCounter(entryIdCounter + 1); // Increment the entry id counter
-  };
+  // 프로필 포트폴리오
+  const portfolioFieldArray = useFieldArray({
+    control: profileEditForm.control,
+    name: 'PORTFOLIO',
+  });
 
-  const handleRemoveEntry = (id) => {
-    setEntries(entries.filter((entry) => entry.id !== id));
-    onRemoveEntry(id, 'portfolio');
-  };
-
-  const handleChange = (event) => {
-    const { key, name, value } = event.target;
-    console.log(key, name, value);
-    onChange({
-      target: {
-        key: 'portfolio',
-        name: name,
-        id: entryIdCounter,
-        value: value,
-      },
+  const handleAppendPortfolio = () => {
+    portfolioFieldArray.append({
+      PROJECT_NM: '',
+      START_DT: null,
+      END_DT: null,
+      DESCRIPTION: '',
+      ROLE: [],
+      CONTRIBUTION: '',
+      TECH_STACK: [],
+      SERVICE_STATUS: '',
+      ACHIEVEMENT: '',
+      URL: [],
+      VIDEO_URL: '',
+      IMAGE_URL: [],
     });
   };
 
-  const renderEntries = () => {
-    return entries.map((entry, index) => (
-      <Stack
-        key={entry.id}
-        spacing={2}
-        sx={{
-          p: 2,
-          border: '1px solid',
-          borderColor: 'divider',
-          borderRadius: '4px',
-        }}
-      >
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <Typography variant="lg" fontWeight={'fontWeightMedium'}>
-            프로젝트{index + 1}
-          </Typography>
-          <IconButton onClick={() => handleRemoveEntry(entry.id)}>
-            <CloseIcon />
-          </IconButton>
-        </Box>
-        <TextField
-          id={`project-name-${entry.id}`}
-          label="프로젝트명"
-          defaultValue=""
-          fullWidth
-          onChange={(e) => {
-            handleChange({
-              target: {
-                key: 'portfolio',
-                name: 'title',
-                value: e.target.value,
-              },
-            });
-          }}
-        />
-        <Stack direction={'row'} spacing={1} alignItems={'center'}>
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
-            <DatePicker
-              label="시작일"
-              views={['year', 'month']}
-              format="YYYY-MM"
-              sx={{ flexGrow: 1 }}
-              onChange={(date) =>
-                handleChange({
-                  target: {
-                    key: 'portfolio',
-                    name: 'startDate',
-                    value: date,
-                  },
-                })
-              }
-            />
-          </LocalizationProvider>
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
-            <DatePicker
-              label="종료일"
-              views={['year', 'month']}
-              format="YYYY-MM"
-              sx={{ flexGrow: 1 }}
-            />
-          </LocalizationProvider>
-        </Stack>
-        <TextField
-          id="outlined-multiline-static"
-          label="프로젝트 설명"
-          multiline
-          rows={4}
-        />
-        <Stack direction={'row'} spacing={1} alignItems={'center'}>
-          <TextField id="outlined-helperText" label="참여인원" fullWidth />
-          <FormControl fullWidth>
-            <InputLabel id="demo-multiple-chip-label">역할</InputLabel>
-            <Select
-              labelId="demo-multiple-chip-label"
-              id="demo-multiple-chip"
-              multiple
-              value={personName}
-              onChange={handleChange}
-              input={<OutlinedInput id="select-multiple-chip" label="chip" />}
-              renderValue={(selected) => (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                  {selected.map((value) => (
-                    <Chip key={value} label={value} />
-                  ))}
-                </Box>
-              )}
-              MenuProps={MenuProps}
-            >
-              {names.map((name) => (
-                <MenuItem
-                  key={name}
-                  value={name}
-                  style={getStyles(name, personName, theme)}
-                >
-                  {name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <TextField id="outlined-helperText" label="기여도(%)" fullWidth />
-        </Stack>
-        <Stack direction={'row'} spacing={1} alignItems={'center'}>
-          <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={['js', 'node.js']}
-            sx={{ flexGrow: 1 }}
-            renderInput={(params) => <TextField {...params} label="기술스택" />}
-            fullWidth
-          />
-          <IconButton>
-            <AddIcon />
-          </IconButton>
-        </Stack>
-        <Stack spacing={2} p={3} bgcolor={'background.neutral'}>
-          <Typography variant="lg" fontWeight={'fontWeightBold'}>
-            현재 선택한 스택
-          </Typography>
-          <Stack flexWrap={'wrap'} direction={'row'} useFlexGap spacing={0.5}>
-            {stack.map((stack, index) => (
-              <Chip
-                key={`stack_${index}`}
-                label={stack.stNm}
-                size={'small'}
-                color={`${stack.level}`}
-                onDelete={() => {}}
-              />
-            ))}
-          </Stack>
-        </Stack>
-        <Box
+  const handleAppendStack = () => {
+    if (stackName) {
+      portfolioFieldArray.fields.forEach((entry, index) => {
+        const stack = entry.TECH_STACK;
+        stack.push(stackName);
+      });
+      setStackName('');
+    }
+  };
+  const profileAddFormValues = profileEditForm.watch();
+
+  const handleAppendLink = (index) => {
+    portfolioFieldArray.fields[index].URL.push({
+      URL: '',
+      DESCRIPTION: '',
+    });
+    portfolioFieldArray.update(index, {
+      ...portfolioFieldArray.fields[index],
+    });
+  };
+
+  const handleAddImageClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleAddVideoClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleImageFileChange = (index) => (event) => {
+    const currentImageCount =
+      portfolioFieldArray.fields[index].IMAGE_URL.length;
+    if (currentImageCount >= 4) {
+      alert('이미지는 최대 4개까지 업로드 가능합니다.');
+      return;
+    }
+    const file = event.target.files[0];
+    const imageUrl = URL.createObjectURL(file);
+    portfolioFieldArray.fields[index].IMAGE_URL.push({
+      URL: imageUrl,
+      NAME: file.name,
+    });
+    portfolioFieldArray.update(index, {
+      ...portfolioFieldArray.fields[index],
+    });
+  };
+
+  const handleRemoveImage = (portfolioIndex, imageIndex) => {
+    console.log(portfolioIndex, imageIndex);
+    const updatedImages = portfolioFieldArray.fields[
+      portfolioIndex
+    ].IMAGE_URL.filter((_, idx) => idx !== imageIndex);
+    portfolioFieldArray.update(portfolioIndex, {
+      ...portfolioFieldArray.fields[portfolioIndex],
+      IMAGE_URL: updatedImages,
+    });
+  };
+
+  const handleVideoFileChange = (index) => (event) => {
+    const currentVideoCount =
+      portfolioFieldArray.fields[index].VIDEO_URL.length;
+    if (currentVideoCount >= 1) {
+      alert('비디오는 최대 1개까지 업로드 가능합니다.');
+      return;
+    }
+    const file = event.target.files[0];
+    const videoUrl = URL.createObjectURL(file);
+    portfolioFieldArray.update(index, {
+      ...portfolioFieldArray.fields[index],
+      VIDEO_URL: {
+        URL: videoUrl,
+        NAME: file.name,
+      },
+    });
+  };
+
+  return (
+    <Stack spacing={2}>
+      {portfolioFieldArray.fields.map((entry, index) => (
+        <Stack
+          key={entry.id}
+          spacing={2}
           sx={{
             p: 2,
             border: '1px solid',
@@ -600,119 +533,312 @@ const PortfolioForm = ({ onChange, onRemoveEntry }) => {
             borderRadius: '4px',
           }}
         >
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <Typography variant="lg" fontWeight={'fontWeightMedium'}>
+              프로젝트{index + 1}
+            </Typography>
+            <IconButton>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <RhfTextField
+            label={'프로젝트명'}
+            name={`PORTFOLIO[${index}].PROJECT_NM`}
+            variant={'outlined'}
+            size={'medium'}
+          />
           <Stack direction={'row'} spacing={1} alignItems={'center'}>
-            <Box>
-              <TextField
-                id="outlined-helperText"
-                label="URL"
-                defaultValue=""
-                fullWidth
-              />
-            </Box>
-            <Box sx={{ flexGrow: 1 }}>
-              <TextField
-                id="outlined-helperText"
-                label="링크 설명"
-                defaultValue=""
-                fullWidth
-              />
-            </Box>
-            <Box>
-              <IconButton>
-                <AddIcon />
-              </IconButton>
-            </Box>
+            <RhfDatePicker
+              name={`PORTFOLIO[${index}].START_DT`}
+              label={'시작일'}
+              views={['year', 'month']}
+              size={'medium'}
+              format={'YYYY-MM'}
+              sx={{ flexGrow: 1 }}
+            />
+            <RhfDatePicker
+              name={`PORTFOLIO[${index}].END_DT`}
+              label={'종료일'}
+              views={['year', 'month']}
+              size={'medium'}
+              format={'YYYY-MM'}
+              sx={{ flexGrow: 1 }}
+            />
           </Stack>
+          <RhfTextField
+            name={`PORTFOLIO[${index}].DESCRIPTION`}
+            label={'프로젝트 설명'}
+            size={'medium'}
+            variant={'outlined'}
+            multiline
+            rows={4}
+          />
+          <Stack direction={'row'} spacing={1}>
+            <RhfTextField
+              name={`PORTFOLIO[${index}].CONTRIBUTION`}
+              label={'참여인원'}
+              size={'medium'}
+              variant={'outlined'}
+            />
+            <FormControl fullWidth>
+              <InputLabel>역할</InputLabel>
+              <Controller
+                name={`PORTFOLIO[${index}].ROLE`}
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <Select
+                    multiple
+                    variant="outlined"
+                    value={value}
+                    onChange={onChange}
+                    input={
+                      <OutlinedInput id="select-multiple-chip" label="chip" />
+                    }
+                    renderValue={(selected) => (
+                      <Box sx={{ display: 'flex', gap: 0.5 }}>
+                        {selected.map((value) => (
+                          <Chip
+                            key={value}
+                            label={value}
+                            sx={{ p: `0 !important` }}
+                          />
+                        ))}
+                      </Box>
+                    )}
+                    MenuProps={MenuProps}
+                  >
+                    {names.map((name) => (
+                      <MenuItem
+                        key={name}
+                        value={name}
+                        style={getStyles(name, value, theme)}
+                      >
+                        {name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )}
+              ></Controller>
+            </FormControl>
+            <RhfTextField
+              name={`PORTFOLIO[${index}].CONTRIBUTION`}
+              label={'기여도(%)'}
+              size={'medium'}
+              variant={'outlined'}
+            />
+          </Stack>
+          <Stack direction={'row'} spacing={1} alignItems={'center'}>
+            <Autocomplete
+              disablePortal
+              id="combo-box-demo"
+              options={['js', 'node.js']}
+              value={stackName}
+              sx={{ flexGrow: 1 }}
+              renderInput={(params) => (
+                <TextField {...params} label="기술스택" />
+              )}
+              fullWidth
+              onInputChange={(event, newValue) => {
+                setStackName(newValue);
+              }}
+            />
+            <IconButton onClick={handleAppendStack}>
+              <AddIcon />
+            </IconButton>
+          </Stack>
+          <Stack spacing={2} p={3} bgcolor={'background.neutral'}>
+            <Typography variant="lg" fontWeight={'fontWeightBold'}>
+              현재 선택한 스택
+            </Typography>
+            <Stack flexWrap={'wrap'} direction={'row'} useFlexGap spacing={0.5}>
+              {portfolioFieldArray.fields[index].TECH_STACK.map(
+                (stack, index) => {
+                  if (stack.length === 0) {
+                    return null;
+                  }
+                  return (
+                    <Chip
+                      key={`stack_${index}`}
+                      label={stack}
+                      size={'small'}
+                      onDelete={() => {}}
+                    />
+                  );
+                },
+              )}
+            </Stack>
+          </Stack>
+          <Box
+            sx={{
+              p: 2,
+              border: '1px solid',
+              borderColor: 'divider',
+              borderRadius: '4px',
+            }}
+          >
+            <Stack spacing={1}>
+              {portfolioFieldArray.fields[index].URL.map((link, index) => (
+                <Stack
+                  key={`link_${index}`}
+                  direction={'row'}
+                  spacing={1}
+                  alignItems={'center'}
+                >
+                  <Box>
+                    <TextField
+                      key={`link_${index}`}
+                      id="outlined-helperText"
+                      label="URL"
+                      fullWidth
+                    />
+                  </Box>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <TextField
+                      key={`link_${index}`}
+                      id="outlined-helperText"
+                      label="링크 설명"
+                      fullWidth
+                    />
+                  </Box>
+                  <Box>
+                    <IconButton>
+                      <AddIcon />
+                    </IconButton>
+                  </Box>
+                </Stack>
+              ))}
+            </Stack>
+            <Button
+              color="primary"
+              variant={'outlined'}
+              fullWidth
+              startIcon={
+                <AddIcon sx={{ color: theme.palette.text.primary }}></AddIcon>
+              }
+              onClick={() => handleAppendLink(index)}
+            >
+              추가하기
+            </Button>
+          </Box>
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">서비스 상태</InputLabel>
+            <Controller
+              name={`PORTFOLIO[${index}].SERVICE_STATUS`}
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={value}
+                  onChange={onChange}
+                >
+                  <MenuItem value={'배포 중'}>배포 중</MenuItem>
+                  <MenuItem value={'중단'}>중단</MenuItem>
+                  <MenuItem value={'완료'}>완료</MenuItem>
+                </Select>
+              )}
+            ></Controller>
+          </FormControl>
+          <RhfTextField
+            label={'성과'}
+            name={`PORTFOLIO[${index}].ACHIEVEMENT`}
+            variant={'outlined'}
+            size={'medium'}
+            fullWidth
+          />
           <Button
             color="primary"
             variant={'outlined'}
-            fullWidth
-            sx={{ mt: 2 }}
-            startIcon={
-              <AddIcon sx={{ color: theme.palette.text.primary }}></AddIcon>
-            }
+            onClick={handleAddImageClick}
           >
-            추가하기
+            <ImageIcon sx={{ mr: 1 }}></ImageIcon>
+            이미지 추가 ({portfolioFieldArray.fields[index].IMAGE_URL.length}/4)
           </Button>
-        </Box>
-        <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">서비스 상태</InputLabel>
-          <Select labelId="demo-simple-select-label" id="demo-simple-select">
-            <MenuItem value={'상'}>배포 중</MenuItem>
-            <MenuItem value={'중'}>중단</MenuItem>
-            <MenuItem value={'하'}>완료</MenuItem>
-          </Select>
-        </FormControl>
-        <TextField
-          id="outlined-helperText"
-          label="성과"
-          defaultValue=""
-          fullWidth
-        />
-        <Button color="primary" variant={'outlined'}>
-          <ImageIcon sx={{ mr: 1 }}></ImageIcon>
-          이미지 추가 (2/4)
-        </Button>
-        <ImageList
-          sx={{ width: '100%', height: 'auto' }}
-          cols={4}
-          rowHeight={'auto'}
-        >
-          {itemData.map((item, index) => (
-            <ImageListItem key={item.img}>
-              <img
-                srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
-                alt={item.title}
-                loading="lazy"
-              />
-              <IconButton
-                onClick={() => handleRemoveImage(item.img)}
-                sx={{ position: 'absolute', top: 0, right: 0, color: 'white' }}
-              >
-                <CloseIcon />
-              </IconButton>
-              {index === 0 && (
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    color: 'white',
-                    padding: '2px 8px',
-                    fontSize: '0.875rem',
-                  }}
-                >
-                  대표 이미지
-                </Box>
-              )}
-            </ImageListItem>
-          ))}
-        </ImageList>
-        <Button color="primary" variant={'outlined'}>
-          <PersonalVideoIcon sx={{ mr: 1 }}></PersonalVideoIcon>
-          동영상 추가 (1/1)
-        </Button>
-        {/* 비디오 URL이 있을 때만 비디오 컴포넌트 표시 */}
-        {videoUrl && (
-          <Box mt={2}>
-            {/* 상단 버튼에서 마진을 주어 간격 조정 */}
-            <video src={videoUrl.url} controls width="100%"></video>
-          </Box>
-        )}
-      </Stack>
-    ));
-  };
-
-  return (
-    <Stack spacing={2}>
-      {renderEntries()}
+          <input
+            type="file"
+            accept="image/*"
+            hidden
+            ref={fileInputRef}
+            onChange={handleImageFileChange(index)}
+          />
+          <ImageList
+            sx={{ width: '100%', height: 'auto' }}
+            cols={4}
+            rowHeight={'auto'}
+          >
+            {portfolioFieldArray.fields[index].IMAGE_URL.map(
+              (item, imageIndex) => (
+                <ImageListItem key={item.URL}>
+                  <img src={item.URL} alt={item.NAME} loading="lazy" />
+                  <IconButton
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      right: 0,
+                      color: 'white',
+                    }}
+                    onClick={() => handleRemoveImage(index, imageIndex)}
+                  >
+                    <CloseIcon sx={{ stroke: '#111111', strokeWidth: 1 }} />
+                  </IconButton>
+                  {index === 0 && (
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        color: 'white',
+                        padding: '2px 8px',
+                        fontSize: '0.875rem',
+                      }}
+                    >
+                      대표 이미지
+                    </Box>
+                  )}
+                </ImageListItem>
+              ),
+            )}
+          </ImageList>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleVideoFileChange(index)}
+            style={{ display: 'none' }} // 파일 입력 요소 숨기기
+            accept="video/*" // 오직 비디오 파일만 허용
+          />
+          <Button
+            color="primary"
+            variant={'outlined'}
+            onClick={handleAddVideoClick}
+          >
+            <PersonalVideoIcon sx={{ mr: 1 }}></PersonalVideoIcon>
+            동영상 추가 ({portfolioFieldArray.fields[index].VIDEO_URL ? 1 : 0}
+            /1)
+          </Button>
+          {/* 비디오 URL이 있을 때만 비디오 컴포넌트 표시 */}
+          {portfolioFieldArray.fields[index].VIDEO_URL && (
+            <Box mt={2}>
+              <video
+                src={portfolioFieldArray.fields[index].VIDEO_URL.URL}
+                controls
+                width="100%"
+              ></video>
+            </Box>
+          )}
+        </Stack>
+      ))}
       <Button
         color="primary"
         variant={'outlined'}
+        onClick={handleAppendPortfolio}
         startIcon={<AddIcon />}
-        onClick={handleAddEntry}
       >
         추가하기
       </Button>
@@ -721,18 +847,8 @@ const PortfolioForm = ({ onChange, onRemoveEntry }) => {
 };
 
 const ProfileEditForm = ({ profileEditForm }) => {
-  const onSubmit = (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget); // Assuming you want to collect the form data
-    const data = {
-      USER_NM: formData.get('USER_NM'),
-      USER_INTRO: formData.get('USER_INTRO'),
-    };
-    console.log(data);
-  };
-
   return (
-    <RhfFormProvider form={profileEditForm} onSubmit={onSubmit}>
+    <RhfFormProvider form={profileEditForm}>
       <Stack spacing={4}>
         <FormGroup title={'프로필'}>
           <ProfileForm />
@@ -750,7 +866,7 @@ const ProfileEditForm = ({ profileEditForm }) => {
           <LinkForm profileEditForm={profileEditForm} />
         </FormGroup>
         <FormGroup title={'포트폴리오'}>
-          <PortfolioForm />
+          <PortfolioForm profileEditForm={profileEditForm} />
         </FormGroup>
       </Stack>
     </RhfFormProvider>

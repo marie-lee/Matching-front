@@ -8,6 +8,7 @@ export const profileEditFormDefaultValues = {
   STACK: [],
   INTEREST: [],
   LINK: [],
+  PORTFOLIO: [],
 };
 
 export const profileEditFormSchema = yup.object().shape({
