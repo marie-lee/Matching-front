@@ -1,17 +1,4 @@
-import {
-  Avatar,
-  Chip,
-  Divider,
-  IconButton,
-  Link,
-  Stack,
-  Typography,
-} from '@mui/material';
-import { useEffect, useState } from 'react';
-import { Icon } from '@iconify/react';
-import { useNavigate } from 'react-router-dom';
-import { PATHS } from '@/routes/paths';
-import { instance } from '@/services/config';
+import { Avatar, Chip, Divider, Link, Stack, Typography } from '@mui/material';
 
 const Career = ({ data }) => {
   return (
@@ -65,7 +52,11 @@ const Intrst = ({ data }) => {
       </Stack>
       <Stack flexWrap direction={'row'} spacing={0.5}>
         {data.map((intrst, index) => (
-          <Chip key={`intrst_${index}`} label={intrst} size={'small'} />
+          <Chip
+            key={`intrst_${index}`}
+            label={intrst.interest}
+            size={'small'}
+          />
         ))}
       </Stack>
     </Stack>
@@ -94,53 +85,8 @@ const Url = ({ data }) => {
   );
 };
 
-const ProfileDetails = () => {
-  const navigate = useNavigate();
-  const [careers, setCareers] = useState([]);
-  const [stack, setStack] = useState([]);
-  const [interest, setInterest] = useState([]);
-  const [url, setUrl] = useState([]);
-  const [intro, setIntro] = useState([]);
-  const [name, setName] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await instance.get('member/profile');
-        const data = response.data;
-        console.log('data', data);
-        const careersData = data.profile[0].carrer.map((career) => ({
-          careerName: career.CARRER_NM,
-          enteringDt: career.ENTERING_DT,
-          quitDt: career.QUIT_DT,
-        }));
-        setCareers(careersData);
-        setName(data.profile[0].USER_NM);
-        setIntro(data.profile[0].PF_INTRO);
-
-        const stacksData = data.profile[0].stack.map((stack) => ({
-          stNm: stack.ST_NM,
-          level: stack.ST_LEVEL,
-        }));
-        setStack(stacksData);
-
-        const interestData = data.profile[0].interest.map(
-          (interest) => interest.INTEREST_NM,
-        );
-        setInterest(interestData);
-
-        const urlsData = data.profile[0].url.map((url) => ({
-          addr: url.URL_ADDR,
-          intro: url.URL_INTRO,
-        }));
-        setUrl(urlsData);
-      } catch (error) {
-        console.log('error: ', error);
-      }
-    };
-
-    fetchData();
-  }, []);
+const ProfilePreviewDetail = ({ profileEditForm }) => {
+  const profile = profileEditForm.getValues();
 
   return (
     <Stack spacing={3} p={3} bgcolor={'background.default'}>
@@ -154,23 +100,20 @@ const ProfileDetails = () => {
         justifyContent={'space-between'}
         spacing={1}
       >
-        <Typography variant={'xl'}>{name}</Typography>
-        <IconButton onClick={() => navigate(PATHS.profiles.editProfile)}>
-          <Icon icon={'akar-icons:edit'} fontSize={24} />
-        </IconButton>
+        <Typography variant={'xl'}>{profile.NAME}</Typography>
       </Stack>
       <Stack>
-        <Typography variant={'lg'}>{intro}</Typography>
+        <Typography variant={'lg'}>{profile.INTRO}</Typography>
       </Stack>
       <Divider />
-      <Career data={careers} />
+      <Career data={profile.CAREER} />
       <Divider />
-      <MajorStack data={stack} />
-      <Intrst data={interest} />
+      <MajorStack data={profile.STACK} />
+      <Intrst data={profile.INTEREST} />
       <Divider />
-      <Url data={url} />
+      <Url data={profile.URL} />
     </Stack>
   );
 };
 
-export default ProfileDetails;
+export default ProfilePreviewDetail;
