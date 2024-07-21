@@ -15,7 +15,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import { ResponsiveImg } from '@/components/img';
 
 const PortfolioDetail = ({ open, setOpen, portfolio }) => {
-  console.log('portfolio', portfolio);
   const theme = useTheme();
 
   const portfolioData = {

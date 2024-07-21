@@ -8,16 +8,30 @@ import {
   Typography,
 } from '@mui/material';
 import { ResponsiveImg } from '@/components/img';
+import { Fragment, useState } from 'react';
+import PortfolioDetail from '@/pages/profile/components/portfolio-detail';
 
 // ----------------------------------------------------------------------
 
 const PortfolioList = (member) => {
-  console.log('member', member.member.portfolio);
+  const [selectedPortfolio, setSelectedPortfolio] = useState(null);
+
+  const handleClickPortfolio = (portfolio) => {
+    setSelectedPortfolio(portfolio);
+    console.log('portfolio', portfolio);
+  };
+
   return (
     <Grid container columnSpacing={2} rowSpacing={3} pt={1}>
       {member.member.portfolio?.length > 0 ?
         member.member.portfolio.map((pfol) => (
-          <Grid item xs={12} md={6} key={pfol.name}>
+          <Grid
+            item
+            xs={12}
+            md={6}
+            key={pfol.name}
+            onClick={() => handleClickPortfolio(pfol)}
+          >
             <Stack
               spacing={0.5}
               sx={{ cursor: 'pointer' }}
@@ -80,6 +94,13 @@ const PortfolioList = (member) => {
           포트폴리오가 없습니다.
         </Typography>
       }
+      {selectedPortfolio && (
+        <PortfolioDetail
+          open={!!selectedPortfolio}
+          setOpen={() => setSelectedPortfolio(null)}
+          portfolio={selectedPortfolio}
+        />
+      )}
     </Grid>
   );
 };
@@ -163,7 +184,9 @@ const ProjectDetailsSelectedMember = ({ member }) => {
           </Typography>
           <Stack spacing={1} pt={1}>
             {member.profile.career?.map((exp, index) => (
-              <>
+              <Fragment key={`career_${index}`}>
+                {' '}
+                {/* Fragment에 key prop 추가 */}
                 <Stack
                   key={`career_${index}`}
                   direction={'row'}
@@ -176,7 +199,7 @@ const ProjectDetailsSelectedMember = ({ member }) => {
                   </Typography>
                 </Stack>
                 <Divider></Divider>
-              </>
+              </Fragment>
             ))}
           </Stack>
         </Grid>
