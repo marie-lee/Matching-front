@@ -30,7 +30,7 @@ const memberItemStyles = {
 
 const MemberItem = ({ member, ...other }) => {
   return (
-    <Grid container item xs={12} md={6} {...other}>
+    <Grid container item xs={12} {...other}>
       <Grid container sx={{ ...memberItemStyles }}>
         <Grid container alignItems={'center'} spacing={3}>
           <Grid item xs={'auto'}>
@@ -60,7 +60,7 @@ const MemberItem = ({ member, ...other }) => {
 };
 // ----------------------------------------------------------------------
 
-const ProjectDetailsRecommendMember = () => {
+const ProjectDetailsRecommendMember = ({ setSelectedMember }) => {
   const { id } = useParams();
   const [profilesDialogOpen, setProfilesDialogOpen] = useState(false);
   const [recommendList, setRecommendList] = useState([]);
@@ -83,34 +83,30 @@ const ProjectDetailsRecommendMember = () => {
   const handleClickMember = (member) => {
     setProfilesDialogOpen(true);
     setMember(member);
+    setSelectedMember(member);
+    console.log(member);
   };
 
   return (
-    <Grid container p={3} bgcolor={'background.default'}>
-      <Grid item container spacing={3}>
-        {/* 제목 */}
-        <Grid item xs={12}>
-          <Typography variant={'xl'}>멤버 추천</Typography>
-        </Grid>
-
-        {/* 검색 */}
-        <Grid item xs={12}>
-          <Autocomplete
-            multiple
-            limitTags={10}
-            id={'search-stack-tags'}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label={'기술 스택'}
-                placeholder="희망하는 기술 스택을 검색"
-              />
-            )}
-            getOptionLabel={(option) => option.title}
-            options={STACKS_OPTIONS}
-          />
-        </Grid>
-
+    <Grid container>
+      {/* 검색 */}
+      <Grid item xs={12} py={3}>
+        <Autocomplete
+          multiple
+          limitTags={10}
+          id={'search-stack-tags'}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label={'조건을 추가해 주세요'}
+              placeholder="희망하는 항목을 선택"
+            />
+          )}
+          getOptionLabel={(option) => option.title}
+          options={STACKS_OPTIONS}
+        />
+      </Grid>
+      <Grid item xs={12} container spacing={3}>
         {/* 추천된 멤버 목록 */}
         <Grid item container spacing={2}>
           {recommendList.map((member, index) => (
@@ -124,14 +120,14 @@ const ProjectDetailsRecommendMember = () => {
       </Grid>
 
       {/* 선택한 멤버의 프로필/포트폴리오 상세 조회 Dialog */}
-      <Dialog
+      {/* <Dialog
         fullWidth
         maxWidth={'md'}
         open={profilesDialogOpen}
         onClose={() => setProfilesDialogOpen(false)}
       >
         <ProjectDetailsMemberProfiles member={member} />
-      </Dialog>
+      </Dialog> */}
     </Grid>
   );
 };
