@@ -35,7 +35,7 @@ const ProjectSection = ({ data, handleClickUser }) => {
           : <Grid item container spacing={2}>
               <Section
                 title={'제안 중인 요청'}
-                data={_.filter(data.REQ_LIST, { REQ_STTS: 'REQ' })}
+                data={_.filter(data.REQ_LIST, { REQ_STTS: 'CONFIRM' })}
                 handleClickUser={handleClickUser}
                 confirmDisabled
                 pjtSn={data.PJT_SN}
@@ -50,7 +50,7 @@ const ProjectSection = ({ data, handleClickUser }) => {
 
               <Section
                 title={'거절'}
-                data={_.filter(data.REQ_LIST, { REQ_STTS: 'REJECTION' })}
+                data={_.filter(data.REQ_LIST, { REQ_STTS: 'REJECT' })}
                 disabled
                 pjtSn={data.PJT_SN}
               />
@@ -164,7 +164,7 @@ const Item = ({ value, disabled, confirmDisabled, handleClickUser, pjtSn }) => {
                   color={'error'}
                   size={'small'}
                 >
-                  거절
+                  {confirmDisabled ? '취소' : '거절'}
                 </Button>
               </Grid>
             </Grid>
@@ -178,6 +178,7 @@ const Item = ({ value, disabled, confirmDisabled, handleClickUser, pjtSn }) => {
 // ----------------------------------------------------------------------
 
 const SentProposalList = ({ data, setSelectedMember }) => {
+  console.log('선택된 프로젝트에서 보낸 제안', data);
   const [userDialogOpen, setUserDialogOpen] = useState(false);
 
   const [user, setUser] = useState();

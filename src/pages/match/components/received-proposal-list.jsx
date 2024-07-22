@@ -115,6 +115,7 @@ const Item = ({ value, disabled, handleClickProject }) => {
 // ----------------------------------------------------------------------
 
 const ReceivedProposalList = ({ data }) => {
+  console.log('data', data);
   const [projectDialogOpen, setProjectDialogOpen] = useState(false);
 
   const [project, setProject] = useState();
