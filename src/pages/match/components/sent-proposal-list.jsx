@@ -2,6 +2,7 @@ import {
   Button,
   Chip,
   Dialog,
+  Divider,
   Grid,
   Link,
   Stack,
@@ -14,6 +15,7 @@ import { ResponsiveImg } from '@/components/img';
 import { getStatusUser } from '@/services/status';
 import { UserInfo } from '@/pages/match/components';
 import { Icon } from '@iconify/react';
+import { ArrowDropDown } from '@mui/icons-material';
 
 // ----------------------------------------------------------------------
 
@@ -22,15 +24,9 @@ const ProjectSection = ({ data, handleClickUser }) => {
     <Grid item xs={12}>
       <Grid container bgcolor={'background.default'}>
         <Grid container p={2} spacing={2}>
-          <Grid item sx={{ my: 0.5 }}>
-            <Typography variant={'xl'} fontWeight={'fontWeightBold'}>
-              {data.PJT_NM}
-            </Typography>
-          </Grid>
-
           {/* TODO: 응답데이터 형식 바뀔 경우 수정 필요함 */}
           {/* 데이터가 없을 경우 빈 배열이 아닌 0번째 인덱스에 값 null로 내려와서 다음과 같이 처리 */}
-          {data?.REQ_LIST[0].REQ_SN === null ?
+          {data === undefined ?
             <Grid item container justifyContent={'center'}>
               <Typography variant={'lg'} color={'text.secondary'}>
                 해당 내역이 없습니다.
@@ -39,21 +35,24 @@ const ProjectSection = ({ data, handleClickUser }) => {
           : <Grid item container spacing={2}>
               <Section
                 title={'제안 중인 요청'}
-                data={_.filter(data.REQ_LIST, { REQ_STTS: 'REQ' })}
+                data={_.filter(data.REQ_LIST, { REQ_STTS: 'CONFIRM' })}
                 handleClickUser={handleClickUser}
                 confirmDisabled
+                pjtSn={data.PJT_SN}
               />
 
               <Section
                 title={'개발자 승인'}
                 data={_.filter(data.REQ_LIST, { REQ_STTS: 'AGREE' })}
                 handleClickUser={handleClickUser}
+                pjtSn={data.PJT_SN}
               />
 
               <Section
                 title={'거절'}
                 data={_.filter(data.REQ_LIST, { REQ_STTS: 'REJECT' })}
                 disabled
+                pjtSn={data.PJT_SN}
               />
             </Grid>
           }
@@ -68,22 +67,26 @@ const ProjectSection = ({ data, handleClickUser }) => {
 const Section = ({
   title,
   data,
+  pjtSn,
   disabled,
   confirmDisabled,
   handleClickUser,
 }) => {
   return (
     <Grid item xs={12}>
+      <Grid item container justifyContent={'space-between'}>
+        <Typography variant={'lg'} fontWeight={'fontWeightBold'}>
+          {title}
+        </Typography>
+        <ArrowDropDown></ArrowDropDown>
+      </Grid>
+      <Grid py={1}>
+        <Divider></Divider>
+      </Grid>
       <Grid container bgcolor={'grey.200'}>
-        <Grid container p={2} spacing={2}>
-          <Grid item container>
-            <Typography variant={'lg'} fontWeight={'fontWeightBold'}>
-              {title}
-            </Typography>
-          </Grid>
-
+        <Grid container p={1} spacing={2}>
           {_.isEmpty(data) && (
-            <Grid item container justifyContent={'center'} p={2}>
+            <Grid item container justifyContent={'center'} m={4}>
               <Typography variant={'lg'} color={'text.secondary'}>
                 제안이 없습니다.
               </Typography>
@@ -97,6 +100,7 @@ const Section = ({
               disabled={disabled}
               confirmDisabled={confirmDisabled}
               handleClickUser={handleClickUser}
+              pjtSn={pjtSn}
             />
           ))}
         </Grid>
@@ -107,12 +111,12 @@ const Section = ({
 
 // ----------------------------------------------------------------------
 
-const Item = ({ value, disabled, confirmDisabled, handleClickUser }) => {
+const Item = ({ value, disabled, confirmDisabled, handleClickUser, pjtSn }) => {
   return (
     <Grid item xs={12} md={6}>
-      <Grid container p={2} border={1} borderColor={'divider'} borderRadius={1}>
+      <Grid container p={1} bgcolor={'Background'}>
         <Grid container spacing={2} alignItems={'center'}>
-          <Grid item xs={12} md={2.5}>
+          <Grid item xs={12} md={3}>
             <ResponsiveImg
               src={value.USER_IMG}
               alt={`${value.PF_SN} 프로필 이미지`}
@@ -126,7 +130,7 @@ const Item = ({ value, disabled, confirmDisabled, handleClickUser }) => {
               <Link
                 component={handleClickUser !== undefined && 'button'}
                 underline={handleClickUser !== undefined ? 'hover' : 'none'}
-                onClick={() => handleClickUser(value.USER_SN)}
+                onClick={() => handleClickUser(pjtSn, value.USER_SN)}
               >
                 <Stack direction={'row'} alignItems={'center'} spacing={0.5}>
                   <Typography variant={'lg'} fontWeight={'fontWeightSemiBold'}>
@@ -144,7 +148,7 @@ const Item = ({ value, disabled, confirmDisabled, handleClickUser }) => {
           </Grid>
 
           {!disabled && (
-            <Grid item container xs={12} md={2} spacing={1}>
+            <Grid item container xs={12} md={4} spacing={1}>
               {!confirmDisabled && (
                 <Grid item xs={6} md={12}>
                   <Button fullWidth size={'small'}>
@@ -160,7 +164,7 @@ const Item = ({ value, disabled, confirmDisabled, handleClickUser }) => {
                   color={'error'}
                   size={'small'}
                 >
-                  거절
+                  {confirmDisabled ? '취소' : '거절'}
                 </Button>
               </Grid>
             </Grid>
@@ -173,47 +177,33 @@ const Item = ({ value, disabled, confirmDisabled, handleClickUser }) => {
 
 // ----------------------------------------------------------------------
 
-const SentProposalList = ({ data }) => {
+const SentProposalList = ({ data, setSelectedMember }) => {
   const [userDialogOpen, setUserDialogOpen] = useState(false);
 
   const [user, setUser] = useState();
 
-  const fetchUserDetail = async (userSn) => {
+  const fetchUserDetail = async (pjtSn, userSn) => {
     try {
-      const res = await getStatusUser(userSn);
+      const res = await getStatusUser(pjtSn, userSn);
       setUser(res?.data);
+      setSelectedMember(res?.data);
       setUserDialogOpen(true);
     } catch (error) {
       console.dir(error);
     }
   };
 
-  const handleClickUser = (userSn) => {
-    fetchUserDetail(userSn);
+  const handleClickUser = (pjtSn, userSn) => {
+    fetchUserDetail(pjtSn, userSn);
   };
 
   return (
     <Grid container spacing={3}>
-      {data.map((item) => (
-        <ProjectSection
-          key={`project_${item.PJT_SN}`}
-          data={item}
-          handleClickUser={handleClickUser}
-        />
-      ))}
-
-      {/* 개발자 프로필/포트폴리오 상세 조회 Dialog */}
-      <Dialog
-        fullWidth
-        maxWidth={'md'}
-        open={userDialogOpen}
-        onClose={() => setUserDialogOpen(false)}
-      >
-        <UserInfo
-          profile={user?.profile ? user?.profile[0] : {}}
-          portfolioInfo={user?.portfolioInfo}
-        />
-      </Dialog>
+      <ProjectSection
+        key={`project_${1}`}
+        data={data}
+        handleClickUser={handleClickUser}
+      />
     </Grid>
   );
 };

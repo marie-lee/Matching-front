@@ -13,7 +13,7 @@ import PortfolioDetail from '@/pages/profile/components/portfolio-detail';
 
 // ----------------------------------------------------------------------
 
-const PortfolioList = (member) => {
+const PortfolioList = ({ portfolio }) => {
   const [selectedPortfolio, setSelectedPortfolio] = useState(null);
 
   const handleClickPortfolio = (portfolio) => {
@@ -22,13 +22,13 @@ const PortfolioList = (member) => {
 
   return (
     <Grid container columnSpacing={2} rowSpacing={3} pt={1}>
-      {member.member.portfolio?.length > 0 ?
-        member.member.portfolio.map((pfol) => (
+      {portfolio?.length > 0 ?
+        portfolio.map((pfol) => (
           <Grid
             item
             xs={12}
             md={6}
-            key={pfol.name}
+            key={pfol.PFOL_NM}
             onClick={() => handleClickPortfolio(pfol)}
           >
             <Stack
@@ -41,7 +41,7 @@ const PortfolioList = (member) => {
             >
               {/* 대표 이미지 */}
               <ResponsiveImg
-                src={pfol.media}
+                src={pfol.IMG}
                 alt={`${pfol.name}`}
                 width={200}
                 height={120}
@@ -50,12 +50,7 @@ const PortfolioList = (member) => {
               <Stack p={2}>
                 {/* 포트폴리오 제목 */}
                 <Typography component={'p'} variant={'lg'}>
-                  {pfol.name}
-                </Typography>
-
-                {/* 포트폴리오 제목 */}
-                <Typography component={'p'} variant={'sm'}>
-                  {pfol.introduction}
+                  {pfol.PFOL_NM}
                 </Typography>
 
                 {/* 프로젝트 기간 */}
@@ -64,15 +59,15 @@ const PortfolioList = (member) => {
                   variant={'sm'}
                   color={'text.secondary'}
                 >
-                  {`${pfol.startDt} ~ ${pfol.endDt}`}
+                  {`${pfol.START_DT} ~ ${pfol.END_DT}`}
                 </Typography>
 
                 {/* 사용 스킬 */}
                 <Stack useFlexGap flexWrap={'wrap'} direction={'row'} gap={0.7}>
-                  {pfol.stack?.split(',').map((stack, index) => (
+                  {pfol.stack?.map((stack, index) => (
                     <Chip
-                      key={`${pfol.name}_stack_${index}`}
-                      label={stack}
+                      key={`${pfol.PFOL_NM}_stack_${index}`}
+                      label={stack.ST_NM}
                       size={'small'}
                     />
                   ))}
@@ -106,7 +101,7 @@ const PortfolioList = (member) => {
 
 // ----------------------------------------------------------------------
 
-const ProjectDetailsSelectedMember = ({ member }) => {
+const MatchSelectedMember = ({ member }) => {
   return (
     <Stack>
       <Grid
@@ -128,63 +123,54 @@ const ProjectDetailsSelectedMember = ({ member }) => {
             alignItems={'center'}
             justifyContent={'space-between'}
           >
-            <Typography variant={'lg'}>{member.userNm}</Typography>
+            <Typography variant={'lg'}>{member.profile[0].USER_NM}</Typography>
             <Button>요청</Button>
           </Grid>
 
           {/* 한 줄 소개 */}
           <Grid item container mt={1}>
-            <Typography variant={'md'}>
-              {member.profile.introduction}
-            </Typography>
+            <Typography variant={'md'}>{member.profile[0].PF_INTRO}</Typography>
             <Grid item container spacing={0.5} alignItems={'center'} mt={2}>
-              <Grid item xs={12} sm={2}>
-                <Typography fontWeight={'fontWeightMedium'}>링크</Typography>
-              </Grid>
-              <Grid item xs={12} md={10}>
-                <Typography size={'sm'} color={'text.secondary'}>
-                  {member.profile.url}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={2}>
-                {/* 이메일없어서 링크로 일단 대체*/}
-                <Typography fontWeight={'fontWeightMedium'}>이메일</Typography>
-              </Grid>
-              <Grid item xs={12} md={10}>
-                <Typography size={'sm'} color={'text.secondary'}>
-                  {member.profile.url}
-                </Typography>
-              </Grid>
+              {member.profile[0].url.map((url, index) => (
+                <Fragment key={`url_${index}`}>
+                  <Grid item xs={12} sm={2}>
+                    <Typography fontWeight={'fontWeightMedium'}>
+                      {url.URL_INTRO}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={10}>
+                    <Typography size={'sm'} color={'text.secondary'}>
+                      {url.URL_ADDR}
+                    </Typography>
+                  </Grid>
+                </Fragment>
+              ))}
             </Grid>
           </Grid>
         </Grid>
         {/* 주요 스킬 */}
         <Grid item xs={12} mt={4}>
           <Typography variant={'lg'} fontWeight={'fontWeightSemiBold'}>
-            Skills
+            주요 스킬
           </Typography>
+          <Divider />
           <Grid container spacing={1} pt={1}>
-            {member.profile.stack.split(',').map(
-              (skill, index) => (
-                console.log('skill', member.profile),
-                (
-                  <Grid item key={`stack_${index}`}>
-                    <Chip label={skill} />
-                  </Grid>
-                )
-              ),
-            )}
+            {member.profile[0].stack.map((skill, index) => (
+              <Grid item key={`stack_${index}`}>
+                <Chip key={`chip_${index}`} label={skill.ST_NM} />
+              </Grid>
+            ))}
           </Grid>
         </Grid>
         {/* 경력 */}
         <Grid item xs={12} mt={4}>
           <Typography variant={'lg'} fontWeight={'fontWeightSemiBold'}>
-            Career
+            경력
           </Typography>
+          <Divider></Divider>
           <Stack spacing={1} pt={1}>
-            {member.profile.career?.map((exp, index) => (
+            {member.profile[0].carrer?.map((exp, index) => (
               <Fragment key={`career_${index}`}>
-                {' '}
                 {/* Fragment에 key prop 추가 */}
                 <Stack
                   key={`career_${index}`}
@@ -192,9 +178,9 @@ const ProjectDetailsSelectedMember = ({ member }) => {
                   spacing={2}
                   alignItems={'center'}
                 >
-                  <Typography>{exp.careerNm}</Typography>
+                  <Typography>{exp.CARRER_NM}</Typography>
                   <Typography variant={'sm'} color={'text.secondary'}>
-                    {exp.enteringDt} ~ {exp.quitDt}
+                    {exp.ENTERING_DT} ~ {exp.QUIT_DT}
                   </Typography>
                 </Stack>
                 <Divider></Divider>
@@ -205,10 +191,10 @@ const ProjectDetailsSelectedMember = ({ member }) => {
       </Grid>
       {/* 포트폴리오 */}
       <Grid item xs={12} mt={2}>
-        <PortfolioList member={member} />
+        <PortfolioList portfolio={member.portfolioInfo} />
       </Grid>
     </Stack>
   );
 };
 
-export default ProjectDetailsSelectedMember;
+export default MatchSelectedMember;
