@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { ResponsiveImg } from '@/components/img';
 import { getStatusProject } from '@/services/status';
 import { ProjectInfo } from '@/pages/match/components';
+import { ProjectDetails } from '@/pages/project/components';
 
 // ----------------------------------------------------------------------
 
@@ -54,7 +55,7 @@ const Section = ({ title, keyName, data, disabled, handleClickProject }) => {
 
 const Item = ({ value, disabled, handleClickProject }) => {
   return (
-    <Grid item xs={12} md={6}>
+    <Grid item xs={12}>
       <Grid container p={2} border={1} borderColor={'divider'} borderRadius={1}>
         <Grid container spacing={2} alignItems={'center'}>
           <Grid item xs={12} md={3}>
@@ -114,17 +115,14 @@ const Item = ({ value, disabled, handleClickProject }) => {
 
 // ----------------------------------------------------------------------
 
-const ReceivedProposalList = ({ data }) => {
-  console.log('data', data);
-  const [projectDialogOpen, setProjectDialogOpen] = useState(false);
-
+const ReceivedProposalList = ({ data, setSelectedProject }) => {
   const [project, setProject] = useState();
 
   const fetchProjectDetail = async (pjtSn) => {
     try {
       const res = await getStatusProject(pjtSn);
       setProject(res?.data);
-      setProjectDialogOpen(true);
+      setSelectedProject(res?.data);
     } catch (error) {
       console.dir(error);
     }
@@ -140,7 +138,7 @@ const ReceivedProposalList = ({ data }) => {
     <Grid container spacing={3}>
       <Section
         title={'요청 온 제안'}
-        data={_.filter(data, { REQ_STTS: 'REQ' })}
+        data={_.filter(data, { REQ_STTS: 'CONFIRM' })}
         keyName={'wait'}
         handleClickProject={handleClickProject}
       />
@@ -158,17 +156,6 @@ const ReceivedProposalList = ({ data }) => {
         keyName={'deny'}
         disabled={true}
       />
-
-      {/* 프로젝트 상세 조회 Dialog */}
-      <Dialog
-        fullWidth
-        maxWidth={'md'}
-        open={projectDialogOpen}
-        onClose={() => setProjectDialogOpen(false)}
-      >
-        {/* 프로젝트 기본 정보 및 모집 인원 */}
-        <ProjectInfo data={project} />
-      </Dialog>
     </Grid>
   );
 };

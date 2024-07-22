@@ -57,7 +57,7 @@ const Group = ({ title, currentCnt, expectCnt, userInfo }) => {
 
 // ----------------------------------------------------------------------
 
-const ProjectDetails = ({ onComplete }) => {
+const ProjectDetails = ({ onComplete, data }) => {
   const location = useLocation();
   const [projectDatas, setProjectDatas] = useState(null);
   const [userInfo, setUserInfo] = useState(null);

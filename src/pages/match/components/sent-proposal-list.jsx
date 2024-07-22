@@ -178,7 +178,6 @@ const Item = ({ value, disabled, confirmDisabled, handleClickUser, pjtSn }) => {
 // ----------------------------------------------------------------------
 
 const SentProposalList = ({ data, setSelectedMember }) => {
-  console.log('선택된 프로젝트에서 보낸 제안', data);
   const [userDialogOpen, setUserDialogOpen] = useState(false);
 
   const [user, setUser] = useState();

@@ -17,6 +17,8 @@ import {
 } from '@/pages/match/components';
 import { getStatus } from '@/services/status';
 import MatchSelectedMember from './components/match-selected-member';
+import { ProjectDetails } from '../project/components';
+import MatchSelectedProject from './components/match-selected-project';
 
 // ----------------------------------------------------------------------
 
@@ -24,6 +26,7 @@ const MatchStatusPage = () => {
   const [selectedView, setSelectedView] = useState('보낸 제안');
   const [selectedMember, setSelectedMember] = useState(null);
   const [selectedProject, setSelectedProject] = useState('');
+  const [sentProject, setSentProject] = useState('');
   const [selectedProjectSN, setSelectedProjectSN] = useState('');
   const [projectReqList, setProjectReqList] = useState([]);
 
@@ -52,7 +55,7 @@ const MatchStatusPage = () => {
       (item) => item.PJT_SN === event.target.value,
     );
     setSelectedMember(null);
-    setSelectedProject(selectedProjectReqList);
+    setSentProject(selectedProjectReqList);
     setSelectedProjectSN(event.target.value);
   };
 
@@ -64,28 +67,38 @@ const MatchStatusPage = () => {
         <Stack spacing={2}>
           <Typography variant={'xl'}>매칭 현황</Typography>
 
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">내 프로젝트</InputLabel>
-            <Select
-              variant="standard"
-              label="내 프로젝트"
-              value={selectedProjectSN}
-              onChange={handleChangeProject}
-              placeholder={'프로젝트를 선택하세요'}
-            >
-              {projectReqList.map((item) => (
-                <MenuItem value={item.PJT_SN} key={item.PJT_SN}>
-                  {item.PJT_NM}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          {selectedView == '받은 제안' && (
+            <Typography variant={'lg'} px={2} pt={2}>
+              나의 현황
+            </Typography>
+          )}
+          {selectedView == '보낸 제안' && (
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">내 프로젝트</InputLabel>
+              <Select
+                variant="standard"
+                label="내 프로젝트"
+                value={selectedProjectSN}
+                onChange={handleChangeProject}
+                placeholder={'프로젝트를 선택하세요'}
+              >
+                {projectReqList.map((item) => (
+                  <MenuItem value={item.PJT_SN} key={item.PJT_SN}>
+                    {item.PJT_NM}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
 
           <ButtonGroup sx={{ pb: 2 }}>
             <Button
               sx={{ px: 2.5 }}
               variant={selectedView === '보낸 제안' ? 'contained' : 'outlined'}
-              onClick={() => setSelectedView('보낸 제안')}
+              onClick={() => {
+                setSelectedView('보낸 제안');
+                setSelectedProject(null);
+              }}
             >
               보낸 제안
             </Button>
@@ -95,6 +108,7 @@ const MatchStatusPage = () => {
               onClick={() => {
                 setSelectedView('받은 제안');
                 setSelectedMember(null);
+                setSelectedProjectSN(null);
               }}
             >
               받은 제안
@@ -104,17 +118,21 @@ const MatchStatusPage = () => {
 
         {selectedView === '보낸 제안' && (
           <SentProposalList
-            data={selectedProject}
+            data={sentProject}
             setSelectedMember={setSelectedMember}
           />
         )}
 
         {selectedView === '받은 제안' && (
-          <ReceivedProposalList data={myReqList} />
+          <ReceivedProposalList
+            data={myReqList}
+            setSelectedProject={setSelectedProject}
+          />
         )}
       </Grid>
       <Grid item container xs={6}>
         {selectedMember && <MatchSelectedMember member={selectedMember} />}
+        <MatchSelectedProject data={selectedProject}></MatchSelectedProject>
       </Grid>
     </Grid>
   );
