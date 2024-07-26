@@ -30,12 +30,9 @@ const PortfolioList = ({ hasProfile }) => {
       try {
         const response = await instance.get('member/profile');
         const data = response.data;
-        console.log('data', data);
         const PORTFOLIOS = data.portfolioInfo.map((item) => ({
           id: item.PFOL_SN,
           pfolNm: item.PFOL_NM,
-          //인트로가 없음 추가해야함
-          intro: '인트로가 없어서 임의로 추가 합니다.',
           startDt: item.START_DT,
           endDt: item.END_DT,
           stacks: item.stack.map((stackItem) => ({ stNm: stackItem.ST_NM })),
@@ -102,7 +99,7 @@ const PortfolioList = ({ hasProfile }) => {
           <PortfolioDetail
             open={!!selectedPortfolio}
             setOpen={() => setSelectedPortfolio(null)}
-            portfolio={selectedPortfolio}
+            portfolioId={selectedPortfolio.id}
           />
         )}
       </div>
