@@ -31,6 +31,7 @@ export const userInfoDefaultValues = {
   name: '',
   email: '',
   authCode: '',
+  phone: '',
   password: '',
   confirmPassword: '',
 };
@@ -57,6 +58,10 @@ export const userInfoSchema = yup.object().shape({
     .email('유효한 이메일을 입력해주세요.')
     .required('이메일을 입력해주세요.'),
   authCode: yup.string().required('인증번호를 입력해주세요.'),
+  phone: yup
+    .string()
+    .matches(/^010-\d{3,4}-\d{4}$/, '유효한 전화번호를 입력해주세요.')
+    .required('전화번호를 입력해주세요.'),
   password: yup.string().required('비밀번호를 입력해주세요.'),
   confirmPassword: yup
     .string()

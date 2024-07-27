@@ -119,6 +119,22 @@ const StepTwo = ({ setCurrentStep }) => {
                 </Button>
               </Stack>
               <Stack direction="row" spacing={4} alignItems="center">
+                <Typography sx={{ minWidth: 100 }}>전화번호</Typography>
+                <Controller
+                  name="phone"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      variant="standard"
+                      fullWidth
+                      error={!!errors.phone}
+                      helperText={errors.phone ? errors.phone.message : ''}
+                    />
+                  )}
+                />
+              </Stack>
+              <Stack direction="row" spacing={4} alignItems="center">
                 <Typography sx={{ minWidth: 100 }}>비밀번호</Typography>
                 <Controller
                   name="password"
