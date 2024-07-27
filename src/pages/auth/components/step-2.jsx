@@ -12,13 +12,15 @@ import { LoadingButton } from '@mui/lab';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { userInfoDefaultValues, userInfoSchema } from '@/pages/auth/constants';
-import { postEmailCertification } from '@/services/member';
+import { postEmailCertification, postEmailConfirmation } from '@/services/member';
 
 const StepTwo = ({ setCurrentStep }) => {
   const theme = useTheme();
   const [isPending, setIsPending] = useState(false);
   const [isCodePending, setIsCodePending] = useState(false);
+  const [isConfirmPending, setIsConfirmPending] = useState(false);
   const [open, setOpen] = useState(false);
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
 
   const {
     control,
@@ -44,13 +46,32 @@ const StepTwo = ({ setCurrentStep }) => {
     }
   };
 
-  const onSubmit = (data) => {
-    console.log(data);
-    setCurrentStep(3);
+  const handleEmailConfirmation = async () => {
+    setIsConfirmPending(true);
+    try {
+      const email = getValues('email');
+      const verificationCode = getValues('authCode');
+      const payload = { USER_EMAIL: email, verificationCode };
+      await postEmailConfirmation(payload);
+      setConfirmationOpen(true);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsConfirmPending(false);
+    }
   };
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleConfirmationClose = () => {
+    setConfirmationOpen(false);
+  };
+
+  const onSubmit = (data) => {
+    console.log(data);
+    setCurrentStep(3);
   };
 
   return (
@@ -141,6 +162,8 @@ const StepTwo = ({ setCurrentStep }) => {
                   variant="contained"
                   sx={{ alignSelf: 'flex-end' }}
                   size={'small'}
+                  onClick={handleEmailConfirmation}
+                  disabled={isConfirmPending}
                 >
                   확인
                 </Button>
@@ -244,6 +267,45 @@ const StepTwo = ({ setCurrentStep }) => {
             variant="contained"
             fullWidth
             onClick={handleClose}
+            sx={{
+              mt: 2,
+              backgroundColor: theme.palette.primary.main,
+              '&:hover': {
+                backgroundColor: theme.palette.primary.dark,
+              },
+            }}
+          >
+            확인
+          </Button>
+        </Box>
+      </Modal>
+      <Modal
+        open={confirmationOpen}
+        onClose={handleConfirmationClose}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Box
+          sx={{
+            backgroundColor: theme.palette.background.paper,
+            padding: 4,
+            borderRadius: 1,
+            boxShadow: 24,
+            width: '60%',
+            maxWidth: '520px',
+            textAlign: 'center',
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            이메일 인증이 완료되었습니다.
+          </Typography>
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={handleConfirmationClose}
             sx={{
               mt: 2,
               backgroundColor: theme.palette.primary.main,

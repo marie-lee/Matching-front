@@ -19,3 +19,9 @@ export const URL_POST_EMAIL_CERTIFICATION = '/member/registration/certification'
 export const postEmailCertification = (payload) => {
   return instance.post(URL_POST_EMAIL_CERTIFICATION, payload);
 };
+
+// 이메일 인증 확인
+export const URL_POST_EMAIL_CONFIRMATION = '/member/registration/confirmation';
+export const postEmailConfirmation = (payload) => {
+  return instance.post(URL_POST_EMAIL_CONFIRMATION, payload);
+};
