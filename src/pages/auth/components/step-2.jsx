@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -6,26 +6,51 @@ import {
   Typography,
   TextField,
   useTheme,
+  Modal,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { userInfoDefaultValues, userInfoSchema } from '@/pages/auth/constants';
+import { postEmailCertification } from '@/services/member';
 
 const StepTwo = ({ setCurrentStep }) => {
   const theme = useTheme();
+  const [isPending, setIsPending] = useState(false);
+  const [isCodePending, setIsCodePending] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const {
     control,
     formState: { errors },
+    handleSubmit,
+    getValues,
   } = useForm({
     resolver: yupResolver(userInfoSchema),
     defaultValues: userInfoDefaultValues,
   });
 
+  const handleEmailCertification = async () => {
+    setIsCodePending(true);
+    try {
+      const email = getValues('email');
+      const payload = { USER_EMAIL: email };
+      await postEmailCertification(payload);
+      setOpen(true);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsCodePending(false);
+    }
+  };
+
   const onSubmit = (data) => {
     console.log(data);
     setCurrentStep(3);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   return (
@@ -89,6 +114,8 @@ const StepTwo = ({ setCurrentStep }) => {
                   variant="contained"
                   sx={{ alignSelf: 'flex-end' }}
                   size={'small'}
+                  onClick={handleEmailCertification}
+                  disabled={isCodePending}
                 >
                   인증
                 </Button>
@@ -177,10 +204,11 @@ const StepTwo = ({ setCurrentStep }) => {
               <Stack direction="row" spacing={4} alignItems="center">
                 <Typography sx={{ minWidth: 100 }}>본인인증</Typography>
                 <LoadingButton
-                  type="submit"
+                  onClick={handleSubmit(onSubmit)}
                   variant="contained"
                   sx={{ width: '100%', mt: 2 }}
                   size={'small'}
+                  loading={isPending}
                 >
                   본인인증
                 </LoadingButton>
@@ -189,6 +217,45 @@ const StepTwo = ({ setCurrentStep }) => {
           </Box>
         </Box>
       </Box>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Box
+          sx={{
+            backgroundColor: theme.palette.background.paper,
+            padding: 4,
+            borderRadius: 1,
+            boxShadow: 24,
+            width: '60%',
+            maxWidth: '520px',
+            textAlign: 'center',
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            이메일로 인증번호를 전송했습니다.
+          </Typography>
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={handleClose}
+            sx={{
+              mt: 2,
+              backgroundColor: theme.palette.primary.main,
+              '&:hover': {
+                backgroundColor: theme.palette.primary.dark,
+              },
+            }}
+          >
+            확인
+          </Button>
+        </Box>
+      </Modal>
     </>
   );
 };

@@ -13,3 +13,9 @@ export const URL_GET_PORTFOLIO_DETAIL = '/member/profile';
 export const getPortfolioDetail = (pfolSn) => {
   return instance.get(`${URL_GET_PORTFOLIO_DETAIL}/${pfolSn}`);
 };
+
+// 이메일 인증
+export const URL_POST_EMAIL_CERTIFICATION = '/member/registration/certification';
+export const postEmailCertification = (payload) => {
+  return instance.post(URL_POST_EMAIL_CERTIFICATION, payload);
+};
