@@ -85,6 +85,16 @@ export const EXPERIENCE_OPTIONS = ['깔끔한 코드', '3년 이상의 경력'];
 
 export const PART_OPTIONS = ['프론트엔드', '백엔드', '디자이너'];
 
+export const reqFormDefaultValues = {
+  pjtSn: '',
+  userSn: '',
+  pjtRoleSn: '',
+};
+
+export const reqFormSchema = yup.object().shape({
+  pjtRoleSn: yup.string().required('분야를 선택해주세요'),
+});
+
 export const PROJECTS = [
   {
     id: 1,

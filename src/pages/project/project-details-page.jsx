@@ -1,6 +1,7 @@
 import { Grid } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import _ from 'lodash';
 
 import {
   ProjectInformation,
@@ -68,7 +69,7 @@ const ProjectDetailsPage = () => {
         open={openReqDialog}
         setOpen={setOpenReqDialog}
         selectedUserSn={selectedMember?.userSn}
-        selectedPjtSn={pjtSn}
+        selectedPjt={projectData}
       />
     </Grid>
   );
