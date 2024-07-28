@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import {
   ReceivedProposalList,
   SentProposalList,
+  MatchReqDialog,
 } from '@/pages/match/components';
 import { getStatus } from '@/services/status';
 import MatchSelectedMember from './components/match-selected-member';
@@ -29,6 +30,9 @@ const MatchStatusPage = () => {
   const [sentProject, setSentProject] = useState('');
   const [selectedProjectSN, setSelectedProjectSN] = useState('');
   const [projectReqList, setProjectReqList] = useState([]);
+
+  const [openReqDialog, setOpenReqDialog] = useState(false);
+  const [reqDialogData, setReqDialogData] = useState({});
 
   const [isFetching, setIsFetching] = useState(false);
 
@@ -57,6 +61,12 @@ const MatchStatusPage = () => {
     setSelectedMember(null);
     setSentProject(selectedProjectReqList);
     setSelectedProjectSN(event.target.value);
+  };
+
+  // 보낸/받은 제안에 대해서 요청 상태 변경
+  const handleClickReq = (pjtSn, reqSn, reqStts) => {
+    setReqDialogData({ pjtSn, reqSn, reqStts });
+    setOpenReqDialog(true);
   };
 
   // ----------------------------------------------------------------------
@@ -120,6 +130,7 @@ const MatchStatusPage = () => {
           <SentProposalList
             data={sentProject}
             setSelectedMember={setSelectedMember}
+            handleClickReq={handleClickReq}
           />
         )}
 
@@ -127,6 +138,7 @@ const MatchStatusPage = () => {
           <ReceivedProposalList
             data={myReqList}
             setSelectedProject={setSelectedProject}
+            handleClickReq={handleClickReq}
           />
         )}
       </Grid>
@@ -134,6 +146,13 @@ const MatchStatusPage = () => {
         {selectedMember && <MatchSelectedMember member={selectedMember} />}
         <MatchSelectedProject data={selectedProject}></MatchSelectedProject>
       </Grid>
+
+      <MatchReqDialog
+        open={openReqDialog}
+        setOpen={setOpenReqDialog}
+        data={reqDialogData}
+        fetchStatus={fetchStatus}
+      />
     </Grid>
   );
 };

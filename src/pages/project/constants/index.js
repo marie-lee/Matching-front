@@ -86,7 +86,6 @@ export const EXPERIENCE_OPTIONS = ['깔끔한 코드', '3년 이상의 경력'];
 export const PART_OPTIONS = ['프론트엔드', '백엔드', '디자이너'];
 
 export const reqFormDefaultValues = {
-  pjtSn: '',
   userSn: '',
   pjtRoleSn: '',
 };

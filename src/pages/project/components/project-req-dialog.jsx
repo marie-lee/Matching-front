@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { reqFormDefaultValues, reqFormSchema } from '@/pages/project/constants';
 import { CustomDialog } from '@/components/custom-dialog';
 import { RhfFormProvider, RhfSelect } from '@/components/hook-form';
-import { postFirstReq } from '@/services/project';
+import { postStatusFirstReq } from '@/services/status';
 
 // ----------------------------------------------------------------------
 
@@ -16,7 +16,6 @@ const ProjectReqDialog = ({ open, setOpen, selectedUserSn, selectedPjt }) => {
     resolver: yupResolver(reqFormSchema),
     values: {
       ...reqFormDefaultValues,
-      pjtSn: selectedPjt?.pjtSn,
       userSn: selectedUserSn,
     },
   });
@@ -36,7 +35,7 @@ const ProjectReqDialog = ({ open, setOpen, selectedUserSn, selectedPjt }) => {
     console.log(payload);
     setIsPending(true);
     try {
-      const res = await postFirstReq(payload);
+      const res = await postStatusFirstReq(selectedPjt?.pjtSn, payload);
       console.log('res: ', res);
       setIsPending(false);
     } catch (error) {

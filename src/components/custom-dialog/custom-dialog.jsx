@@ -16,7 +16,7 @@ const CustomDialog = ({
   setOpen,
   onClose,
   //
-  cancelButtonText = '닫기',
+  cancelButtonText = '취소',
   confirmButtonText = '저장',
   onConfirm,
   confirmDisabled = false,
@@ -37,19 +37,22 @@ const CustomDialog = ({
   return (
     <Dialog fullWidth open={open} setOpen={setOpen} {...other}>
       {/* Dialog 제목 및 헤더 메뉴 */}
-      <Stack
-        direction={'row'}
-        alignItems={'center'}
-        justifyContent={'space-between'}
-        spacing={2}
-      >
-        <DialogTitle>{title}</DialogTitle>
-      </Stack>
-
-      <Divider sx={{ borderStyle: 'dashed' }} />
+      {title && (
+        <>
+          <Stack
+            direction={'row'}
+            alignItems={'center'}
+            justifyContent={'space-between'}
+            spacing={2}
+          >
+            <DialogTitle>{title}</DialogTitle>
+          </Stack>
+          <Divider sx={{ borderStyle: 'dashed' }} />
+        </>
+      )}
 
       {/* Dialog 콘텐츠(내용) */}
-      <DialogContent>{children}</DialogContent>
+      <DialogContent sx={{ py: 3 }}>{children}</DialogContent>
 
       <Divider sx={{ borderStyle: 'dashed' }} />
 

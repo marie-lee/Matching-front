@@ -33,9 +33,3 @@ export const URL_POST_PROJECT = '/project/add';
 export const postProject = (payload) => {
   return instance.post(URL_POST_PROJECT, payload);
 };
-
-// 개발자에게 참여 요청 전송
-// export const URL_POST_FIRST_REQ = '/status/{pjtSn}/req';
-export const postFirstReq = (pjtSn, payload) => {
-  return instance.post(`/status/${pjtSn}/req`, payload);
-};
