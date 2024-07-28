@@ -60,7 +60,7 @@ export const userInfoSchema = yup.object().shape({
   authCode: yup.string().required('인증번호를 입력해주세요.'),
   phone: yup
     .string()
-    .matches(/^010-\d{3,4}-\d{4}$/, '유효한 전화번호를 입력해주세요.')
+    .matches(/^010\d{3,4}\d{4}$/, '유효한 전화번호를 입력해주세요.')
     .required('전화번호를 입력해주세요.'),
   password: yup.string().required('비밀번호를 입력해주세요.'),
   confirmPassword: yup
@@ -95,7 +95,10 @@ export const findPwFormDefaultValues = {
 
 export const findPwFormSchema = yup.object().shape({
   name: yup.string().required('이름을 입력해 주세요'),
-  email: yup.string().email('유효한 이메일을 입력해 주세요').required('이메일을 입력해 주세요'),
+  email: yup
+    .string()
+    .email('유효한 이메일을 입력해 주세요')
+    .required('이메일을 입력해 주세요'),
   authCode: yup.string().required('인증번호를 입력해 주세요'),
 });
 

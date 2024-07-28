@@ -7,40 +7,43 @@ import {
   TextField,
   useTheme,
   Modal,
+  Alert,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { userInfoDefaultValues, userInfoSchema } from '@/pages/auth/constants';
-import { postEmailCertification, postEmailConfirmation } from '@/services/member';
+import { useFormContext, Controller } from 'react-hook-form';
+import {
+  postEmailCertification,
+  postEmailConfirmation,
+} from '@/services/member';
 
-const StepTwo = ({ setCurrentStep }) => {
+const StepTwo = ({ setCurrentStep, fetchSignUp, handleSubmit, onSubmit }) => {
   const theme = useTheme();
-  const [isPending, setIsPending] = useState(false);
   const [isCodePending, setIsCodePending] = useState(false);
   const [isConfirmPending, setIsConfirmPending] = useState(false);
   const [open, setOpen] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [confirmationError, setConfirmationError] = useState('');
 
   const {
     control,
     formState: { errors },
-    handleSubmit,
     getValues,
-  } = useForm({
-    resolver: yupResolver(userInfoSchema),
-    defaultValues: userInfoDefaultValues,
-  });
+  } = useFormContext();
 
   const handleEmailCertification = async () => {
     setIsCodePending(true);
+    setEmailError('');
     try {
       const email = getValues('email');
+      if (!email) {
+        throw new Error('이메일이 제공되지 않았습니다');
+      }
       const payload = { USER_EMAIL: email };
       await postEmailCertification(payload);
       setOpen(true);
     } catch (error) {
-      console.error(error);
+      setEmailError(error.message || '이메일 인증 요청 실패');
     } finally {
       setIsCodePending(false);
     }
@@ -48,6 +51,7 @@ const StepTwo = ({ setCurrentStep }) => {
 
   const handleEmailConfirmation = async () => {
     setIsConfirmPending(true);
+    setConfirmationError('');
     try {
       const email = getValues('email');
       const verificationCode = getValues('authCode');
@@ -55,7 +59,7 @@ const StepTwo = ({ setCurrentStep }) => {
       await postEmailConfirmation(payload);
       setConfirmationOpen(true);
     } catch (error) {
-      console.error(error);
+      setConfirmationError(error.message || '인증 코드가 일치하지 않습니다');
     } finally {
       setIsConfirmPending(false);
     }
@@ -67,11 +71,6 @@ const StepTwo = ({ setCurrentStep }) => {
 
   const handleConfirmationClose = () => {
     setConfirmationOpen(false);
-  };
-
-  const onSubmit = (data) => {
-    console.log(data);
-    setCurrentStep(3);
   };
 
   return (
@@ -112,6 +111,7 @@ const StepTwo = ({ setCurrentStep }) => {
                       fullWidth
                       error={!!errors.name}
                       helperText={errors.name ? errors.name.message : ''}
+                      value={field.value || ''}
                     />
                   )}
                 />
@@ -128,6 +128,7 @@ const StepTwo = ({ setCurrentStep }) => {
                       fullWidth
                       error={!!errors.email}
                       helperText={errors.email ? errors.email.message : ''}
+                      value={field.value || ''}
                     />
                   )}
                 />
@@ -141,6 +142,11 @@ const StepTwo = ({ setCurrentStep }) => {
                   인증
                 </Button>
               </Stack>
+              {emailError && (
+                <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
+                  {emailError}
+                </Alert>
+              )}
               <Stack direction="row" spacing={4} alignItems="center">
                 <Typography sx={{ minWidth: 100 }}>인증번호</Typography>
                 <Controller
@@ -155,6 +161,7 @@ const StepTwo = ({ setCurrentStep }) => {
                       helperText={
                         errors.authCode ? errors.authCode.message : ''
                       }
+                      value={field.value || ''}
                     />
                   )}
                 />
@@ -168,6 +175,11 @@ const StepTwo = ({ setCurrentStep }) => {
                   확인
                 </Button>
               </Stack>
+              {confirmationError && (
+                <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
+                  {confirmationError}
+                </Alert>
+              )}
               <Stack direction="row" spacing={4} alignItems="center">
                 <Typography sx={{ minWidth: 100 }}>전화번호</Typography>
                 <Controller
@@ -180,6 +192,7 @@ const StepTwo = ({ setCurrentStep }) => {
                       fullWidth
                       error={!!errors.phone}
                       helperText={errors.phone ? errors.phone.message : ''}
+                      value={field.value || ''}
                     />
                   )}
                 />
@@ -199,6 +212,7 @@ const StepTwo = ({ setCurrentStep }) => {
                       helperText={
                         errors.password ? errors.password.message : ''
                       }
+                      value={field.value || ''}
                     />
                   )}
                 />
@@ -220,21 +234,10 @@ const StepTwo = ({ setCurrentStep }) => {
                           errors.confirmPassword.message
                         : ''
                       }
+                      value={field.value || ''}
                     />
                   )}
                 />
-              </Stack>
-              <Stack direction="row" spacing={4} alignItems="center">
-                <Typography sx={{ minWidth: 100 }}>본인인증</Typography>
-                <LoadingButton
-                  onClick={handleSubmit(onSubmit)}
-                  variant="contained"
-                  sx={{ width: '100%', mt: 2 }}
-                  size={'small'}
-                  loading={isPending}
-                >
-                  본인인증
-                </LoadingButton>
               </Stack>
             </Stack>
           </Box>

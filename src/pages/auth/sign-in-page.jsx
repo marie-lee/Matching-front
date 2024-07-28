@@ -32,7 +32,7 @@ import { postMemberLogin } from '@/services/member';
 const SignInPage = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const navigate = useNavigjsgate();
+  const navigate = useNavigate();
 
   const [isPending, setIsPending] = useState(false);
 
