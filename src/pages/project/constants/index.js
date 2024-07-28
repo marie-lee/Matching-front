@@ -33,37 +33,15 @@ export const projectAddFormSchema = yup.object().shape({
       test: (START_DT, context) => {
         const { SELECTED_DT_YN } = context.parent;
 
-        if (SELECTED_DT_YN) {
+        if (SELECTED_DT_YN === 'true') {
           return !_.isEmpty(START_DT);
         } else {
           return true;
         }
       },
     }),
-  PERIOD: yup.string().test({
-    message: '예상 기간을 입력해주세요',
-    test: (PERIOD, context) => {
-      const { SELECTED_DT_YN } = context.parent;
-
-      if (SELECTED_DT_YN) {
-        return !_.isEmpty(PERIOD);
-      } else {
-        return true;
-      }
-    },
-  }),
-  DURATION_UNIT: yup.string().test({
-    message: '예상 기간 단위를 선택해주세요',
-    test: (DURATION_UNIT, context) => {
-      const { SELECTED_DT_YN } = context.parent;
-
-      if (SELECTED_DT_YN) {
-        return !_.isEmpty(DURATION_UNIT);
-      } else {
-        return true;
-      }
-    },
-  }),
+  PERIOD: yup.string().required('예상 기간을 입력해주세요'),
+  DURATION_UNIT: yup.string().required('예상 기간 단위를 선택해주세요'),
   PJT_DETAIL: yup.string().required('프로젝트 상세 작성을 입력해주세요'),
   STACKS: yup
     .array()
@@ -82,6 +60,11 @@ export const projectAddFormSchema = yup.object().shape({
 export const OPEN_OPTIONS = [
   { label: '상세 공개', value: 'false' },
   { label: '일부 공개', value: 'true' },
+];
+
+export const SELECTED_DT_OPTIONS = [
+  { label: '팀 모집 후 바로 시작', value: 'false' },
+  { label: '날짜 선택', value: 'true' },
 ];
 
 export const DURATION_UNIT_OPTIONS = [

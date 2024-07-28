@@ -7,7 +7,13 @@ import { DURATION_UNIT_OPTIONS, OPEN_OPTIONS } from '@/pages/project/constants';
 
 // ----------------------------------------------------------------------
 
-const ProjectAddPreview = ({ open, setOpen, projectAddForm, handleSubmit }) => {
+const ProjectAddPreview = ({
+  open,
+  setOpen,
+  projectAddForm,
+  isPending,
+  onSubmit,
+}) => {
   const projectAddFormValues = projectAddForm.watch();
 
   const getRoleText = () => {
@@ -153,7 +159,9 @@ const ProjectAddPreview = ({ open, setOpen, projectAddForm, handleSubmit }) => {
             </Button>
           </Grid>
           <Grid item>
-            <LoadingButton onClick={handleSubmit}>등록하기</LoadingButton>
+            <LoadingButton loading={isPending} onClick={onSubmit}>
+              등록하기
+            </LoadingButton>
           </Grid>
         </Grid>
       </Grid>

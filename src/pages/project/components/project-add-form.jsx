@@ -29,6 +29,7 @@ import {
   PART_OPTIONS,
   projectAddFormDefaultValues,
   projectAddFormSchema,
+  SELECTED_DT_OPTIONS,
   STACK_OPTIONS,
 } from '@/pages/project/constants';
 
@@ -64,7 +65,6 @@ const ProjectAddForm = ({ projectAddForm, handleOpenPreview }) => {
   const {
     formState: { errors },
   } = projectAddForm;
-  console.log(errors);
 
   const projectAddFormValues = projectAddForm.watch();
 
@@ -249,35 +249,32 @@ const ProjectAddForm = ({ projectAddForm, handleOpenPreview }) => {
           </Button>
         </Section>
 
-        <Section title={'프로젝트 기간'}>
+        <Section title={'예상 프로젝트 시작일'}>
           <RhfRadioGroup
             name={'SELECTED_DT_YN'}
-            options={[
-              { label: '팀 모집 후 바로 시작', value: false },
-              { label: '날짜 선택', value: true },
-            ]}
+            options={SELECTED_DT_OPTIONS}
           />
           {projectAddFormValues.SELECTED_DT_YN === 'true' && (
-            <Stack spacing={2}>
-              <Box sx={{ width: 200 }}>
-                <RhfDatePicker label={'업무 시작'} name={'START_DT'} />
-              </Box>
-
-              <Stack direction={'row'} spacing={1}>
-                <Box sx={{ width: 200 }}>
-                  <RhfTextField
-                    label={'예상 기간'}
-                    name={'PERIOD'}
-                    variant={'outlined'}
-                  />
-                </Box>
-                <RhfRadioGroup
-                  name={'DURATION_UNIT'}
-                  options={DURATION_UNIT_OPTIONS}
-                />
-              </Stack>
-            </Stack>
+            <Box sx={{ width: 200 }}>
+              <RhfDatePicker label={'업무 시작'} name={'START_DT'} />
+            </Box>
           )}
+        </Section>
+
+        <Section title={'프로젝트 예상 기간'}>
+          <Stack direction={'row'} spacing={1}>
+            <Box sx={{ width: 200 }}>
+              <RhfTextField
+                label={'예상 기간'}
+                name={'PERIOD'}
+                variant={'outlined'}
+              />
+            </Box>
+            <RhfRadioGroup
+              name={'DURATION_UNIT'}
+              options={DURATION_UNIT_OPTIONS}
+            />
+          </Stack>
         </Section>
 
         <Section title={'프로젝트 관련 스킬'}>
