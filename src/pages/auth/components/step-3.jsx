@@ -3,7 +3,7 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 import signUp from '@/assets/sign-up.png';
 import { useTheme } from '@mui/material/styles';
 
-const StepThree = () => {
+const StepThree = ({ name }) => {
   const theme = useTheme();
 
   return (
@@ -33,7 +33,7 @@ const StepThree = () => {
           sx={{ mb: 2, textAlign: 'center' }}
           fontSize={theme.typography.fontSize.xl}
         >
-          이메일 님!
+          {name} 님!
           <br />
           회원가입을 진심으로 환영합니다.
         </Typography>
