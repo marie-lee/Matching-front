@@ -21,6 +21,7 @@ const Section = ({
   keyName,
   data,
   disabled,
+  confirmDisabled,
   handleClickProject,
   handleClickReq,
 }) => {
@@ -47,6 +48,7 @@ const Section = ({
               key={`match-${keyName}-${index}`}
               value={item}
               disabled={disabled}
+              confirmDisabled={confirmDisabled}
               handleClickProject={handleClickProject}
               handleClickReq={handleClickReq}
             />
@@ -59,7 +61,13 @@ const Section = ({
 
 // ----------------------------------------------------------------------
 
-const Item = ({ value, disabled, handleClickProject, handleClickReq }) => {
+const Item = ({
+  value,
+  disabled,
+  confirmDisabled,
+  handleClickProject,
+  handleClickReq,
+}) => {
   return (
     <Grid item xs={12}>
       <Grid container p={2} border={1} borderColor={'divider'} borderRadius={1}>
@@ -96,20 +104,19 @@ const Item = ({ value, disabled, handleClickProject, handleClickReq }) => {
 
           {!disabled && (
             <Grid item container xs={12} md={2} spacing={1}>
-              <Grid item xs={6} md={12}>
-                <Button
-                  fullWidth
-                  size={'small'}
-                  onClick={() => {
-                    const reqStts =
-                      value.REQ_STTS === 'AGREE' ? 'CONFIRM' : 'AGREE';
-
-                    handleClickReq(value.PJT_SN, value.REQ_SN, reqStts);
-                  }}
-                >
-                  수락
-                </Button>
-              </Grid>
+              {!confirmDisabled && (
+                <Grid item xs={6} md={12}>
+                  <Button
+                    fullWidth
+                    size={'small'}
+                    onClick={() =>
+                      handleClickReq(value.PJT_SN, value.REQ_SN, 'AGREE')
+                    }
+                  >
+                    수락
+                  </Button>
+                </Grid>
+              )}
               <Grid item xs={6} md={12}>
                 <Button
                   fullWidth
@@ -166,6 +173,7 @@ const ReceivedProposalList = ({ data, setSelectedProject, handleClickReq }) => {
         title={'최종 확인'}
         data={_.filter(data, { REQ_STTS: 'AGREE' })}
         keyName={'success'}
+        confirmDisabled
         handleClickProject={handleClickProject}
         handleClickReq={handleClickReq}
       />
