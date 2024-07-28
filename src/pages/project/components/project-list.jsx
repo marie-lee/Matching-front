@@ -7,6 +7,7 @@ import { BasicDataGrid } from '@/components/data-grid';
 
 import { PATHS } from '@/routes/paths';
 import { getProjectList } from '@/services/project';
+import dayjs from 'dayjs';
 
 // ----------------------------------------------------------------------
 
@@ -121,8 +122,15 @@ const ProjectList = () => {
       field: 'START_DT',
       headerName: '기간',
       sortable: false,
-      valueGetter: (params) =>
-        `${params.row.START_DT} ~ ${params.row.END_DT || ''}`,
+      valueGetter: (params) => {
+        if (params.row.START_DT && params.row.END_DT) {
+          return `${dayjs(params.row.START_DT).format('YYYY-MM-DD')} ~ ${dayjs(params.row.END_DT).format('YYYY-MM-DD')}`;
+        } else if (params.row.START_DT) {
+          return `${dayjs(params.row.START_DT).format('YYYY-MM-DD')}`;
+        } else {
+          return '';
+        }
+      },
       width: 250,
     },
     {
