@@ -7,86 +7,11 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { useState, useEffect } from 'react';
-import { getProject } from '@/services/project';
-import { ResponsiveImg } from '@/components/img';
-import { useLocation } from 'react-router-dom';
-
-const Group = ({ title, currentCnt, expectCnt, userInfo }) => {
-  return (
-    <Grid item xs={6}>
-      <Stack
-        direction={'row'}
-        justifyContent={'space-between'}
-        spacing={0.5}
-        mb={0.5}
-      >
-        <Typography variant={'sm'}>{title}</Typography>
-        <Typography variant={'sm'}>
-          {currentCnt} / {expectCnt}
-        </Typography>
-      </Stack>
-      <Box
-        p={2}
-        sx={{
-          backgroundColor: (theme) => theme.palette.grey[300],
-          minHeight: 56.75,
-        }}
-      >
-        {userInfo.flatMap((user, index) => {
-          if (user.part === title) {
-            return user.names
-              .split(', ')
-              .map((name, nameIndex) => (
-                <Chip
-                  sx={{ mr: 0.5 }}
-                  key={`${index}-${nameIndex}`}
-                  avatar={<Avatar alt={`${name} 프로필 이미지`} />}
-                  label={name}
-                  size="small"
-                  clickable
-                />
-              ));
-          }
-          return [];
-        })}
-      </Box>
-    </Grid>
-  );
-};
 
 // ----------------------------------------------------------------------
 
-const ProjectInformation = ({ onComplete }) => {
-  const location = useLocation();
-  const [projectDatas, setProjectDatas] = useState(null);
-  const [userInfo, setUserInfo] = useState(null);
-
-  const fetchProject = async () => {
-    try {
-      const { projectData } = location.state;
-
-      const res = await getProject(projectData.PJT_SN);
-      console.log('내 프로젝트 조회', res.data);
-
-      const userInfo = res.data.role.map((role) => ({
-        names: role.mem.split(',').join(', '),
-        part: role.part,
-      }));
-      setUserInfo(userInfo);
-      setProjectDatas(res.data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      onComplete();
-    }
-  };
-
-  useEffect(() => {
-    fetchProject();
-  }, []);
-
-  if (!projectDatas) {
+const ProjectInformation = ({ projectData }) => {
+  if (!projectData) {
     return <div>Loading.....</div>;
   }
 
@@ -106,10 +31,10 @@ const ProjectInformation = ({ onComplete }) => {
           <Grid item xs={12} md={10}>
             <Stack>
               {/* 제목 */}
-              <Typography variant={'xl'}>{projectDatas.pjtNm}</Typography>
+              <Typography variant={'xl'}>{projectData.pjtNm}</Typography>
               {/* 팀장, 기간 */}
               <Stack direction={'row'} spacing={1} mt={1}>
-                <Typography>{projectDatas.pjtIntro}</Typography>
+                <Typography>{projectData.pjtIntro}</Typography>
               </Stack>
             </Stack>
           </Grid>
@@ -139,7 +64,7 @@ const ProjectInformation = ({ onComplete }) => {
               </Grid>
               <Grid item xs={10}>
                 <Typography variant={'sm'}>
-                  {projectDatas.startDt}~{projectDatas.endDt}
+                  {projectData.startDt}~{projectData.endDt}
                 </Typography>
               </Grid>
             </Grid>
@@ -155,18 +80,15 @@ const ProjectInformation = ({ onComplete }) => {
               </Grid>
               <Grid item xs={10}>
                 <Typography variant={'sm'}>
-                  {projectDatas.stack && projectDatas.stack.length > 0 ?
+                  {projectData.stack && projectData.stack.length > 0 ?
                     <Grid item container spacing={0.5}>
-                      {projectDatas.stack.split(',').map((stack, index) => (
+                      {projectData.stack.split(',').map((stack, index) => (
                         <Grid item key={`stack${index}`}>
                           <Chip label={stack.trim()} size="small" />
                         </Grid>
                       ))}
                     </Grid>
-                  : <Chip
-                      label={projectDatas.stack || 'No Data'}
-                      size="small"
-                    />
+                  : <Chip label={projectData.stack || 'No Data'} size="small" />
                   }
                 </Typography>
               </Grid>
@@ -176,7 +98,7 @@ const ProjectInformation = ({ onComplete }) => {
                 <Typography variant={'md'}>모집 인원</Typography>
               </Grid>
               <Grid item container xs={10}>
-                {projectDatas.role.map((group, index) => (
+                {projectData?.role?.map((group, index) => (
                   <Grid item key={`group_${index}`} xs={3}>
                     <Typography variant={'sm'}>
                       {group.part} : {group.totalCnt}명
@@ -190,7 +112,7 @@ const ProjectInformation = ({ onComplete }) => {
                 <Typography variant={'md'}>남은 인원</Typography>
               </Grid>
               <Grid item container xs={10}>
-                {projectDatas.role.map((group, index) => (
+                {projectData?.role?.map((group, index) => (
                   <Grid item key={`group_${index}`} xs={3}>
                     <Typography variant={'sm'}>
                       {group.part} : {group.totalCnt - group.cnt}명

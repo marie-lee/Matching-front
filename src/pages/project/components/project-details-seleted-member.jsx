@@ -106,7 +106,7 @@ const PortfolioList = (member) => {
 
 // ----------------------------------------------------------------------
 
-const ProjectDetailsSelectedMember = ({ member }) => {
+const ProjectDetailsSelectedMember = ({ member, handleClickReq }) => {
   return (
     <Stack>
       <Grid
@@ -129,7 +129,7 @@ const ProjectDetailsSelectedMember = ({ member }) => {
             justifyContent={'space-between'}
           >
             <Typography variant={'lg'}>{member.userNm}</Typography>
-            <Button>요청</Button>
+            <Button onClick={handleClickReq}>요청</Button>
           </Grid>
 
           {/* 한 줄 소개 */}

@@ -20,7 +20,7 @@ const project = {
       element: <ProjectListPage />,
     },
     {
-      path: 'details/:id',
+      path: 'details/:pjtSn',
       element: <ProjectDetailsPage />,
     },
     {
