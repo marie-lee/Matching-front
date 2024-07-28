@@ -24,7 +24,7 @@ export const projectAddFormSchema = yup.object().shape({
   CONSTRUCTOR_ROLE: yup
     .mixed()
     .required('프로젝트 상세 공개 여부를 선택해주세요'),
-  SELECTED_DT_YN: yup.mixed().required('프로젝트 기간을 선택해주세요'),
+  SELECTED_DT_YN: yup.mixed().required('예상 프로젝트 시작일을 선택해주세요'),
   START_DT: yup
     .mixed()
     .nullable()
