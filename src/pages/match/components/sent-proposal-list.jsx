@@ -1,7 +1,6 @@
 import {
   Button,
   Chip,
-  Dialog,
   Divider,
   Grid,
   Link,
@@ -13,13 +12,12 @@ import _ from 'lodash';
 
 import { ResponsiveImg } from '@/components/img';
 import { getStatusUser } from '@/services/status';
-import { UserInfo } from '@/pages/match/components';
 import { Icon } from '@iconify/react';
 import { ArrowDropDown } from '@mui/icons-material';
 
 // ----------------------------------------------------------------------
 
-const ProjectSection = ({ data, handleClickUser }) => {
+const ProjectSection = ({ data, handleClickUser, handleClickReq }) => {
   return (
     <Grid item xs={12}>
       <Grid container bgcolor={'background.default'}>
@@ -35,8 +33,9 @@ const ProjectSection = ({ data, handleClickUser }) => {
           : <Grid item container spacing={2}>
               <Section
                 title={'제안 중인 요청'}
-                data={_.filter(data.REQ_LIST, { REQ_STTS: 'CONFIRM' })}
+                data={_.filter(data.REQ_LIST, { REQ_STTS: 'REQ' })}
                 handleClickUser={handleClickUser}
+                handleClickReq={handleClickReq}
                 confirmDisabled
                 pjtSn={data.PJT_SN}
               />
@@ -45,12 +44,14 @@ const ProjectSection = ({ data, handleClickUser }) => {
                 title={'개발자 승인'}
                 data={_.filter(data.REQ_LIST, { REQ_STTS: 'AGREE' })}
                 handleClickUser={handleClickUser}
+                handleClickReq={handleClickReq}
                 pjtSn={data.PJT_SN}
               />
 
               <Section
                 title={'거절'}
                 data={_.filter(data.REQ_LIST, { REQ_STTS: 'REJECT' })}
+                handleClickReq={handleClickReq}
                 disabled
                 pjtSn={data.PJT_SN}
               />
@@ -71,6 +72,7 @@ const Section = ({
   disabled,
   confirmDisabled,
   handleClickUser,
+  handleClickReq,
 }) => {
   return (
     <Grid item xs={12}>
@@ -100,6 +102,7 @@ const Section = ({
               disabled={disabled}
               confirmDisabled={confirmDisabled}
               handleClickUser={handleClickUser}
+              handleClickReq={handleClickReq}
               pjtSn={pjtSn}
             />
           ))}
@@ -111,7 +114,16 @@ const Section = ({
 
 // ----------------------------------------------------------------------
 
-const Item = ({ value, disabled, confirmDisabled, handleClickUser, pjtSn }) => {
+const Item = ({
+  value,
+  disabled,
+  confirmDisabled,
+  handleClickUser,
+  handleClickReq,
+  pjtSn,
+}) => {
+  console.log(value);
+
   return (
     <Grid item xs={12} md={6}>
       <Grid container p={1} bgcolor={'Background'}>
@@ -151,7 +163,13 @@ const Item = ({ value, disabled, confirmDisabled, handleClickUser, pjtSn }) => {
             <Grid item container xs={12} md={4} spacing={1}>
               {!confirmDisabled && (
                 <Grid item xs={6} md={12}>
-                  <Button fullWidth size={'small'}>
+                  <Button
+                    fullWidth
+                    size={'small'}
+                    onClick={() =>
+                      handleClickReq(pjtSn, value?.REQ_SN, 'FINAL_REQ')
+                    }
+                  >
                     수락
                   </Button>
                 </Grid>
@@ -163,6 +181,7 @@ const Item = ({ value, disabled, confirmDisabled, handleClickUser, pjtSn }) => {
                   variant={'outlined'}
                   color={'error'}
                   size={'small'}
+                  onClick={() => handleClickReq(pjtSn, value?.REQ_SN, 'CANCEL')}
                 >
                   {confirmDisabled ? '취소' : '거절'}
                 </Button>
@@ -177,7 +196,7 @@ const Item = ({ value, disabled, confirmDisabled, handleClickUser, pjtSn }) => {
 
 // ----------------------------------------------------------------------
 
-const SentProposalList = ({ data, setSelectedMember }) => {
+const SentProposalList = ({ data, setSelectedMember, handleClickReq }) => {
   const [userDialogOpen, setUserDialogOpen] = useState(false);
 
   const [user, setUser] = useState();
@@ -203,6 +222,7 @@ const SentProposalList = ({ data, setSelectedMember }) => {
         key={`project_${1}`}
         data={data}
         handleClickUser={handleClickUser}
+        handleClickReq={handleClickReq}
       />
     </Grid>
   );

@@ -13,12 +13,17 @@ import { useState } from 'react';
 
 import { ResponsiveImg } from '@/components/img';
 import { getStatusProject } from '@/services/status';
-import { ProjectInfo } from '@/pages/match/components';
-import { ProjectDetails } from '@/pages/project/components';
 
 // ----------------------------------------------------------------------
 
-const Section = ({ title, keyName, data, disabled, handleClickProject }) => {
+const Section = ({
+  title,
+  keyName,
+  data,
+  disabled,
+  handleClickProject,
+  handleClickReq,
+}) => {
   return (
     <Grid item xs={12}>
       <Grid container bgcolor={'background.default'}>
@@ -43,6 +48,7 @@ const Section = ({ title, keyName, data, disabled, handleClickProject }) => {
               value={item}
               disabled={disabled}
               handleClickProject={handleClickProject}
+              handleClickReq={handleClickReq}
             />
           ))}
         </Grid>
@@ -53,7 +59,7 @@ const Section = ({ title, keyName, data, disabled, handleClickProject }) => {
 
 // ----------------------------------------------------------------------
 
-const Item = ({ value, disabled, handleClickProject }) => {
+const Item = ({ value, disabled, handleClickProject, handleClickReq }) => {
   return (
     <Grid item xs={12}>
       <Grid container p={2} border={1} borderColor={'divider'} borderRadius={1}>
@@ -91,7 +97,16 @@ const Item = ({ value, disabled, handleClickProject }) => {
           {!disabled && (
             <Grid item container xs={12} md={2} spacing={1}>
               <Grid item xs={6} md={12}>
-                <Button fullWidth size={'small'}>
+                <Button
+                  fullWidth
+                  size={'small'}
+                  onClick={() => {
+                    const reqStts =
+                      value.REQ_STTS === 'AGREE' ? 'CONFIRM' : 'AGREE';
+
+                    handleClickReq(value.PJT_SN, value.REQ_SN, reqStts);
+                  }}
+                >
                   수락
                 </Button>
               </Grid>
@@ -101,6 +116,9 @@ const Item = ({ value, disabled, handleClickProject }) => {
                   variant={'outlined'}
                   color={'error'}
                   size={'small'}
+                  onClick={() =>
+                    handleClickReq(value.PJT_SN, value.REQ_SN, 'REJECT')
+                  }
                 >
                   거절
                 </Button>
@@ -115,7 +133,7 @@ const Item = ({ value, disabled, handleClickProject }) => {
 
 // ----------------------------------------------------------------------
 
-const ReceivedProposalList = ({ data, setSelectedProject }) => {
+const ReceivedProposalList = ({ data, setSelectedProject, handleClickReq }) => {
   const [project, setProject] = useState();
 
   const fetchProjectDetail = async (pjtSn) => {
@@ -138,9 +156,10 @@ const ReceivedProposalList = ({ data, setSelectedProject }) => {
     <Grid container spacing={3}>
       <Section
         title={'요청 온 제안'}
-        data={_.filter(data, { REQ_STTS: 'CONFIRM' })}
+        data={_.filter(data, { REQ_STTS: 'REQ' })}
         keyName={'wait'}
         handleClickProject={handleClickProject}
+        handleClickReq={handleClickReq}
       />
 
       <Section
@@ -148,6 +167,7 @@ const ReceivedProposalList = ({ data, setSelectedProject }) => {
         data={_.filter(data, { REQ_STTS: 'AGREE' })}
         keyName={'success'}
         handleClickProject={handleClickProject}
+        handleClickReq={handleClickReq}
       />
 
       <Section
@@ -155,6 +175,7 @@ const ReceivedProposalList = ({ data, setSelectedProject }) => {
         data={_.filter(data, { REQ_STTS: 'REJECT' })}
         keyName={'deny'}
         disabled={true}
+        handleClickReq={handleClickReq}
       />
     </Grid>
   );

@@ -61,14 +61,14 @@ const MemberItem = ({ member, ...other }) => {
 // ----------------------------------------------------------------------
 
 const ProjectDetailsRecommendMember = ({ setSelectedMember }) => {
-  const { id } = useParams();
+  const { pjtSn } = useParams();
   const [profilesDialogOpen, setProfilesDialogOpen] = useState(false);
   const [recommendList, setRecommendList] = useState([]);
   const [member, setMember] = useState({});
 
   const fetchProject = async () => {
     try {
-      const recommendList = await getRecommend(id);
+      const recommendList = await getRecommend(pjtSn);
       setRecommendList(recommendList.data);
       console.log('recommendList', recommendList);
     } catch (error) {

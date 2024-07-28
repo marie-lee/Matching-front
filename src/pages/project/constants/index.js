@@ -24,7 +24,7 @@ export const projectAddFormSchema = yup.object().shape({
   CONSTRUCTOR_ROLE: yup
     .mixed()
     .required('프로젝트 상세 공개 여부를 선택해주세요'),
-  SELECTED_DT_YN: yup.mixed().required('프로젝트 기간을 선택해주세요'),
+  SELECTED_DT_YN: yup.mixed().required('예상 프로젝트 시작일을 선택해주세요'),
   START_DT: yup
     .mixed()
     .nullable()
@@ -33,37 +33,15 @@ export const projectAddFormSchema = yup.object().shape({
       test: (START_DT, context) => {
         const { SELECTED_DT_YN } = context.parent;
 
-        if (SELECTED_DT_YN) {
+        if (SELECTED_DT_YN === 'true') {
           return !_.isEmpty(START_DT);
         } else {
           return true;
         }
       },
     }),
-  PERIOD: yup.string().test({
-    message: '예상 기간을 입력해주세요',
-    test: (PERIOD, context) => {
-      const { SELECTED_DT_YN } = context.parent;
-
-      if (SELECTED_DT_YN) {
-        return !_.isEmpty(PERIOD);
-      } else {
-        return true;
-      }
-    },
-  }),
-  DURATION_UNIT: yup.string().test({
-    message: '예상 기간 단위를 선택해주세요',
-    test: (DURATION_UNIT, context) => {
-      const { SELECTED_DT_YN } = context.parent;
-
-      if (SELECTED_DT_YN) {
-        return !_.isEmpty(DURATION_UNIT);
-      } else {
-        return true;
-      }
-    },
-  }),
+  PERIOD: yup.string().required('예상 기간을 입력해주세요'),
+  DURATION_UNIT: yup.string().required('예상 기간 단위를 선택해주세요'),
   PJT_DETAIL: yup.string().required('프로젝트 상세 작성을 입력해주세요'),
   STACKS: yup
     .array()
@@ -84,6 +62,11 @@ export const OPEN_OPTIONS = [
   { label: '일부 공개', value: 'true' },
 ];
 
+export const SELECTED_DT_OPTIONS = [
+  { label: '팀 모집 후 바로 시작', value: 'false' },
+  { label: '날짜 선택', value: 'true' },
+];
+
 export const DURATION_UNIT_OPTIONS = [
   { label: '일', value: 'DAY' },
   { label: '개월', value: 'MONTH' },
@@ -101,6 +84,15 @@ export const STACK_OPTIONS = [
 export const EXPERIENCE_OPTIONS = ['깔끔한 코드', '3년 이상의 경력'];
 
 export const PART_OPTIONS = ['프론트엔드', '백엔드', '디자이너'];
+
+export const reqFormDefaultValues = {
+  userSn: '',
+  pjtRoleSn: '',
+};
+
+export const reqFormSchema = yup.object().shape({
+  pjtRoleSn: yup.string().required('분야를 선택해주세요'),
+});
 
 export const PROJECTS = [
   {
