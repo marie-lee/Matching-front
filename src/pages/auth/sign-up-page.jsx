@@ -62,7 +62,6 @@ const SignUpPage = () => {
     } else if (currentStep === 2) {
       const valid = await trigger();
       if (valid) {
-        console.log('Step 2 triggered');
         await fetchSignUp(data);
       }
     }
@@ -81,7 +80,6 @@ const SignUpPage = () => {
       await postMemberJoin(payload);
       setCurrentStep(3);
     } catch (error) {
-      console.error(error);
     } finally {
       setIsPending(false);
     }
