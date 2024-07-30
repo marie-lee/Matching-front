@@ -15,7 +15,8 @@ export const getPortfolioDetail = (pfolSn) => {
 };
 
 // 이메일 인증
-export const URL_POST_EMAIL_CERTIFICATION = '/member/registration/certification';
+export const URL_POST_EMAIL_CERTIFICATION =
+  '/member/registration/certification';
 export const postEmailCertification = (payload) => {
   return instance.post(URL_POST_EMAIL_CERTIFICATION, payload);
 };
@@ -30,4 +31,28 @@ export const postEmailConfirmation = (payload) => {
 export const URL_POST_MEMBER_JOIN = '/member/registration/join';
 export const postMemberJoin = (payload) => {
   return instance.post(URL_POST_MEMBER_JOIN, payload);
+};
+
+// 아이디 찾기
+export const URL_POST_MEMBER_FIND_ID = '/member/find/id';
+export const postMemberFindId = (payload) => {
+  return instance.post(URL_POST_MEMBER_FIND_ID, payload);
+};
+
+// 비밀번호 재설정
+export const URL_POST_RESET_PASSWORD = '/member/find/pw/confirmation';
+export const postResetPassword = (payload) => {
+  return instance.post(URL_POST_RESET_PASSWORD, payload);
+};
+
+// 비밀번호 찾기 - 이메일 인증 요청
+export const URL_POST_PW_CERTIFICATION = '/member/find/pw';
+export const postPwCertification = (payload) => {
+  return instance.post(URL_POST_PW_CERTIFICATION, payload);
+};
+
+// 비밀번호 찾기 - 이메일 인증 확인
+export const URL_POST_PW_CONFIRMATION = '/member/find/pw/certification';
+export const postPwVerification = (payload) => {
+  return instance.post(URL_POST_PW_CONFIRMATION, payload);
 };
