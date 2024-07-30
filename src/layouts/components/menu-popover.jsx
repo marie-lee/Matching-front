@@ -16,6 +16,10 @@ const MENUS = [
     label: '매칭 현황',
     path: PATHS.match.root,
   },
+  {
+    label: 'wbs 작성',
+    path: PATHS.wbs.root,
+  },
 ];
 
 const Menu = ({ menu, handleClickItem }) => {
