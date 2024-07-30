@@ -1,4 +1,4 @@
-import { Box, Stack, Typography, useTheme } from '@mui/material';
+import { Box, Stack, Typography, useTheme, Modal } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -26,6 +26,9 @@ const SignUpPage = () => {
 
   const [isPending, setIsPending] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -62,6 +65,7 @@ const SignUpPage = () => {
     } else if (currentStep === 2) {
       const valid = await trigger();
       if (valid) {
+        setUserName(data.name);
         await fetchSignUp(data);
       }
     }
@@ -69,6 +73,7 @@ const SignUpPage = () => {
 
   const fetchSignUp = async (data) => {
     setIsPending(true);
+    setErrorMessage('');
     try {
       const payload = {
         USER_NM: data.name,
@@ -80,12 +85,18 @@ const SignUpPage = () => {
       await postMemberJoin(payload);
       setCurrentStep(3);
     } catch (error) {
+      const errorData =
+        error.response?.data || '회원가입 중 오류가 발생했습니다';
+      setErrorMessage(errorData);
+      setErrorModalOpen(true);
     } finally {
       setIsPending(false);
     }
   };
 
-  // ----------------------------------------------------------------------
+  const handleCloseErrorModal = () => {
+    setErrorModalOpen(false);
+  };
 
   return (
     <Box
@@ -104,7 +115,6 @@ const SignUpPage = () => {
           padding: 4,
         }}
       >
-        {/* title */}
         <Stack alignItems={'center'} mb={7}>
           <Typography variant={'h5'} fontFamily={'Pretendard'}>
             Sign up
@@ -113,7 +123,6 @@ const SignUpPage = () => {
 
         <Box sx={{ mb: 8 }} />
 
-        {/* navigation */}
         <Stack
           direction="row"
           justifyContent="center"
@@ -137,14 +146,14 @@ const SignUpPage = () => {
                   height: 30,
                   borderRadius: '50%',
                   border: `1px solid ${
-                    step.value === currentStep
-                      ? theme.palette.primary.main
-                      : theme.palette.text.disabled
+                    step.value === currentStep ?
+                      theme.palette.primary.main
+                    : theme.palette.text.disabled
                   }`,
                   color:
-                    step.value === currentStep
-                      ? theme.palette.primary.main
-                      : theme.palette.text.disabled,
+                    step.value === currentStep ?
+                      theme.palette.primary.main
+                    : theme.palette.text.disabled,
                 }}
               >
                 {`0${step.value}`}
@@ -158,13 +167,17 @@ const SignUpPage = () => {
 
         <Box sx={{ mb: 6 }} />
 
-        {/* step content */}
         <RhfFormProvider form={signUpForm}>
           {currentStep === 1 && <StepOne />}
           {currentStep === 2 && (
-            <StepTwo setCurrentStep={setCurrentStep} fetchSignUp={fetchSignUp} />
+            <StepTwo
+              setCurrentStep={setCurrentStep}
+              fetchSignUp={fetchSignUp}
+              handleSubmit={handleSubmit}
+              onSubmit={onSubmit}
+            />
           )}
-          {currentStep === 3 && <StepThree />}
+          {currentStep === 3 && <StepThree name={userName} />}
 
           <Box sx={{ mb: 10 }} />
 
@@ -196,6 +209,49 @@ const SignUpPage = () => {
         </RhfFormProvider>
         <Box sx={{ mb: 10 }} />
       </Box>
+
+      {/* Error Modal */}
+      <Modal
+        open={errorModalOpen}
+        onClose={handleCloseErrorModal}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Box
+          sx={{
+            backgroundColor: theme.palette.background.paper,
+            padding: 4,
+            borderRadius: 1,
+            boxShadow: 24,
+            width: '60%',
+            maxWidth: '520px',
+            textAlign: 'center',
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            회원가입 실패
+          </Typography>
+          <Typography variant="body1" gutterBottom>
+            {errorMessage}
+          </Typography>
+          <LoadingButton
+            variant="contained"
+            onClick={handleCloseErrorModal}
+            sx={{
+              mt: 2,
+              backgroundColor: theme.palette.primary.main,
+              '&:hover': {
+                backgroundColor: theme.palette.primary.dark,
+              },
+            }}
+          >
+            확인
+          </LoadingButton>
+        </Box>
+      </Modal>
     </Box>
   );
 };
