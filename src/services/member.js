@@ -15,7 +15,8 @@ export const getPortfolioDetail = (pfolSn) => {
 };
 
 // 이메일 인증
-export const URL_POST_EMAIL_CERTIFICATION = '/member/registration/certification';
+export const URL_POST_EMAIL_CERTIFICATION =
+  '/member/registration/certification';
 export const postEmailCertification = (payload) => {
   return instance.post(URL_POST_EMAIL_CERTIFICATION, payload);
 };
@@ -30,4 +31,10 @@ export const postEmailConfirmation = (payload) => {
 export const URL_POST_MEMBER_JOIN = '/member/registration/join';
 export const postMemberJoin = (payload) => {
   return instance.post(URL_POST_MEMBER_JOIN, payload);
+};
+
+// 아이디 찾기
+export const URL_POST_MEMBER_FIND_ID = '/member/find/id';
+export const postMemberFindId = (payload) => {
+  return instance.post(URL_POST_MEMBER_FIND_ID, payload);
 };
