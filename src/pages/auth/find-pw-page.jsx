@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
-import { Box, Stack, Typography, useTheme, Link, Modal, Button } from '@mui/material';
+import { Box, Stack, Typography, useTheme, Link } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { RhfFormProvider, RhfTextField } from '@/components/hook-form';
-import { findPwFormDefaultValues, findPwFormSchema } from '@/pages/auth/constants';
+import {
+  findPwFormDefaultValues,
+  findPwFormSchema,
+} from '@/pages/auth/constants';
 import { PATHS } from '@/routes/paths';
-import { postPwCertification, postPwVerification } from '@/services/member';
+
+// ----------------------------------------------------------------------
+// 비밀번호 찾기 화면
+// ----------------------------------------------------------------------
 
 const FindPwPage = () => {
   const theme = useTheme();
@@ -15,26 +21,21 @@ const FindPwPage = () => {
 
   const [isPending, setIsPending] = useState(false);
   const [isCodePending, setIsCodePending] = useState(false);
-  const [open, setOpen] = useState(false);
 
   const findPwForm = useForm({
     defaultValues: findPwFormDefaultValues,
     resolver: yupResolver(findPwFormSchema),
   });
 
-  const { handleSubmit, trigger, getValues } = findPwForm;
+  const { handleSubmit } = findPwForm;
 
   const onSubmit = async (data) => {
     setIsPending(true);
     try {
-      const { email, authCode } = data;
-      const valid = await trigger(['email', 'authCode']);
-      if (valid) {
-        await postPwVerification({ USER_EMAIL: email, verificationCode: authCode });
-        navigate(PATHS.auth.resetPw, { state: { email } });
-      }
+      console.log(data);
+      navigate(PATHS.auth.resetPw);
     } catch (error) {
-      findPwForm.setError('authCode', { message: error?.response?.data || '인증에 실패했습니다.' });
+      findPwForm.setError('email', { message: error?.data });
     } finally {
       setIsPending(false);
     }
@@ -43,21 +44,12 @@ const FindPwPage = () => {
   const handleRequestCode = async () => {
     setIsCodePending(true);
     try {
-      const { name, email } = getValues();
-      const valid = await trigger(['name', 'email']);
-      if (valid) {
-        await postPwCertification({ USER_NM: name, USER_EMAIL: email });
-        setOpen(true);
-      }
+      // 인증번호 요청
     } catch (error) {
-      findPwForm.setError('email', { message: error.response?.data || error.message || '인증번호 요청에 실패했습니다.' });
+      findPwForm.setError('email', { message: error?.data });
     } finally {
       setIsCodePending(false);
     }
-  };
-
-  const handleClose = () => {
-    setOpen(false);
   };
 
   return (
@@ -105,22 +97,24 @@ const FindPwPage = () => {
             </Stack>
             <Stack spacing={3}>
               <RhfTextField name="name" label="이름" variant="outlined" />
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Stack direction="row" spacing={2}>
                 <RhfTextField
                   name="email"
                   label="이메일"
                   variant="outlined"
                   fullWidth
                 />
-                <LoadingButton
-                  loading={isCodePending}
-                  variant="contained"
-                  onClick={handleRequestCode}
-                  sx={{ minWidth: 110 }}
-                >
-                  인증번호 요청
-                </LoadingButton>
-              </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <LoadingButton
+                    loading={isCodePending}
+                    variant="contained"
+                    onClick={handleRequestCode}
+                    sx={{ height: '4.2vh', width: '15vh' }}
+                  >
+                    인증번호 요청
+                  </LoadingButton>
+                </Box>
+              </Stack>
               <RhfTextField
                 name="authCode"
                 label="인증번호"
@@ -132,7 +126,7 @@ const FindPwPage = () => {
               fullWidth
               type="submit"
               variant="contained"
-              sx={{ mt: 3, height: '5vh' }}
+              sx={{ mt: 3, height: '4vh' }}
             >
               다음
             </LoadingButton>
@@ -147,46 +141,6 @@ const FindPwPage = () => {
           </Box>
         </Stack>
       </RhfFormProvider>
-
-      <Modal
-        open={open}
-        onClose={handleClose}
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Box
-          sx={{
-            backgroundColor: theme.palette.background.paper,
-            padding: 4,
-            borderRadius: 1,
-            boxShadow: 24,
-            width: '60%',
-            maxWidth: '520px',
-            textAlign: 'center',
-          }}
-        >
-          <Typography variant="h6" gutterBottom>
-            이메일로 인증번호를 전송했습니다.
-          </Typography>
-          <Button
-            variant="contained"
-            fullWidth
-            onClick={handleClose}
-            sx={{
-              mt: 2,
-              backgroundColor: theme.palette.primary.main,
-              '&:hover': {
-                backgroundColor: theme.palette.primary.dark,
-              },
-            }}
-          >
-            확인
-          </Button>
-        </Box>
-      </Modal>
     </>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Stack, Typography, useTheme, Button, Modal } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { RhfFormProvider, RhfTextField } from '@/components/hook-form';
@@ -10,16 +10,17 @@ import {
   resetPwFormSchema,
 } from '@/pages/auth/constants';
 import { PATHS } from '@/routes/paths';
-import { postResetPassword } from '@/services/member';
+
+// ----------------------------------------------------------------------
+// 비밀번호 재설정 화면
+// ----------------------------------------------------------------------
 
 const ResetPwPage = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [isPending, setIsPending] = useState(false);
   const [open, setOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
 
   const resetPwForm = useForm({
     defaultValues: resetPwFormDefaultValues,
@@ -27,36 +28,25 @@ const ResetPwPage = () => {
   });
 
   const { handleSubmit } = resetPwForm;
-  const email = location.state?.email;
-
-  if (!email) {
-    setErrorMessage('이메일이 전달되지 않았습니다.');
-    setOpen(true);
-  }
 
   const onSubmit = handleSubmit(async (data) => {
     setIsPending(true);
     try {
-      const { newPassword, confirmPassword } = data;
-      await postResetPassword({
-        USER_EMAIL: email,
-        newPassword: newPassword,
-        confirmPassword: confirmPassword,
-      });
-      setErrorMessage('');
+      // 비밀번호 변경
       setOpen(true);
-    } catch (error) {
-      setErrorMessage(error?.response?.data || '비밀번호 변경에 실패했습니다.');
-      setOpen(true);
-    } finally {
       setIsPending(false);
+    } catch (error) {
+      setIsPending(false);
+      resetPwForm.setError('password', { message: error?.data });
     }
   });
 
   const handleClose = () => {
     setOpen(false);
-    if (!errorMessage) navigate(PATHS.auth.signIn);
+    navigate(PATHS.auth.signIn);
   };
+
+  // ----------------------------------------------------------------------
 
   return (
     <>
@@ -150,7 +140,7 @@ const ResetPwPage = () => {
           }}
         >
           <Typography variant="h6" gutterBottom>
-            {errorMessage || '비밀번호가 성공적으로 변경되었습니다.'}
+            비밀번호가 성공적으로 변경되었습니다.
           </Typography>
           <Button
             variant="contained"
