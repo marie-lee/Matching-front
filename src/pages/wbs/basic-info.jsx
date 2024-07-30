@@ -5,7 +5,6 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
-  Box,
   Container,
 } from '@mui/material';
 import StepperComponent from '@/pages/wbs/components/stepperComponent';
@@ -18,8 +17,8 @@ import UserAdd from '@/pages/wbs/components/userAdd';
 const BasicInfo = () => {
   const navigate = useNavigate();
 
-  const handleCreateWbs = () => {
-    navigate(PATHS.wbs.basicinfo);
+  const handleInputWbs = () => {
+    navigate(PATHS.wbs.wbsInput);
   };
 
   const handleBack = () => {
@@ -27,7 +26,7 @@ const BasicInfo = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ p: 3 }}>
+    <Container maxWidth="lg" sx={{ p: 3, pb: 10 }}>
       <Stack spacing={5}>
         <Stack
           direction="row"
@@ -48,7 +47,7 @@ const BasicInfo = () => {
               color="greyButton"
               sx={{ width: '100px' }}
               variant="contained"
-              onClick={handleCreateWbs}
+              onClick={handleInputWbs}
             >
               NEXT
             </Button>

@@ -11,42 +11,69 @@ import {
   Paper,
   TextField,
   IconButton,
+  Select,
+  MenuItem,
+  FormControl,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const initialParticipants = [
   { name: '김영후', role: 'B.E.', permission: 'member' },
   { name: '박미영', role: 'F.E.', permission: 'member' },
 ];
 
+const roles = ['F.E.', 'B.E.', 'Design', 'Manager', '직접 입력'];
+const permissions = ['member', 'owner'];
+
 const UserAdd = () => {
   const [participants, setParticipants] = useState(initialParticipants);
+  const [isCustomRole, setIsCustomRole] = useState(
+    Array(initialParticipants.length).fill(false),
+  );
+  const [isInitialRender, setIsInitialRender] = useState(true);
   const tableEndRef = useRef(null);
 
   const handleAddRow = () => {
-    setParticipants([...participants, { name: '', role: '', permission: '' }]);
+    setParticipants((prev) => [
+      ...prev,
+      { name: '', role: '', permission: '' },
+    ]);
+    setIsCustomRole((prev) => [...prev, false]);
   };
 
   useEffect(() => {
-    if (tableEndRef.current) {
-      tableEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (isInitialRender) {
+      setIsInitialRender(false);
+    } else {
+      if (tableEndRef.current) {
+        tableEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   }, [participants]);
 
   const handleChange = (index, field, value) => {
-    const updatedParticipants = participants.map((participant, i) =>
-      i === index ? { ...participant, [field]: value } : participant,
+    setParticipants((prev) =>
+      prev.map((participant, i) =>
+        i === index ? { ...participant, [field]: value } : participant,
+      ),
     );
-    setParticipants(updatedParticipants);
+  };
+
+  const handleRoleChange = (index, value) => {
+    setIsCustomRole((prev) =>
+      prev.map((item, i) => (i === index ? value === '직접 입력' : item)),
+    );
+    handleChange(index, 'role', value === '직접 입력' ? '' : value);
+  };
+
+  const handleDeleteRow = (index) => {
+    setParticipants((prev) => prev.filter((_, i) => i !== index));
+    setIsCustomRole((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
-    <Grid
-      container
-      spacing={2}
-      direction="column"
-      sx={{ width: '60%', margin: 'auto' }}
-    >
+    <Grid container spacing={2} direction="column" sx={{ width: '60%' }}>
       <Grid item>
         <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
           참여자 정보
@@ -54,113 +81,116 @@ const UserAdd = () => {
       </Grid>
       <TableContainer
         component={Paper}
-        sx={{ boxShadow: 'none', borderRadius: 0, ml: 1, mt: 1 }}
+        sx={{
+          boxShadow: 'none',
+          borderRadius: 0,
+          ml: 1,
+          mt: 1,
+        }}
       >
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table sx={{ minWidth: 650 }}>
+          <colgroup>
+            <col style={{ width: '20%' }} />
+            <col style={{ width: '40%' }} />
+            <col style={{ width: '40%' }} />
+          </colgroup>
           <TableHead>
             <TableRow>
-              <TableCell
-                align="center"
-                sx={{ border: '5px solid #f4f6f8', padding: '4px' }}
-              >
-                참여자
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ border: '5px solid #f4f6f8', padding: '4px' }}
-              >
-                담당
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ border: '5px solid #f4f6f8', padding: '4px' }}
-              >
-                권한
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ border: '5px solid #f4f6f8', padding: '4px' }}
-              >
-                <IconButton onClick={handleAddRow}>
-                  <AddIcon />
-                </IconButton>
-              </TableCell>
+              {['참여자', '담당', '권한', ''].map((head) => (
+                <TableCell
+                  align="center"
+                  sx={{
+                    padding: '4px',
+                    border: '4px solid #f4f6f8',
+                  }}
+                  key={head}
+                >
+                  {head ?
+                    head
+                  : <IconButton onClick={handleAddRow}>
+                      <AddIcon />
+                    </IconButton>
+                  }
+                </TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
             {participants.map((participant, index) => (
-              <TableRow key={index}>
-                <TableCell
-                  align="center"
-                  sx={{ border: '5px solid #f4f6f8', padding: '4px' }}
-                >
-                  <TextField
-                    value={participant.name}
-                    onChange={(e) =>
-                      handleChange(index, 'name', e.target.value)
+              <TableRow key={index} sx={{ border: '4px solid #f4f6f8' }}>
+                {['name', 'role', 'permission'].map((field) => (
+                  <TableCell
+                    align="center"
+                    sx={{
+                      padding: '4px',
+                      border: '4px solid #f4f6f8',
+                    }}
+                    key={field}
+                  >
+                    {field === 'role' && isCustomRole[index] ?
+                      <TextField
+                        value={participant[field]}
+                        onChange={(e) =>
+                          handleChange(index, field, e.target.value)
+                        }
+                        fullWidth
+                        variant="standard"
+                        InputProps={{
+                          disableUnderline: true,
+                        }}
+                        inputProps={{
+                          style: { textAlign: 'center' },
+                        }}
+                      />
+                    : field === 'role' || field === 'permission' ?
+                      <FormControl fullWidth variant="standard">
+                        <Select
+                          value={participant[field]}
+                          onChange={(e) =>
+                            field === 'role' ?
+                              handleRoleChange(index, e.target.value)
+                            : handleChange(index, field, e.target.value)
+                          }
+                        >
+                          {(field === 'role' ? roles : permissions).map(
+                            (option) => (
+                              <MenuItem key={option} value={option}>
+                                {option}
+                              </MenuItem>
+                            ),
+                          )}
+                        </Select>
+                      </FormControl>
+                    : <TextField
+                        value={participant[field]}
+                        onChange={(e) =>
+                          handleChange(index, field, e.target.value)
+                        }
+                        fullWidth
+                        variant="standard"
+                        InputProps={{
+                          disableUnderline: true,
+                        }}
+                        inputProps={{
+                          style: { textAlign: 'center' },
+                        }}
+                      />
                     }
-                    fullWidth
-                    variant="standard"
-                    InputProps={{
-                      disableUnderline: true,
-                      sx: { textAlign: 'center' },
-                    }}
-                    inputProps={{
-                      style: { textAlign: 'center' },
-                    }}
-                    sx={{ margin: 0 }}
-                  />
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ border: '5px solid #f4f6f8', padding: '4px' }}
-                >
-                  <TextField
-                    value={participant.role}
-                    onChange={(e) =>
-                      handleChange(index, 'role', e.target.value)
-                    }
-                    fullWidth
-                    variant="standard"
-                    InputProps={{
-                      disableUnderline: true,
-                      sx: { textAlign: 'center' },
-                    }}
-                    inputProps={{
-                      style: { textAlign: 'center' },
-                    }}
-                    sx={{ margin: 0 }}
-                  />
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ border: '5px solid #f4f6f8', padding: '4px' }}
-                >
-                  <TextField
-                    value={participant.permission}
-                    onChange={(e) =>
-                      handleChange(index, 'permission', e.target.value)
-                    }
-                    fullWidth
-                    variant="standard"
-                    InputProps={{
-                      disableUnderline: true,
-                      sx: { textAlign: 'center' },
-                    }}
-                    inputProps={{
-                      style: { textAlign: 'center' },
-                    }}
-                    sx={{ margin: 0 }}
-                  />
-                </TableCell>
+                  </TableCell>
+                ))}
                 <TableCell
                   align="center"
                   sx={{
-                    border: '5px solid #f4f6f8',
-
-                    backgroundColor: '#f4f6f8',
+                    padding: '4px',
+                    backgroundColor: '#f5f5f5',
                   }}
-                ></TableCell>
+                >
+                  {index === participants.length - 1 && (
+                    <IconButton onClick={() => handleDeleteRow(index)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  )}
+                </TableCell>
               </TableRow>
             ))}
             <TableRow ref={tableEndRef} />
