@@ -10,7 +10,6 @@ const CreateWbsTemplatePage = lazy(
   () => import('@/pages/wbs/create-wbs-template'),
 );
 const BasicInfoPage = lazy(() => import('@/pages/wbs/basic-info'));
-const WbsInput = lazy(() => import('@/pages/wbs/wbs-input'));
 // ----------------------------------------------------------------------
 
 const wbs = {
@@ -28,10 +27,6 @@ const wbs = {
     {
       path: 'basic-info',
       element: <BasicInfoPage />,
-    },
-    {
-      path: 'wbs-input',
-      element: <WbsInput />,
     },
   ],
 };

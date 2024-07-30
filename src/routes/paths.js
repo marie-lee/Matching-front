@@ -33,6 +33,5 @@ export const PATHS = {
     root: '/wbs',
     createWbs: '/wbs/create-wbs',
     basicinfo: '/wbs/basic-info',
-    wbsInput: '/wbs/wbs-input',
   },
 };

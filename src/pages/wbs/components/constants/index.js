@@ -62,7 +62,8 @@ export const tableData = [
     thirdColumn: '기획 분석',
   },
   {
-    thirdColumn: 'WBS 작성',
+    secondColumn: 'WBS 작성',
+    thirdColumn: '화면설계서 작성',
   },
   {
     secondColumn: '화면 설계',

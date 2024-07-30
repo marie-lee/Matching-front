@@ -21,9 +21,6 @@ const CreateWbsTemplatePage = () => {
   const handleCreateWbs = () => {
     navigate(PATHS.wbs.basicinfo);
   };
-  const handleBack = () => {
-    navigate(PATHS.wbs.root);
-  };
 
   const renderTemplate = (template) => {
     return template.map((item) => (
@@ -45,25 +42,14 @@ const CreateWbsTemplatePage = () => {
           alignItems="start"
         >
           <StepperComponent activeStep={0} />
-
-          <Stack direction="row" spacing={1}>
-            <Button
-              color="greyButton"
-              sx={{ width: '100px' }}
-              variant="contained"
-              onClick={handleBack}
-            >
-              BACK
-            </Button>
-            <Button
-              color="greyButton"
-              sx={{ width: '100px' }}
-              variant="contained"
-              onClick={handleCreateWbs}
-            >
-              NEXT
-            </Button>
-          </Stack>
+          <Button
+            color="greyButton"
+            sx={{ width: '100px' }}
+            variant="contained"
+            onClick={handleCreateWbs}
+          >
+            NEXT
+          </Button>
         </Stack>
         <Stack direction="row" spacing={2}>
           {renderTemplate(template1)}
