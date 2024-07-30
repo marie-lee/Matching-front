@@ -12,7 +12,6 @@ import { ResponsiveImg } from '@/components/img';
 // ----------------------------------------------------------------------
 
 const PortfolioList = (member) => {
-  console.log('member', member.member.portfolio);
   return (
     <Grid container columnSpacing={2} rowSpacing={3} pt={1}>
       {member.member.portfolio?.length > 0 ?

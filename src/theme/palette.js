@@ -10,7 +10,7 @@ export const grey = {
   600: '#637381',
   700: '#454F5B',
   800: '#212B36',
-  900: '#161C24',
+  900: '#BDBDBD',
 };
 
 export const common = {
@@ -44,6 +44,14 @@ export const success = {
   main: '#7DD11D',
   dark: '#4A960E',
   darker: '#266405',
+  contrastText: '#FFFFFF',
+};
+export const basicButton = {
+  main: '#2196F3',
+  contrastText: '#FFFFFF',
+};
+export const greyButton = {
+  main: '#BDBDBD',
   contrastText: '#FFFFFF',
 };
 
@@ -106,6 +114,8 @@ export const palette = {
   warning,
   login,
   error,
+  basicButton,
+  greyButton,
   //
   LOW: low,
   MEDIUM: { ...secondary },

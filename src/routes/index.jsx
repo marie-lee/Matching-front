@@ -8,6 +8,7 @@ import project from '@/routes/project';
 import recommend from '@/routes/recommend';
 import match from '@/routes/match';
 import Home from '@/pages/home';
+import wbs from '@/routes/wbs';
 
 import NotFoundPage from '@/pages/error/404';
 import GuestLayout from '@/layouts/guest/guest-layout';
@@ -54,7 +55,8 @@ const Router = () => {
     recommend,
     // 매칭
     match,
-
+    // wbs
+    wbs,
     {
       path: '*',
       element: <NotFoundPage />,

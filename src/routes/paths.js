@@ -29,4 +29,10 @@ export const PATHS = {
   match: {
     root: '/match',
   },
+  wbs: {
+    root: '/wbs',
+    createWbs: '/wbs/create-wbs',
+    basicinfo: '/wbs/basic-info',
+    wbsInput: '/wbs/wbs-input',
+  },
 };
