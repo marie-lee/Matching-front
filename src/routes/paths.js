@@ -6,7 +6,9 @@ export const PATHS = {
     root: '/auth',
     signIn: '/auth/sign-in',
     signUp: '/auth/sign-up',
-    resetPassword: '/auth/reset-password',
+    findId: '/auth/find-id',
+    findPw: '/auth/find-pw',
+    resetPw: '/auth/reset-pw',
   },
   // 프로필&포트폴리오
   profiles: {
@@ -18,6 +20,7 @@ export const PATHS = {
   project: {
     root: '/project',
     details: '/project/details',
+    add: '/project/add',
   },
   recommend: {
     root: '/recommend',

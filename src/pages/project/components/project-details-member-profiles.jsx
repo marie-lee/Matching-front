@@ -72,6 +72,7 @@ const PortfolioList = (member) => {
 // ----------------------------------------------------------------------
 
 const ProjectDetailsMemberProfiles = ({ member }) => {
+  console.log('member', member);
   return (
     <Grid container p={3}>
       <Grid container p={3} border={1} borderColor={'divider'} borderRadius={1}>

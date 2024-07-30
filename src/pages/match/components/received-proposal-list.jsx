@@ -13,11 +13,18 @@ import { useState } from 'react';
 
 import { ResponsiveImg } from '@/components/img';
 import { getStatusProject } from '@/services/status';
-import { ProjectInfo } from '@/pages/match/components';
 
 // ----------------------------------------------------------------------
 
-const Section = ({ title, keyName, data, disabled, handleClickProject }) => {
+const Section = ({
+  title,
+  keyName,
+  data,
+  disabled,
+  confirmDisabled,
+  handleClickProject,
+  handleClickReq,
+}) => {
   return (
     <Grid item xs={12}>
       <Grid container bgcolor={'background.default'}>
@@ -41,7 +48,9 @@ const Section = ({ title, keyName, data, disabled, handleClickProject }) => {
               key={`match-${keyName}-${index}`}
               value={item}
               disabled={disabled}
+              confirmDisabled={confirmDisabled}
               handleClickProject={handleClickProject}
+              handleClickReq={handleClickReq}
             />
           ))}
         </Grid>
@@ -52,9 +61,15 @@ const Section = ({ title, keyName, data, disabled, handleClickProject }) => {
 
 // ----------------------------------------------------------------------
 
-const Item = ({ value, disabled, handleClickProject }) => {
+const Item = ({
+  value,
+  disabled,
+  confirmDisabled,
+  handleClickProject,
+  handleClickReq,
+}) => {
   return (
-    <Grid item xs={12} md={6}>
+    <Grid item xs={12}>
       <Grid container p={2} border={1} borderColor={'divider'} borderRadius={1}>
         <Grid container spacing={2} alignItems={'center'}>
           <Grid item xs={12} md={3}>
@@ -89,17 +104,28 @@ const Item = ({ value, disabled, handleClickProject }) => {
 
           {!disabled && (
             <Grid item container xs={12} md={2} spacing={1}>
-              <Grid item xs={6} md={12}>
-                <Button fullWidth size={'small'}>
-                  수락
-                </Button>
-              </Grid>
+              {!confirmDisabled && (
+                <Grid item xs={6} md={12}>
+                  <Button
+                    fullWidth
+                    size={'small'}
+                    onClick={() =>
+                      handleClickReq(value.PJT_SN, value.REQ_SN, 'AGREE')
+                    }
+                  >
+                    수락
+                  </Button>
+                </Grid>
+              )}
               <Grid item xs={6} md={12}>
                 <Button
                   fullWidth
                   variant={'outlined'}
                   color={'error'}
                   size={'small'}
+                  onClick={() =>
+                    handleClickReq(value.PJT_SN, value.REQ_SN, 'REJECT')
+                  }
                 >
                   거절
                 </Button>
@@ -114,16 +140,14 @@ const Item = ({ value, disabled, handleClickProject }) => {
 
 // ----------------------------------------------------------------------
 
-const ReceivedProposalList = ({ data }) => {
-  const [projectDialogOpen, setProjectDialogOpen] = useState(false);
-
+const ReceivedProposalList = ({ data, setSelectedProject, handleClickReq }) => {
   const [project, setProject] = useState();
 
   const fetchProjectDetail = async (pjtSn) => {
     try {
       const res = await getStatusProject(pjtSn);
       setProject(res?.data);
-      setProjectDialogOpen(true);
+      setSelectedProject(res?.data);
     } catch (error) {
       console.dir(error);
     }
@@ -142,13 +166,16 @@ const ReceivedProposalList = ({ data }) => {
         data={_.filter(data, { REQ_STTS: 'REQ' })}
         keyName={'wait'}
         handleClickProject={handleClickProject}
+        handleClickReq={handleClickReq}
       />
 
       <Section
         title={'최종 확인'}
         data={_.filter(data, { REQ_STTS: 'AGREE' })}
         keyName={'success'}
+        confirmDisabled
         handleClickProject={handleClickProject}
+        handleClickReq={handleClickReq}
       />
 
       <Section
@@ -156,18 +183,8 @@ const ReceivedProposalList = ({ data }) => {
         data={_.filter(data, { REQ_STTS: 'REJECT' })}
         keyName={'deny'}
         disabled={true}
+        handleClickReq={handleClickReq}
       />
-
-      {/* 프로젝트 상세 조회 Dialog */}
-      <Dialog
-        fullWidth
-        maxWidth={'md'}
-        open={projectDialogOpen}
-        onClose={() => setProjectDialogOpen(false)}
-      >
-        {/* 프로젝트 기본 정보 및 모집 인원 */}
-        <ProjectInfo data={project} />
-      </Dialog>
     </Grid>
   );
 };

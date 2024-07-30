@@ -1,3 +1,99 @@
+import * as yup from 'yup';
+import _ from 'lodash';
+
+export const projectAddFormDefaultValues = {
+  PJT_NM: '',
+  PJT_IMG: null,
+  PJT_INTRO: '',
+  PJT_OPEN_YN: null,
+  CONSTRUCTOR_ROLE: null,
+  SELECTED_DT_YN: null,
+  START_DT: null,
+  PERIOD: '',
+  DURATION_UNIT: '',
+  STACKS: [],
+  WANTED: [],
+  ROLES: [{ PART: '', TOTAL_CNT: '' }],
+  PJT_DETAIL: '',
+};
+
+export const projectAddFormSchema = yup.object().shape({
+  PJT_NM: yup.string().required('프로젝트 제목을 입력해주세요'),
+  PJT_INTRO: yup.string().required('프로젝트 간단 소개를 입력해주세요'),
+  PJT_OPEN_YN: yup.mixed().required('본인의 역할을 작성해주세요'),
+  CONSTRUCTOR_ROLE: yup
+    .mixed()
+    .required('프로젝트 상세 공개 여부를 선택해주세요'),
+  SELECTED_DT_YN: yup.mixed().required('예상 프로젝트 시작일을 선택해주세요'),
+  START_DT: yup
+    .mixed()
+    .nullable()
+    .test({
+      message: '업무 시작일을 입력해주세요',
+      test: (START_DT, context) => {
+        const { SELECTED_DT_YN } = context.parent;
+
+        if (SELECTED_DT_YN === 'true') {
+          return !_.isEmpty(START_DT);
+        } else {
+          return true;
+        }
+      },
+    }),
+  PERIOD: yup.string().required('예상 기간을 입력해주세요'),
+  DURATION_UNIT: yup.string().required('예상 기간 단위를 선택해주세요'),
+  PJT_DETAIL: yup.string().required('프로젝트 상세 작성을 입력해주세요'),
+  STACKS: yup
+    .array()
+    .min(1, '선호하는 프로젝트 관련 스킬을 최소 1개 이상 입력해주세요'),
+  WANTED: yup
+    .array()
+    .min(1, '선호하는 프로젝트 관련 경험을 최소 1개 이상 입력해주세요'),
+  ROLES: yup.array(
+    yup.object().shape({
+      PART: yup.string().required('분야를 입력해주세요'),
+      TOTAL_CNT: yup.string().required('모집인원을 입력해주세요'),
+    }),
+  ),
+});
+
+export const OPEN_OPTIONS = [
+  { label: '상세 공개', value: 'false' },
+  { label: '일부 공개', value: 'true' },
+];
+
+export const SELECTED_DT_OPTIONS = [
+  { label: '팀 모집 후 바로 시작', value: 'false' },
+  { label: '날짜 선택', value: 'true' },
+];
+
+export const DURATION_UNIT_OPTIONS = [
+  { label: '일', value: 'DAY' },
+  { label: '개월', value: 'MONTH' },
+];
+
+export const STACK_OPTIONS = [
+  'Java',
+  'JavaScript',
+  'PHP',
+  'React',
+  'Nodejs',
+  'Spring',
+];
+
+export const EXPERIENCE_OPTIONS = ['깔끔한 코드', '3년 이상의 경력'];
+
+export const PART_OPTIONS = ['프론트엔드', '백엔드', '디자이너'];
+
+export const reqFormDefaultValues = {
+  userSn: '',
+  pjtRoleSn: '',
+};
+
+export const reqFormSchema = yup.object().shape({
+  pjtRoleSn: yup.string().required('분야를 선택해주세요'),
+});
+
 export const PROJECTS = [
   {
     id: 1,

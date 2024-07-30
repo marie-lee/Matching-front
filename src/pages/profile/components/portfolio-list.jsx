@@ -12,10 +12,16 @@ import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/routes/paths';
 import { useEffect, useState } from 'react';
 import { instance } from '@/services/config';
+import PortfolioDetail from './portfolio-detail';
 // ----------------------------------------------------------------------
 
 const PortfolioList = ({ hasProfile }) => {
   const navigate = useNavigate();
+  const [selectedPortfolio, setSelectedPortfolio] = useState(null);
+
+  const handlePortfolioClick = (portfolio) => {
+    setSelectedPortfolio(portfolio);
+  };
 
   const [portfolio, setPortfolio] = useState([]);
 
@@ -27,8 +33,6 @@ const PortfolioList = ({ hasProfile }) => {
         const PORTFOLIOS = data.portfolioInfo.map((item) => ({
           id: item.PFOL_SN,
           pfolNm: item.PFOL_NM,
-          //인트로가 없음 추가해야함
-          intro: '인트로가 없어서 임의로 추가 합니다.',
           startDt: item.START_DT,
           endDt: item.END_DT,
           stacks: item.stack.map((stackItem) => ({ stNm: stackItem.ST_NM })),
@@ -44,46 +48,61 @@ const PortfolioList = ({ hasProfile }) => {
 
   const renderList = () => {
     return (
-      <Grid container columnSpacing={2} rowSpacing={3}>
-        {portfolio.map((pfol) => (
-          <Grid item xs={12} md={4} key={pfol.id}>
-            <Stack spacing={0.5} sx={{ cursor: 'pointer' }}>
-              {/* 대표 이미지 */}
-              <ResponsiveImg
-                src={pfol.img}
-                alt={`${pfol.pfolNm}`}
-                width={230}
-                height={150}
-              />
+      <div>
+        <Grid container columnSpacing={2} rowSpacing={3}>
+          {portfolio.map((pfol, index) => (
+            <Grid
+              item
+              xs={12}
+              md={4}
+              key={pfol.id}
+              onClick={() => handlePortfolioClick(pfol)}
+            >
+              <Stack spacing={0.5} sx={{ cursor: 'pointer' }}>
+                {/* 대표 이미지 */}
+                <ResponsiveImg
+                  src={pfol.img}
+                  alt={`${pfol.pfolNm}`}
+                  width={230}
+                  height={150}
+                />
 
-              {/* 포트폴리오 제목 */}
-              <Typography component={'p'} variant={'lg'}>
-                {pfol.pfolNm}
-              </Typography>
+                {/* 포트폴리오 제목 */}
+                <Typography component={'p'} variant={'lg'}>
+                  {pfol.pfolNm}
+                </Typography>
 
-              {/* 프로젝트 기간 */}
-              <Typography
-                component={'p'}
-                variant={'sm'}
-                color={'text.secondary'}
-              >
-                {`${pfol.startDt} ~ ${pfol.endDt}`}
-              </Typography>
+                {/* 프로젝트 기간 */}
+                <Typography
+                  component={'p'}
+                  variant={'sm'}
+                  color={'text.secondary'}
+                >
+                  {`${pfol.startDt} ~ ${pfol.endDt}`}
+                </Typography>
 
-              {/* 사용 스킬 */}
-              <Stack useFlexGap flexWrap={'wrap'} direction={'row'} gap={0.7}>
-                {pfol.stacks.map((stack, index) => (
-                  <Chip
-                    key={`${pfol.pfolNm}_stack_${index}`}
-                    label={stack.stNm}
-                    size={'small'}
-                  />
-                ))}
+                {/* 사용 스킬 */}
+                <Stack useFlexGap flexWrap={'wrap'} direction={'row'} gap={0.7}>
+                  {pfol.stacks.map((stack, index) => (
+                    <Chip
+                      key={`${pfol.pfolNm}_stack_${index}`}
+                      label={stack.stNm}
+                      size={'small'}
+                    />
+                  ))}
+                </Stack>
               </Stack>
-            </Stack>
-          </Grid>
-        ))}
-      </Grid>
+            </Grid>
+          ))}
+        </Grid>
+        {selectedPortfolio && (
+          <PortfolioDetail
+            open={!!selectedPortfolio}
+            setOpen={() => setSelectedPortfolio(null)}
+            portfolioId={selectedPortfolio.id}
+          />
+        )}
+      </div>
     );
   };
 
