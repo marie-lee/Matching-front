@@ -12,6 +12,7 @@ import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/routes/paths';
 import { instance } from '@/services/config';
+import { set } from 'date-fns';
 
 const Career = ({ data }) => {
   return (
@@ -102,6 +103,7 @@ const ProfileDetails = () => {
   const [url, setUrl] = useState([]);
   const [intro, setIntro] = useState([]);
   const [name, setName] = useState([]);
+  const [profileData, setProfileData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -134,6 +136,7 @@ const ProfileDetails = () => {
           intro: url.URL_INTRO,
         }));
         setUrl(urlsData);
+        setProfileData(data);
       } catch (error) {
         console.log('error: ', error);
       }
@@ -155,7 +158,11 @@ const ProfileDetails = () => {
         spacing={1}
       >
         <Typography variant={'xl'}>{name}</Typography>
-        <IconButton onClick={() => navigate(PATHS.profiles.editProfile)}>
+        <IconButton
+          onClick={() =>
+            navigate(PATHS.profiles.editProfile, { state: { profileData } })
+          }
+        >
           <Icon icon={'akar-icons:edit'} fontSize={24} />
         </IconButton>
       </Stack>

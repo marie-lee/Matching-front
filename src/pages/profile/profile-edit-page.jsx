@@ -7,12 +7,15 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { profileEditFormDefaultValues } from './constants';
+import { useLocation } from 'react-router-dom';
 
 const ProfileEditPage = () => {
-  const profileEditForm = useForm({
-    defaultValues: profileEditFormDefaultValues,
-  });
+  const location = useLocation();
 
+  const { profileData } = location.state;
+  const profileEditForm = useForm({
+    defaultValues: profileData,
+  });
   const handlePreviewOpen = () => {
     console.log('Preview Open');
     // console.log('profileEditForm', profileEditForm.getValues());
@@ -21,7 +24,10 @@ const ProfileEditPage = () => {
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} md={9}>
-        <ProfileEditForm profileEditForm={profileEditForm} />
+        <ProfileEditForm
+          profileEditForm={profileEditForm}
+          profileData={profileData}
+        />
       </Grid>
       <Grid item xs={12} md={3}>
         <AppBar

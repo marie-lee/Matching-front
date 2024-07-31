@@ -6,10 +6,10 @@ const Career = ({ data }) => {
       <Typography variant={'lg'}>경력</Typography>
       {data.map((career, index) => (
         <Stack key={`career_${index}`} spacing={0.5}>
-          <Typography>{career.careerName}</Typography>
+          <Typography>{career.CARRER_NM}</Typography>
           <Stack direction={'row'} alignItems={'center'}>
             <Typography variant={'xs'} color={'text.secondary'}>
-              {`${career.enteringDt} ~ ${career.quitDt != null ? career.quitDt : '재직중'}`}
+              {`${career.ENTERING_DT} ~ ${career.QUIT_DT != null ? career.QUIT_DT : '재직중'}`}
             </Typography>
           </Stack>
         </Stack>
@@ -31,9 +31,9 @@ const MajorStack = ({ data }) => {
         {data.map((stack, index) => (
           <Chip
             key={`stack_${index}`}
-            label={stack.stNm}
+            label={stack.ST_NM}
             size={'small'}
-            color={`${stack.level}`}
+            color={`${stack.ST_LEVEL}`}
           />
         ))}
       </Stack>
@@ -54,7 +54,7 @@ const Intrst = ({ data }) => {
         {data.map((intrst, index) => (
           <Chip
             key={`intrst_${index}`}
-            label={intrst.interest}
+            label={intrst.INTEREST_NM}
             size={'small'}
           />
         ))}
@@ -69,7 +69,7 @@ const Url = ({ data }) => {
       <Typography variant={'lg'}>링크</Typography>
       {data.map((url, index) => (
         <Stack key={`url_${index}`} spacing={0.5}>
-          <Typography>{url.intro}</Typography>
+          <Typography>{url.URL_INTRO}</Typography>
           <Link
             href={url.addr}
             variant={'xs'}
@@ -77,7 +77,7 @@ const Url = ({ data }) => {
             target={'_blank'}
             underline="hover"
           >
-            {url.addr}
+            {url.URL_ADDR}
           </Link>
         </Stack>
       ))}
@@ -86,7 +86,8 @@ const Url = ({ data }) => {
 };
 
 const ProfilePreviewDetail = ({ profileEditForm }) => {
-  const profile = profileEditForm.getValues();
+  const PreviewData = profileEditForm.getValues();
+  const profile = PreviewData.profile[0];
 
   return (
     <Stack spacing={3} p={3} bgcolor={'background.default'}>
@@ -100,18 +101,18 @@ const ProfilePreviewDetail = ({ profileEditForm }) => {
         justifyContent={'space-between'}
         spacing={1}
       >
-        <Typography variant={'xl'}>{profile.NAME}</Typography>
+        <Typography variant={'xl'}>{profile.USER_NM}</Typography>
       </Stack>
       <Stack>
-        <Typography variant={'lg'}>{profile.INTRO}</Typography>
+        <Typography variant={'lg'}>{profile.PF_INTRO}</Typography>
       </Stack>
       <Divider />
-      <Career data={profile.CAREER} />
+      <Career data={profile.carrer} />
       <Divider />
-      <MajorStack data={profile.STACK} />
-      <Intrst data={profile.INTEREST} />
+      <MajorStack data={profile.stack} />
+      <Intrst data={profile.interest} />
       <Divider />
-      <Url data={profile.URL} />
+      <Url data={profile.url} />
     </Stack>
   );
 };
