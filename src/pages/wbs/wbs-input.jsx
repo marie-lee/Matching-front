@@ -50,7 +50,11 @@ const WbsInput = () => {
         </Stack>
       </Stack>
       <Stack>
-        <WbsTable tableData={tableData} handleCellChange={handleCellChange} />
+        <WbsTable
+          tableData={tableData}
+          handleCellChange={handleCellChange}
+          borderStyle="1px solid rgba(0, 0, 0, 0.4)"
+        />
       </Stack>
     </Container>
   );

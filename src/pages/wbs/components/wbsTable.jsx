@@ -53,7 +53,13 @@ function mergeTable(table) {
 
 const WbsTable = ({ tableData, handleCellChange }) => {
   return (
-    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+    <table
+      style={{
+        width: '100%',
+        borderCollapse: 'collapse',
+        backgroundColor: '#ffffff',
+      }}
+    >
       <tbody>
         {tableData.map((row, rowIndex) => (
           <tr key={rowIndex}>
@@ -63,9 +69,9 @@ const WbsTable = ({ tableData, handleCellChange }) => {
                   key={cellIndex}
                   rowSpan={cell.rowSpan}
                   style={{
-                    border: '1px solid rgba(0, 0, 0, 0.4)',
-                    padding: 0,
-                    position: 'relative',
+                    border: '2px solid #f4f6f8',
+                    wordWrap: 'break-word',
+                    padding: '2px 4px',
                   }}
                 >
                   <TextField
