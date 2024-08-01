@@ -1,13 +1,24 @@
 import React, { useState } from 'react';
-import { Button, Stack, Container } from '@mui/material';
+import { Button, Stack, Container, TextField } from '@mui/material';
 import StepperComponent from '@/pages/wbs/components/stepperComponent';
 import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/routes/paths';
-
-const engineers = ['김영후', '박미영', '최대한'];
+import WbsTable, { createMergedTable } from '@/pages/wbs/components/wbsTable';
+import { wbsData } from '@/pages/wbs/components/constants';
 
 const WbsInput = () => {
   const navigate = useNavigate();
+
+  const [tableData, setTableData] = useState(createMergedTable(wbsData));
+
+  const handleCellChange = (rowIndex, cellIndex, newValue) => {
+    const updatedTable = [...tableData];
+    const cell = updatedTable[rowIndex][cellIndex];
+    if (cell) {
+      cell.value = newValue;
+      setTableData(updatedTable);
+    }
+  };
 
   const handleBack = () => {
     navigate(PATHS.wbs.basicinfo);
@@ -38,7 +49,9 @@ const WbsInput = () => {
           </Button>
         </Stack>
       </Stack>
-      <Stack>asd</Stack>
+      <Stack>
+        <WbsTable tableData={tableData} handleCellChange={handleCellChange} />
+      </Stack>
     </Container>
   );
 };
