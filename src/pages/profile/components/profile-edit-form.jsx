@@ -61,6 +61,8 @@ const FormGroup = ({ title, children }) => {
 };
 
 const ProfileForm = () => {
+  const { control } = useFormContext();
+
   return (
     <Stack spacing={2}>
       <Stack alignItems={'center'}>
@@ -87,11 +89,14 @@ const ProfileForm = () => {
   );
 };
 
-const CareerForm = ({ profileEditForm }) => {
+const CareerForm = () => {
+  const { control } = useFormContext();
+  console.log('render CareerForm');
+
   const theme = useTheme();
   // 프로필 커리어
   const careerFieldArray = useFieldArray({
-    control: profileEditForm.control,
+    control,
     name: 'profile[0].carrer',
   });
 
@@ -102,8 +107,6 @@ const CareerForm = ({ profileEditForm }) => {
       QUIT_DT: null,
     });
   };
-
-  const profileAddFormValues = profileEditForm.watch();
 
   return (
     <Stack spacing={2}>
@@ -132,7 +135,7 @@ const CareerForm = ({ profileEditForm }) => {
             />
           </Box>
           {/* 재직 중인 경우에만 종료일을 보여줌 */}
-          {profileAddFormValues.profile[0]['carrer'][index].QUIT_DT === null ?
+          {entry.QUIT_DT === null ?
             <Box>
               <RhfSwitch
                 name={`profile[0].carrer[${index}].QUIT_DT`}
@@ -167,12 +170,14 @@ const CareerForm = ({ profileEditForm }) => {
   );
 };
 
-const SkillForm = ({ profileEditForm }) => {
+const SkillForm = () => {
+  console.log('render SkillForm');
   const [stackName, setStackName] = useState('');
   const [level, setLevel] = useState('');
+  const { control } = useFormContext();
   // 프로필 스택
   const stackFieldArray = useFieldArray({
-    control: profileEditForm.control,
+    control,
     name: 'profile[0].stack',
   });
 
@@ -187,9 +192,6 @@ const SkillForm = ({ profileEditForm }) => {
       setLevel('');
     }
   };
-
-  const profileAddFormValues = profileEditForm.watch();
-
   return (
     <Stack spacing={2}>
       <Stack direction={'row'} spacing={1} alignItems={'center'}>
@@ -203,6 +205,7 @@ const SkillForm = ({ profileEditForm }) => {
           onInputChange={(event, newValue) => {
             setStackName(newValue);
           }}
+          isOptionEqualToValue={(option, value) => option === value}
         />
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">난이도</InputLabel>
@@ -227,7 +230,7 @@ const SkillForm = ({ profileEditForm }) => {
         </Typography>
         <Typography>난이도는 상, 중, 하에 따라 색상으로 나뉘어져요</Typography>
         <Stack flexWrap={'wrap'} direction={'row'} useFlexGap spacing={0.5}>
-          {profileAddFormValues.profile[0].stack.map(
+          {stackFieldArray.fields.map(
             (stack, index) =>
               stack.ST_NM &&
               stack.ST_LEVEL && (
@@ -252,18 +255,20 @@ const SkillForm = ({ profileEditForm }) => {
   );
 };
 
-const InterestForm = ({ profileEditForm }) => {
+const InterestForm = () => {
+  console.log('render InterestForm');
   const [interest, setInterest] = useState('');
+  const { control } = useFormContext();
 
   // 프로필 관심사
   const interestFieldArray = useFieldArray({
-    control: profileEditForm.control,
+    control,
     name: 'profile[0].interest',
   });
 
   const handleAppendInterest = () => {
     if (interest) {
-      interestFieldArray.append({ interest });
+      interestFieldArray.append({ INTEREST_NM: interest });
       setInterest('');
     }
   };
@@ -301,12 +306,14 @@ const InterestForm = ({ profileEditForm }) => {
   );
 };
 
-const LinkForm = ({ profileEditForm }) => {
+const LinkForm = () => {
+  console.log('render LinkForm');
+  const { control } = useFormContext();
   const theme = useTheme();
 
   // 프로필 링크
   const linkFieldArray = useFieldArray({
-    control: profileEditForm.control,
+    control,
     name: 'profile[0].url',
   });
 
@@ -381,16 +388,8 @@ const MenuProps = {
 
 const names = ['백엔드', '프론트엔드', '기획', '디자인'];
 
-function getStyles(name, personName, theme) {
-  return {
-    fontWeight:
-      personName.indexOf(name) === -1 ?
-        theme.typography.fontWeightRegular
-      : theme.typography.fontWeightMedium,
-  };
-}
-
-const PortfolioForm = ({ profileEditForm }) => {
+const PortfolioForm = () => {
+  console.log('render PortfolioForm');
   const theme = useTheme();
   const { control } = useFormContext();
   const [stackName, setStackName] = useState('');
@@ -399,7 +398,7 @@ const PortfolioForm = ({ profileEditForm }) => {
 
   // 프로필 포트폴리오
   const portfolioFieldArray = useFieldArray({
-    control: profileEditForm.control,
+    control,
     name: 'portfolioInfo',
   });
 
@@ -467,7 +466,6 @@ const PortfolioForm = ({ profileEditForm }) => {
   };
 
   const handleRemoveImage = (portfolioIndex, imageIndex) => {
-    console.log(portfolioIndex, imageIndex);
     const updatedImages = portfolioFieldArray.fields[
       portfolioIndex
     ].IMAGE_URL.filter((_, idx) => idx !== imageIndex);
@@ -608,7 +606,6 @@ const PortfolioForm = ({ profileEditForm }) => {
               disablePortal
               id="combo-box-demo"
               options={['js', 'node.js']}
-              value={stackName}
               sx={{ flexGrow: 1 }}
               renderInput={(params) => (
                 <TextField {...params} label="기술스택" />
@@ -617,6 +614,7 @@ const PortfolioForm = ({ profileEditForm }) => {
               onInputChange={(event, newValue) => {
                 setStackName(newValue);
               }}
+              isOptionEqualToValue={(option, value) => option === value}
             />
             <IconButton onClick={handleAppendStack}>
               <AddIcon />
@@ -817,30 +815,35 @@ const PortfolioForm = ({ profileEditForm }) => {
   );
 };
 
-const ProfileEditForm = ({ profileEditForm }) => {
+const MemoizedProfileForm = React.memo(ProfileForm);
+const MemoizedCareerForm = React.memo(CareerForm);
+const MemoizedSkillForm = React.memo(SkillForm);
+const MemoizedInterestForm = React.memo(InterestForm);
+const MemoizedLinkForm = React.memo(LinkForm);
+const MemoizedPortfolioForm = React.memo(PortfolioForm);
+
+const ProfileEditForm = ({ profileData }) => {
   return (
-    <RhfFormProvider form={profileEditForm}>
-      <Stack spacing={4}>
-        <FormGroup title={'프로필'}>
-          <ProfileForm />
-        </FormGroup>
-        <FormGroup title={'경력'}>
-          <CareerForm profileEditForm={profileEditForm} />
-        </FormGroup>
-        <FormGroup title={'주요 스킬'}>
-          <SkillForm profileEditForm={profileEditForm} />
-        </FormGroup>
-        <FormGroup title={'관심분야'}>
-          <InterestForm profileEditForm={profileEditForm} />
-        </FormGroup>
-        <FormGroup title={'링크'}>
-          <LinkForm profileEditForm={profileEditForm} />
-        </FormGroup>
-        <FormGroup title={'포트폴리오'}>
-          <PortfolioForm profileEditForm={profileEditForm} />
-        </FormGroup>
-      </Stack>
-    </RhfFormProvider>
+    <Stack spacing={4}>
+      <FormGroup title={'프로필'}>
+        <MemoizedProfileForm />
+      </FormGroup>
+      <FormGroup title={'경력'}>
+        <MemoizedCareerForm />
+      </FormGroup>
+      <FormGroup title={'주요 스킬'}>
+        <MemoizedSkillForm />
+      </FormGroup>
+      <FormGroup title={'관심분야'}>
+        <MemoizedInterestForm />
+      </FormGroup>
+      <FormGroup title={'링크'}>
+        <MemoizedLinkForm />
+      </FormGroup>
+      <FormGroup title={'포트폴리오'}>
+        <MemoizedPortfolioForm />
+      </FormGroup>
+    </Stack>
   );
 };
 
