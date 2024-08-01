@@ -5,8 +5,8 @@ import {
   Typography,
   useTheme,
   Link,
-  Button,
   Modal,
+  Button,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useNavigate } from 'react-router-dom';
@@ -18,10 +18,7 @@ import {
   findIdFormSchema,
 } from '@/pages/auth/constants';
 import { PATHS } from '@/routes/paths';
-
-// ----------------------------------------------------------------------
-// 아이디 찾기 화면
-// ----------------------------------------------------------------------
+import { postMemberFindId } from '@/services/member';
 
 const FindIdPage = () => {
   const theme = useTheme();
@@ -41,13 +38,18 @@ const FindIdPage = () => {
   const onSubmit = handleSubmit(async (data) => {
     setIsPending(true);
     try {
-      // 팝업에 넣을 임시 이메일
-      setEmail('dkdkdkdkdk@gmail.com');
+      const response = await postMemberFindId({
+        USER_NM: data.name,
+        PHONE: data.phone.replace(/-/g, ''),
+      });
+      setEmail(response.data.USER_ID);
       setOpen(true);
-      setIsPending(false);
     } catch (error) {
+      findIdForm.setError('name', {
+        message: error?.response?.data || 'Error fetching ID',
+      });
+    } finally {
       setIsPending(false);
-      findIdForm.setError('name', { message: error?.data });
     }
   });
 
@@ -55,8 +57,6 @@ const FindIdPage = () => {
     setOpen(false);
     navigate(PATHS.auth.signIn);
   };
-
-  // ----------------------------------------------------------------------
 
   return (
     <>
@@ -133,11 +133,7 @@ const FindIdPage = () => {
       <Modal
         open={open}
         onClose={handleClose}
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
+        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       >
         <Box
           sx={{
@@ -160,9 +156,7 @@ const FindIdPage = () => {
             sx={{
               mt: 2,
               backgroundColor: theme.palette.primary.main,
-              '&:hover': {
-                backgroundColor: theme.palette.primary.dark,
-              },
+              '&:hover': { backgroundColor: theme.palette.primary.dark },
             }}
           >
             확인
