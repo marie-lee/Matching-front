@@ -2,7 +2,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { IconButton, InputAdornment, TextField } from '@mui/material';
 import { Icon } from '@iconify/react';
 
-import { useBoolean } from '@/hooks/user-boolean';
+import { useBoolean } from '@/hooks/use-boolean';
 
 // ----------------------------------------------------------------------
 /**
