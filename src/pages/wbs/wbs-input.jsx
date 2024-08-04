@@ -1,23 +1,52 @@
-import React, { useState } from 'react';
-import { Button, Stack, Container, TextField } from '@mui/material';
-import StepperComponent from '@/pages/wbs/components/stepperComponent';
+import { useState, useEffect } from 'react';
+import { Button, Stack, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateCell } from '@/store/wbsSlice';
+import StepperComponent from '@/pages/wbs/components/stepperComponent';
+import WbsInputTable from '@/pages/wbs/components/wbsInputTable';
 import { PATHS } from '@/routes/paths';
-import WbsTable, { createMergedTable } from '@/pages/wbs/components/wbsTable';
-import { wbsData } from '@/pages/wbs/components/constants';
+
+const members = [
+  '김영호',
+  '박미영',
+  '한민규',
+  '이세진',
+  '임동현',
+  '백예나',
+  '박지민',
+  '이영현',
+];
 
 const WbsInput = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const tableData = useSelector((state) => state.wbs.tableData);
+  const [localTableData, setLocalTableData] = useState([]);
 
-  const [tableData, setTableData] = useState(createMergedTable(wbsData));
+  useEffect(() => {
+    const modifiedData = tableData.map((row) => [
+      ...row.slice(0, 3),
+      { value: '', rowSpan: 1 },
+      { value: '', rowSpan: 1 },
+      { value: '', rowSpan: 1 },
+      { value: '', rowSpan: 1 },
+    ]);
+    setLocalTableData(modifiedData);
+  }, [tableData]);
 
   const handleCellChange = (rowIndex, cellIndex, newValue) => {
-    const updatedTable = [...tableData];
-    const cell = updatedTable[rowIndex][cellIndex];
-    if (cell) {
-      cell.value = newValue;
-      setTableData(updatedTable);
-    }
+    setLocalTableData((prevData) => {
+      const updatedTable = [...prevData];
+      updatedTable[rowIndex] = [...updatedTable[rowIndex]];
+      updatedTable[rowIndex][cellIndex] = {
+        ...updatedTable[rowIndex][cellIndex],
+        value: newValue,
+      };
+      return updatedTable;
+    });
+
+    dispatch(updateCell({ rowIndex, cellIndex, newValue }));
   };
 
   const handleBack = () => {
@@ -29,34 +58,42 @@ const WbsInput = () => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ p: 3, pb: 10 }}>
-      <Stack direction="row" justifyContent="space-between" alignItems="start">
-        <StepperComponent activeStep={2} />
-        <Stack direction="row" spacing={1}>
-          <Button
-            color="greyButton"
-            sx={{ width: '100px' }}
-            onClick={handleBack}
-          >
-            BACK
-          </Button>
-          <Button
-            color="greyButton"
-            sx={{ width: '100px' }}
-            onClick={handleNext}
-          >
-            NEXT
-          </Button>
+    <>
+      <Container maxWidth="lg" sx={{ p: 3 }}>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="start"
+        >
+          <StepperComponent activeStep={2} />
+          <Stack direction="row" spacing={1}>
+            <Button
+              color="greyButton"
+              sx={{ width: '100px' }}
+              onClick={handleBack}
+            >
+              BACK
+            </Button>
+            <Button
+              color="greyButton"
+              sx={{ width: '100px' }}
+              onClick={handleNext}
+            >
+              NEXT
+            </Button>
+          </Stack>
         </Stack>
-      </Stack>
-      <Stack>
-        <WbsTable
-          tableData={tableData}
-          handleCellChange={handleCellChange}
-          borderStyle="1px solid rgba(0, 0, 0, 0.4)"
-        />
-      </Stack>
-    </Container>
+      </Container>
+      <Container maxWidth="xl">
+        <Stack mt={3}>
+          <WbsInputTable
+            tableData={localTableData}
+            handleCellChange={handleCellChange}
+            members={members}
+          />
+        </Stack>
+      </Container>
+    </>
   );
 };
 

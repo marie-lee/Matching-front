@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Button,
   Stack,
@@ -9,7 +9,7 @@ import {
   Container,
 } from '@mui/material';
 import StepperComponent from '@/pages/wbs/components/stepperComponent';
-import TemplateTable from '@/pages/wbs/components/template-table';
+
 import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/routes/paths';
 import ProjectInfo from '@/pages/wbs/components/projectInfo';
@@ -40,7 +40,7 @@ const BasicInfo = () => {
 
   return (
     <Container maxWidth="lg" sx={{ p: 3, pb: 10 }}>
-      <Stack spacing={10}>
+      <Stack spacing={1}>
         <Stack
           direction="row"
           justifyContent="space-between"
