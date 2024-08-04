@@ -36,7 +36,7 @@ const Sidebar = () => {
             sx={{ textAlign: 'center', fontWeight: 'bold', fontSize: '24px' }}
           />
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton href={'/task'}>
           <ListItemIcon sx={{ justifyContent: 'center' }}>
             <MenuBookIcon />
           </ListItemIcon>
