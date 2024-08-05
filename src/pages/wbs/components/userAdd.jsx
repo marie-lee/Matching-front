@@ -127,6 +127,16 @@ const UserAdd = () => {
                         onChange={(e) =>
                           handleChange(index, field, e.target.value)
                         }
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            '& fieldset': { border: 'none' },
+                          },
+                          input: {
+                            padding: 0,
+                            textAlign: 'center',
+                            fontSize: '16px',
+                          },
+                        }}
                       />
                     : <FormControl fullWidth variant="standard">
                         <Select

@@ -61,6 +61,8 @@ function createTable(table) {
 const cellStyle = {
   border: '2px solid #f4f6f8',
   padding: '2px 4px',
+  textAlign: 'center',
+  verticalAlign: 'middle',
 };
 
 const Cell = memo(({ cell, cellIndex }) => (
