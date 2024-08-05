@@ -1,11 +1,22 @@
 import React, { useState } from 'react';
-import { Box, Stack, Typography, useTheme, Link, Modal, Button } from '@mui/material';
+import {
+  Box,
+  Stack,
+  Typography,
+  useTheme,
+  Link,
+  Modal,
+  Button,
+} from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { RhfFormProvider, RhfTextField } from '@/components/hook-form';
-import { findPwFormDefaultValues, findPwFormSchema } from '@/pages/auth/constants';
+import {
+  findPwFormDefaultValues,
+  findPwFormSchema,
+} from '@/pages/auth/constants';
 import { PATHS } from '@/routes/paths';
 import { postPwCertification, postPwVerification } from '@/services/member';
 
@@ -30,11 +41,16 @@ const FindPwPage = () => {
       const { email, authCode } = data;
       const valid = await trigger(['email', 'authCode']);
       if (valid) {
-        await postPwVerification({ USER_EMAIL: email, verificationCode: authCode });
+        await postPwVerification({
+          USER_EMAIL: email,
+          verificationCode: authCode,
+        });
         navigate(PATHS.auth.resetPw, { state: { email } });
       }
     } catch (error) {
-      findPwForm.setError('authCode', { message: error?.response?.data || '인증에 실패했습니다.' });
+      findPwForm.setError('authCode', {
+        message: error?.response?.data || '인증에 실패했습니다.',
+      });
     } finally {
       setIsPending(false);
     }
@@ -50,7 +66,12 @@ const FindPwPage = () => {
         setOpen(true);
       }
     } catch (error) {
-      findPwForm.setError('email', { message: error.response?.data || error.message || '인증번호 요청에 실패했습니다.' });
+      findPwForm.setError('email', {
+        message:
+          error.response?.data ||
+          error.message ||
+          '인증번호 요청에 실패했습니다.',
+      });
     } finally {
       setIsCodePending(false);
     }

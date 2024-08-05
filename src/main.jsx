@@ -4,6 +4,10 @@ import { BrowserRouter } from 'react-router-dom';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Suspense } from 'react';
 
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
+dayjs.locale('ko');
+
 import App from '@/App';
 import { persistor, store } from '@/store';
 import ThemeProvider from '@/theme';
