@@ -11,7 +11,7 @@ import {
   MenuItem,
   FormControl,
 } from '@mui/material';
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -61,9 +61,9 @@ const renderSelectField = (value, onChange, options) => (
       }}
       sx={{
         '& .MuiSelect-select': {
-          padding: '0',
+          padding: '0 !important',
           fontSize: '12px',
-          textAlign: 'right',
+          textAlign: 'center',
         },
         '& .MuiOutlinedInput-notchedOutline': {
           border: 'none',
@@ -96,8 +96,10 @@ const renderTextField = (value, onChange) => (
 
 const Cell = memo(
   ({ cell, rowIndex, cellIndex, handleCellChange, members }) => {
-    const handleChange = (e) =>
-      handleCellChange(rowIndex, cellIndex, e.target.value);
+    const handleChange = useCallback(
+      (e) => handleCellChange(rowIndex, cellIndex, e.target.value),
+      [rowIndex, cellIndex, handleCellChange],
+    );
 
     if (cellIndex === 4 || cellIndex === 5) {
       // 날짜
@@ -139,9 +141,16 @@ const Cell = memo(
       </TableCell>
     );
   },
+  (prevProps, nextProps) => {
+    return (
+      prevProps.cell.value === nextProps.cell.value &&
+      prevProps.cell.rowSpan === nextProps.cell.rowSpan &&
+      prevProps.members === nextProps.members
+    );
+  },
 );
 
-const WbsInputTable = ({ tableData, handleCellChange, members }) => (
+const WbsInputTable = memo(({ tableData, handleCellChange, members }) => (
   <TableContainer
     component={Paper}
     sx={{ backgroundColor: '#ffffff', width: '70%', borderRadius: 0 }}
@@ -195,6 +204,6 @@ const WbsInputTable = ({ tableData, handleCellChange, members }) => (
       </TableBody>
     </Table>
   </TableContainer>
-);
+));
 
 export default WbsInputTable;

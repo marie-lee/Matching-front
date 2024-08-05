@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button, Stack, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateCell } from '@/store/wbsSlice';
+import { setTableData } from '@/store/wbsSlice';
 import StepperComponent from '@/pages/wbs/components/stepperComponent';
 import WbsInputTable from '@/pages/wbs/components/wbsInputTable';
 import { PATHS } from '@/routes/paths';
@@ -25,13 +25,7 @@ const WbsInput = () => {
   const [localTableData, setLocalTableData] = useState([]);
 
   useEffect(() => {
-    const modifiedData = tableData.map((row) => [
-      ...row.slice(0, 3),
-      { value: '', rowSpan: 1 },
-      { value: '', rowSpan: 1 },
-      { value: '', rowSpan: 1 },
-      { value: '', rowSpan: 1 },
-    ]);
+    const modifiedData = tableData.map((row) => [...row]);
     setLocalTableData(modifiedData);
   }, [tableData]);
 
@@ -43,13 +37,17 @@ const WbsInput = () => {
         ...updatedTable[rowIndex][cellIndex],
         value: newValue,
       };
+
       return updatedTable;
     });
+  };
 
-    dispatch(updateCell({ rowIndex, cellIndex, newValue }));
+  const handleSave = () => {
+    dispatch(setTableData(localTableData));
   };
 
   const handleBack = () => {
+    handleSave();
     navigate(PATHS.wbs.basicinfo);
   };
 
@@ -79,7 +77,7 @@ const WbsInput = () => {
               sx={{ width: '100px' }}
               onClick={handleNext}
             >
-              NEXT
+              SAVE
             </Button>
           </Stack>
         </Stack>
