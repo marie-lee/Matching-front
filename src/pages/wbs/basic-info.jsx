@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Button,
   Stack,
@@ -19,7 +18,7 @@ import { wbsData } from '@/pages/wbs/components/constants';
 
 const BasicInfo = () => {
   const navigate = useNavigate();
-  const [tableData, setTableData] = useState(createMergedTable(wbsData));
+  const tableData = createMergedTable(wbsData);
 
   const handleInputWbs = () => {
     navigate(PATHS.wbs.wbsInput);
@@ -27,15 +26,6 @@ const BasicInfo = () => {
 
   const handleBack = () => {
     navigate(PATHS.wbs.createWbs);
-  };
-
-  const handleCellChange = (rowIndex, cellIndex, newValue) => {
-    const updatedTable = [...tableData];
-    const cell = updatedTable[rowIndex][cellIndex];
-    if (cell) {
-      cell.value = newValue;
-      setTableData(updatedTable);
-    }
   };
 
   return (
@@ -97,7 +87,6 @@ const BasicInfo = () => {
           </Stack>
           <WbsTable
             tableData={tableData}
-            handleCellChange={handleCellChange}
             borderStyle="1px solid rgba(0, 0, 0, 0.4)"
           />
         </Stack>

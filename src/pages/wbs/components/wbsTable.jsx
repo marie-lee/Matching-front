@@ -4,7 +4,6 @@ import {
   TableCell,
   TableContainer,
   TableRow,
-  TextField,
 } from '@mui/material';
 import { memo } from 'react';
 
@@ -64,34 +63,13 @@ const cellStyle = {
   padding: '2px 4px',
 };
 
-const textFieldStyle = {
-  '& .MuiOutlinedInput-root': {
-    border: 'none',
-    padding: 0,
-    height: '100%',
-    width: '100%',
-    '& fieldset': { border: 'none' },
-  },
-  input: {
-    padding: 0,
-    height: '100%',
-    width: '100%',
-    textAlign: 'center',
-  },
-};
-
-const Cell = memo(({ cell, rowIndex, cellIndex, handleCellChange }) => (
+const Cell = memo(({ cell, cellIndex }) => (
   <TableCell key={cellIndex} rowSpan={cell.rowSpan} sx={cellStyle}>
-    <TextField
-      value={cell.value}
-      onChange={(e) => handleCellChange(rowIndex, cellIndex, e.target.value)}
-      fullWidth
-      sx={textFieldStyle}
-    />
+    {cell.value}
   </TableCell>
 ));
 
-const WbsTable = ({ tableData, handleCellChange }) => (
+const WbsTable = ({ tableData }) => (
   <TableContainer sx={{ backgroundColor: '#ffffff', borderRadius: 0 }}>
     <Table>
       <colgroup>
@@ -105,13 +83,7 @@ const WbsTable = ({ tableData, handleCellChange }) => (
             {row.map(
               (cell, cellIndex) =>
                 cell && (
-                  <Cell
-                    key={cellIndex}
-                    cell={cell}
-                    rowIndex={rowIndex}
-                    cellIndex={cellIndex}
-                    handleCellChange={handleCellChange}
-                  />
+                  <Cell key={cellIndex} cell={cell} cellIndex={cellIndex} />
                 ),
             )}
           </TableRow>
