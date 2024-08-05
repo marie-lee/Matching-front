@@ -8,7 +8,7 @@ const initialState = {
     { value: '', rowSpan: 1 },
     { value: '', rowSpan: 1 },
     { value: '', rowSpan: 1 },
-    { value: '', rowSpan: 1 },
+    { value: '대기', rowSpan: 1 },
   ]),
 };
 
