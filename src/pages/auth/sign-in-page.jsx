@@ -25,16 +25,13 @@ import {
 import { useState } from 'react';
 import { postMemberLogin } from '@/services/member';
 
-// ----------------------------------------------------------------------
-// 로그인 화면
-// ----------------------------------------------------------------------
-
 const SignInPage = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [isPending, setIsPending] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const signInForm = useForm({
     defaultValues: sigInInFormDefaultValues,
@@ -49,20 +46,38 @@ const SignInPage = () => {
 
   const fetchLogin = async (data) => {
     setIsPending(true);
+    setErrorMessage('');
+
     try {
       const res = await postMemberLogin(data);
-      console.log('res', res.data.USER_NM);
       setIsPending(false);
-      dispatch(setName(res.data.USER_NM));
-      dispatch(signIn({ token: res?.data?.accessToken }));
-      navigate(PATHS.root);
+
+      if (res.status === 200) {
+        dispatch(setName(res.data.USER_NM));
+        dispatch(signIn({ token: res.data.accessToken }));
+        navigate(PATHS.root);
+      } else {
+        setErrorMessage('알 수 없는 오류가 발생했습니다.');
+      }
     } catch (error) {
       setIsPending(false);
-      signInForm.setError('password', { message: error?.data });
+
+      if (error.status == 400 || error.status == 401) {
+        if (error.data.trim() === '로그인 실패 : 유저 정보를 찾지 못했습니다.') {
+          setErrorMessage('회원가입되지 않은 이메일입니다.');
+        } else if (error.data == '로그인 실패 : 잘못된 비밀번호입니다.') {
+          setErrorMessage('비밀번호가 틀렸습니다. 다시 시도해주세요.');
+        } else {
+          setErrorMessage(error.data || '인증에 실패했습니다.');
+        }
+
+      } else {
+        setErrorMessage('알 수 없는 오류가 발생했습니다.');
+      }
     }
   };
 
-  // ----------------------------------------------------------------------
+
 
   return (
     <Box
@@ -97,6 +112,11 @@ const SignInPage = () => {
             type={'password'}
           />
         </Stack>
+        {errorMessage && (
+          <Typography color="error" variant="body2">
+            {errorMessage}
+          </Typography>
+        )}
         <Box
           sx={{
             display: 'flex',
