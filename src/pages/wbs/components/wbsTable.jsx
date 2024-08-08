@@ -59,8 +59,8 @@ function createTable(table) {
 }
 
 const cellStyle = {
-  border: '2px solid #f4f6f8',
-  padding: '2px 4px',
+  border: '2px solid #545454',
+  padding: '5px 4px',
   textAlign: 'center',
   verticalAlign: 'middle',
 };

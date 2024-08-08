@@ -53,7 +53,6 @@ const ProjectInfo = () => {
           xs={12}
           mt={5}
           sx={{ backgroundColor: '#fff', borderRadius: '5px' }}
-          container
           alignItems="center"
           justifyContent="flex-start"
         >
