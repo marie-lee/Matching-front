@@ -9,6 +9,7 @@ import recommend from '@/routes/recommend';
 import match from '@/routes/match';
 import Home from '@/pages/home';
 import wbs from '@/routes/wbs';
+import task from '@/routes/task.jsx';
 
 import NotFoundPage from '@/pages/error/404';
 import GuestLayout from '@/layouts/guest/guest-layout';
@@ -57,6 +58,9 @@ const Router = () => {
     match,
     // wbs
     wbs,
+    // 업무/이슈
+    task,
+
     {
       path: '*',
       element: <NotFoundPage />,

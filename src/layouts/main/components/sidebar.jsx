@@ -2,10 +2,9 @@ import React from 'react';
 import {
   Drawer,
   List,
-  ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
-  Typography,
 } from '@mui/material';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -31,42 +30,42 @@ const Sidebar = () => {
       }}
     >
       <List>
-        <ListItem>
+        <ListItemButton>
           <ListItemText
             primary="pmp"
             sx={{ textAlign: 'center', fontWeight: 'bold', fontSize: '24px' }}
           />
-        </ListItem>
-        <ListItem button>
+        </ListItemButton>
+        <ListItemButton href={'/task'}>
           <ListItemIcon sx={{ justifyContent: 'center' }}>
             <MenuBookIcon />
           </ListItemIcon>
-        </ListItem>
-        <ListItem button>
+        </ListItemButton>
+        <ListItemButton>
           <ListItemIcon sx={{ justifyContent: 'center' }}>
             <AccessTimeIcon />
           </ListItemIcon>
-        </ListItem>
-        <ListItem button>
+        </ListItemButton>
+        <ListItemButton>
           <ListItemIcon sx={{ justifyContent: 'center' }}>
             <GroupIcon />
           </ListItemIcon>
-        </ListItem>
-        <ListItem button>
+        </ListItemButton>
+        <ListItemButton>
           <ListItemIcon sx={{ justifyContent: 'center' }}>
             <StarIcon />
           </ListItemIcon>
-        </ListItem>
-        <ListItem button>
+        </ListItemButton>
+        <ListItemButton>
           <ListItemIcon sx={{ justifyContent: 'center' }}>
             <NotificationsIcon />
           </ListItemIcon>
-        </ListItem>
-        <ListItem button>
+        </ListItemButton>
+        <ListItemButton>
           <ListItemIcon sx={{ justifyContent: 'center' }}>
             <PersonIcon />
           </ListItemIcon>
-        </ListItem>
+        </ListItemButton>
       </List>
     </Drawer>
   );
