@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Button, Stack, Container } from '@mui/material';
+import { Stack, Container } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { setTableData } from '@/store/wbsSlice';
 import WbsInputTable from '@/pages/wbs/components/wbsInputTable';
+import TopBar from '@/pages/wbs/components/topBar';
 
 const members = [
   '김영호',
@@ -19,6 +20,8 @@ const WbsView = () => {
   const dispatch = useDispatch();
   const tableData = useSelector((state) => state.wbs.tableData);
   const [localTableData, setLocalTableData] = useState([]);
+  const [save, setSave] = useState(true);
+  const [view, setView] = useState(true);
 
   useEffect(() => {
     const modifiedData = tableData.map((row) => [...row]);
@@ -40,26 +43,33 @@ const WbsView = () => {
 
   const handleSave = () => {
     dispatch(setTableData(localTableData));
+    setSave(false);
+  };
+
+  const handleClick = () => {
+    setSave((prev) => !prev);
+  };
+
+  const handleView = () => {
+    setView((prev) => !prev);
   };
 
   return (
     <>
       <Container maxWidth="xl">
-        <Stack mt={5}>
-          <Button
-            onClick={handleSave}
-            color="basicButton"
-            sx={{ width: '80px' }}
-          >
-            Edit
-          </Button>
-        </Stack>
+        <TopBar
+          save={save}
+          handleClick={handleClick}
+          handleSave={handleSave}
+          view={view}
+          handleView={handleView}
+        />
         <Stack mt={5}>
           <WbsInputTable
             tableData={localTableData}
             handleCellChange={handleCellChange}
             members={members}
-            width={100}
+            width={view ? 100 : 60}
           />
         </Stack>
       </Container>

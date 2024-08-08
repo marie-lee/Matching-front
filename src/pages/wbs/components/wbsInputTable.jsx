@@ -151,64 +151,74 @@ const Cell = memo(
 );
 
 const WbsInputTable = memo(
-  ({ tableData, handleCellChange, members, width }) => (
-    <TableContainer
-      component={Paper}
-      sx={{ backgroundColor: '#ffffff', width: `${width}%`, borderRadius: 0 }}
-      elevation={0}
-    >
-      <Table>
-        <colgroup>
-          <col style={{ width: '10%' }} />
-          <col style={{ width: '20%' }} />
-          <col style={{ width: '30%' }} />
-          <col style={{ width: '10%' }} />
-          <col style={{ width: '10%' }} />
-          <col style={{ width: '10%' }} />
-          <col style={{ width: '10%' }} />
-        </colgroup>
-        <TableHead>
-          <TableRow>
-            {[
-              'Part',
-              'Division',
-              'Work',
-              'Engineer',
-              'Start Date',
-              'Due Date',
-              'Status',
-            ].map((header) => (
-              <TableCell
-                key={header}
-                sx={{ ...cellStyle, textAlign: 'center' }}
-              >
-                {header}
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {tableData.map((row, rowIndex) => (
-            <TableRow key={rowIndex}>
-              {row.map(
-                (cell, cellIndex) =>
-                  cell && (
-                    <Cell
-                      key={cellIndex}
-                      cell={cell}
-                      rowIndex={rowIndex}
-                      cellIndex={cellIndex}
-                      handleCellChange={handleCellChange}
-                      members={members}
-                    />
-                  ),
-              )}
+  ({ tableData, handleCellChange, members, width }) => {
+    const isFullWidth = width === 100;
+
+    return (
+      <TableContainer
+        component={Paper}
+        sx={{ backgroundColor: '#ffffff', width: `${width}%`, borderRadius: 0 }}
+        elevation={0}
+      >
+        <Table>
+          <colgroup>
+            <col style={{ width: '10%' }} />
+            <col style={{ width: '20%' }} />
+            <col style={{ width: '30%' }} />
+            <col style={{ width: '10%' }} />
+            <col style={{ width: '10%' }} />
+            <col style={{ width: '10%' }} />
+            <col style={{ width: '10%' }} />
+          </colgroup>
+          <TableHead>
+            <TableRow>
+              {[
+                'Part',
+                'Division',
+                'Work',
+                'Engineer',
+                'Start-Date',
+                'Due-Date',
+                'Status',
+              ].map((header) => (
+                <TableCell
+                  key={header}
+                  sx={{
+                    ...cellStyle,
+                    textAlign: 'center',
+                    ...(isFullWidth ?
+                      { fontSize: '14px' }
+                    : { fontSize: '11px', fontWeight: 'fontWeightSemiBold' }),
+                  }}
+                >
+                  {header}
+                </TableCell>
+              ))}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  ),
+          </TableHead>
+          <TableBody>
+            {tableData.map((row, rowIndex) => (
+              <TableRow key={rowIndex}>
+                {row.map(
+                  (cell, cellIndex) =>
+                    cell && (
+                      <Cell
+                        key={cellIndex}
+                        cell={cell}
+                        rowIndex={rowIndex}
+                        cellIndex={cellIndex}
+                        handleCellChange={handleCellChange}
+                        members={members}
+                      />
+                    ),
+                )}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  },
 );
 
 export default WbsInputTable;
