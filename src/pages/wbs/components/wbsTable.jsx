@@ -1,28 +1,35 @@
-import { TextField } from '@mui/material';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+} from '@mui/material';
+import { memo } from 'react';
 
 export function createMergedTable(data) {
   const table = [];
 
-  function traverse(node, parentNames = []) {
+  function merged(node, parentNames = []) {
     const currentNames = [...parentNames, node.name];
 
     if (!node.child || node.child.length === 0) {
       table.push(currentNames);
     } else {
       node.child.forEach((childNode) => {
-        traverse(childNode, currentNames);
+        merged(childNode, currentNames);
       });
     }
   }
 
   data.forEach((item) => {
-    traverse(item);
+    merged(item);
   });
 
-  return mergeTable(table);
+  return createTable(table);
 }
 
-function mergeTable(table) {
+function createTable(table) {
   const mergedTable = [];
   const rowCount = table.length;
   const colCount = Math.max(...table.map((row) => row.length));
@@ -51,56 +58,41 @@ function mergeTable(table) {
   return mergedTable;
 }
 
-const WbsTable = ({ tableData, handleCellChange }) => {
-  return (
-    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-      <tbody>
-        {tableData.map((row, rowIndex) => (
-          <tr key={rowIndex}>
-            {row.map((cell, cellIndex) =>
-              cell ?
-                <td
-                  key={cellIndex}
-                  rowSpan={cell.rowSpan}
-                  style={{
-                    border: '1px solid rgba(0, 0, 0, 0.4)',
-                    padding: 0,
-                    position: 'relative',
-                  }}
-                >
-                  <TextField
-                    value={cell.value}
-                    onChange={(e) =>
-                      handleCellChange(rowIndex, cellIndex, e.target.value)
-                    }
-                    variant="outlined"
-                    fullWidth
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        border: 'none',
-                        padding: 0,
-                        height: '100%',
-                        width: '100%',
-                        '& fieldset': {
-                          border: 'none',
-                        },
-                      },
-                      input: {
-                        padding: 0,
-                        height: '100%',
-                        width: '100%',
-                        textAlign: 'center',
-                      },
-                    }}
-                  />
-                </td>
-              : null,
-            )}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
+const cellStyle = {
+  border: '2px solid #545454',
+  padding: '5px 4px',
+  textAlign: 'center',
+  verticalAlign: 'middle',
 };
+
+const Cell = memo(({ cell, cellIndex }) => (
+  <TableCell key={cellIndex} rowSpan={cell.rowSpan} sx={cellStyle}>
+    {cell.value}
+  </TableCell>
+));
+
+const WbsTable = ({ tableData }) => (
+  <TableContainer sx={{ backgroundColor: '#ffffff', borderRadius: 0 }}>
+    <Table>
+      <colgroup>
+        <col style={{ width: '20%' }} />
+        <col style={{ width: '30%' }} />
+        <col style={{ width: '50%' }} />
+      </colgroup>
+      <TableBody>
+        {tableData.map((row, rowIndex) => (
+          <TableRow key={rowIndex}>
+            {row.map(
+              (cell, cellIndex) =>
+                cell && (
+                  <Cell key={cellIndex} cell={cell} cellIndex={cellIndex} />
+                ),
+            )}
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </TableContainer>
+);
 
 export default WbsTable;

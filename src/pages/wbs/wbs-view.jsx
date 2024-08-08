@@ -1,11 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Button, Stack, Container } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setTableData } from '@/store/wbsSlice';
-import StepperComponent from '@/pages/wbs/components/stepperComponent';
 import WbsInputTable from '@/pages/wbs/components/wbsInputTable';
-import { PATHS } from '@/routes/paths';
 
 const members = [
   '김영호',
@@ -18,8 +15,7 @@ const members = [
   '이영현',
 ];
 
-const WbsInput = () => {
-  const navigate = useNavigate();
+const WbsView = () => {
   const dispatch = useDispatch();
   const tableData = useSelector((state) => state.wbs.tableData);
   const [localTableData, setLocalTableData] = useState([]);
@@ -46,50 +42,24 @@ const WbsInput = () => {
     dispatch(setTableData(localTableData));
   };
 
-  const handleBack = () => {
-    handleSave();
-    navigate(PATHS.wbs.basicinfo);
-  };
-
-  const handleNext = () => {
-    handleSave();
-    navigate(PATHS.wbs.wbsView);
-  };
-
   return (
     <>
-      <Container maxWidth="lg" sx={{ p: 3 }}>
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="start"
-        >
-          <StepperComponent activeStep={2} />
-          <Stack direction="row" spacing={1}>
-            <Button
-              color="greyButton"
-              sx={{ width: '100px' }}
-              onClick={handleBack}
-            >
-              BACK
-            </Button>
-            <Button
-              color="basicButton"
-              sx={{ width: '100px' }}
-              onClick={handleNext}
-            >
-              SAVE
-            </Button>
-          </Stack>
-        </Stack>
-      </Container>
       <Container maxWidth="xl">
-        <Stack mt={3}>
+        <Stack mt={5}>
+          <Button
+            onClick={handleSave}
+            color="basicButton"
+            sx={{ width: '80px' }}
+          >
+            Edit
+          </Button>
+        </Stack>
+        <Stack mt={5}>
           <WbsInputTable
             tableData={localTableData}
             handleCellChange={handleCellChange}
             members={members}
-            width={70}
+            width={100}
           />
         </Stack>
       </Container>
@@ -97,4 +67,4 @@ const WbsInput = () => {
   );
 };
 
-export default WbsInput;
+export default WbsView;
