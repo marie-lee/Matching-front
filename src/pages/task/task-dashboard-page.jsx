@@ -8,6 +8,7 @@ import {
   TaskAdd,
   IssueAdd,
   TaskDetail,
+  IssueDetail,
 } from '@/pages/task/components';
 import { useState } from 'react';
 
@@ -15,9 +16,14 @@ import { useState } from 'react';
 
 const TaskDashboardPage = () => {
   const [taskDialogOpen, setTaskDialogOpen] = useState(false);
+  const [issueDialogOpen, setIssueDialogOpen] = useState(false);
 
   const handleOpenTask = (value) => {
     setTaskDialogOpen(true);
+  };
+
+  const handleOpenIssue = (value) => {
+    setIssueDialogOpen(true);
   };
 
   // ----------------------------------------------------------------------
@@ -60,7 +66,8 @@ const TaskDashboardPage = () => {
               <Typography>1</Typography>
             </Stack>
             <IssueAdd />
-            <IssueItem />
+            <IssueDetail open={issueDialogOpen} setOpen={setIssueDialogOpen} />
+            <IssueItem onClick={handleOpenIssue} />
           </Stack>
         </Grid>
       </Grid>

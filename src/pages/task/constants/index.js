@@ -25,6 +25,17 @@ export const taskEditFormDefaultValues = {
   status: '',
 };
 
+export const issueEditFormDefaultValues = {
+  present: [],
+  mention: [],
+  dueDate: null,
+  status: '',
+};
+
+export const commentAddFormDefaultValues = {
+  content: '',
+};
+
 export const ISSUE_LIST = [
   {
     id: 1,
@@ -38,6 +49,22 @@ export const ISSUE_LIST = [
     title:
       '이슈명을 적어보아요 이슈명을 적어보아요 이슈명을 적어보아요 이슈명을 적어보아요 이슈명을 적어보아요',
     present: '임동현',
+    date: '2024.07.22',
+  },
+];
+
+export const COMMENT_LIST = [
+  {
+    id: 1,
+    content: '덧글 내용 어쩌구 저쩌구',
+    writer: '홍길동',
+    date: '2024.06.15',
+  },
+  {
+    id: 2,
+    content:
+      '덧글 내용 어쩌구 저쩌구 덧글 내용 어쩌구 저쩌구 덧글 내용 어쩌구 저쩌구 덧글 내용 어쩌구 저쩌구',
+    writer: '홍길동',
     date: '2024.07.22',
   },
 ];

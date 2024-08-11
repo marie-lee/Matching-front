@@ -4,71 +4,52 @@ import {
   Button,
   Chip,
   Dialog,
+  Divider,
   Grid,
+  IconButton,
+  InputAdornment,
   Stack,
   Typography,
 } from '@mui/material';
-import { Icon } from '@iconify/react';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-
-import { issueAddFormDefaultValues } from '@/pages/task/constants';
-import { CustomDialog } from '@/components/custom-dialog';
+import {
+  COMMENT_LIST,
+  commentAddFormDefaultValues,
+  issueEditFormDefaultValues,
+  taskEditFormDefaultValues,
+} from '@/pages/task/constants';
 import {
   RhfAutocomplete,
+  RhfDatePicker,
   RhfFormProvider,
-  RhfSelect,
   RhfTextField,
 } from '@/components/hook-form';
-import Required from '@/components/required';
-import { MenuPriority } from '@/pages/task/components';
+import { MenuPriority, MenuStatus } from '@/pages/task/components';
+import { Icon } from '@iconify/react';
 
-const IssueAdd = () => {
-  const [open, setOpen] = useState(false);
-  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+// ----------------------------------------------------------------------
 
-  const issueAddForm = useForm({
-    defaultValues: issueAddFormDefaultValues,
+const IssueDetail = ({ open, setOpen }) => {
+  const issueEditForm = useForm({
+    defaultValues: issueEditFormDefaultValues,
   });
 
+  const commentAddForm = useForm({
+    defaultValues: commentAddFormDefaultValues,
+  });
+
+  // ----------------------------------------------------------------------
+
   return (
-    <>
-      {/* 이슈 추가 버튼*/}
-      <Button variant={'outlined'} size={'large'} onClick={() => setOpen(true)}>
-        <Icon icon={'ic:outline-plus'} fontSize={'28'} />
-      </Button>
-
-      {/* 이슈 저장 취소 Dialog */}
-      <CustomDialog
-        open={cancelDialogOpen}
-        onClose={() => {
-          setCancelDialogOpen(false);
-        }}
-        confirmButtonText={'확인'}
-        onConfirm={() => {
-          setCancelDialogOpen(false);
-          setOpen(false);
-          issueAddForm.reset();
-        }}
-      >
-        <Typography textAlign={'center'}>
-          이슈 저장을 취소하시겠습니까?
-        </Typography>
-      </CustomDialog>
-
-      {/* 이슈 추가 Dialog */}
-      <Dialog open={open} maxWidth={'false'}>
-        <RhfFormProvider form={issueAddForm}>
-          <Stack width={'700px'} px={5.5} py={5} spacing={3} useFlexGap>
+    <Dialog open={open} maxWidth={'false'}>
+      <Stack width={'700px'} spacing={3} px={5.5} py={5}>
+        <RhfFormProvider form={issueEditForm}>
+          <Stack spacing={3} useFlexGap>
             <Stack direction={'row'} alignItems={'center'}>
               <Typography variant={'xl'}>Issue</Typography>
               <Box flexGrow={1} />
-              <Stack direction={'row'} spacing={1.5}>
-                <Button>Save</Button>
-                <Button
-                  variant={'outlined'}
-                  onClick={() => setCancelDialogOpen(true)}
-                >
+              <Stack direction={'row'}>
+                <Button variant={'outlined'} onClick={() => setOpen(false)}>
                   Close
                 </Button>
               </Stack>
@@ -76,34 +57,31 @@ const IssueAdd = () => {
 
             <Grid container spacing={3} alignItems={'center'}>
               <Grid item xs={12} sm={3}>
-                <Typography textAlign={'right'}>
-                  Task
-                  <Required />
-                </Typography>
+                <Typography textAlign={'right'}>No</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <RhfSelect name={'workPackage'} options={[]} size={'small'} />
+                <Typography>Front-3011</Typography>
               </Grid>
 
               <Grid item xs={12} sm={3}>
-                <Typography textAlign={'right'}>
-                  Title
-                  <Required />
-                </Typography>
+                <Typography textAlign={'right'}>Task</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <RhfTextField
-                  name={'title'}
-                  variant={'outlined'}
-                  size={'small'}
-                />
+                <Typography>프론트 / 메인페이지 / 구글로그인</Typography>
+              </Grid>
+
+              <Grid item xs={12} sm={3}>
+                <Typography textAlign={'right'}>Title</Typography>
+              </Grid>
+              <Grid item xs={12} sm={9}>
+                <Typography>구글 로그인</Typography>
               </Grid>
 
               <Grid item xs={12} sm={3}>
                 <Typography textAlign={'right'}>Priority</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <MenuPriority />
+                <MenuPriority editable={false} />
               </Grid>
 
               <Grid item xs={12} sm={3}>
@@ -187,27 +165,90 @@ const IssueAdd = () => {
                 />
               </Grid>
 
+              <Grid item xs={12} sm={3}>
+                <Typography textAlign={'right'}>Due Date</Typography>
+              </Grid>
+              <Grid item xs={12} sm={9}>
+                <RhfDatePicker name={'dueDate'} />
+              </Grid>
+
+              <Grid item xs={12} sm={3}>
+                <Typography textAlign={'right'}>Status</Typography>
+              </Grid>
+              <Grid item xs={12} sm={9}>
+                <MenuStatus />
+              </Grid>
+
               <Grid item xs={12} sm={3} alignSelf={'flex-start'}>
                 <Typography textAlign={'right'} pt={0.5}>
                   Contents
-                  <Required />
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <RhfTextField
-                  name={'contents'}
-                  variant={'outlined'}
-                  size={'small'}
-                  multiline
-                  rows={5}
-                />
+                이슈 추가할 때 썼던 상세 내용 자세히 나오는거라요 이슈 추가할 때
+                썼던 상세 내용 자세 히 나오는거라요 이슈 추가할 때 썼던 상세
+                내용 자세히 나오는 거
               </Grid>
             </Grid>
           </Stack>
         </RhfFormProvider>
-      </Dialog>
-    </>
+
+        <Divider flexItem />
+
+        <Stack spacing={1.5}>
+          <Typography variant={'lg'}>Comment</Typography>
+
+          <Divider flexItem />
+
+          <Stack spacing={2}>
+            {COMMENT_LIST.map((comment) => (
+              <Stack
+                direction={'row'}
+                key={`comment-${comment.id}`}
+                spacing={1.5}
+                alignItems={'center'}
+              >
+                <Avatar />
+                <Stack spacing={0.5}>
+                  <Stack direction={'row'} spacing={1}>
+                    <Typography variant={'sm'}>{comment.writer}</Typography>
+                    <Typography variant={'xs'} color={'text.secondary'}>
+                      {comment.date}
+                    </Typography>
+                  </Stack>
+                  <Typography>{comment.content}</Typography>
+                </Stack>
+              </Stack>
+            ))}
+
+            <RhfFormProvider form={commentAddForm}>
+              <Stack direction={'row'} spacing={1.5}>
+                <Avatar />
+                <RhfTextField
+                  name={'content'}
+                  placeholder={'덧글 추가'}
+                  sx={{ pt: 1 }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end" sx={{ mb: 1 }}>
+                        <IconButton disableRipple>
+                          <Icon
+                            icon={'clarity:circle-arrow-solid'}
+                            color={'#000'}
+                            fontSize={24}
+                          />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Stack>
+            </RhfFormProvider>
+          </Stack>
+        </Stack>
+      </Stack>
+    </Dialog>
   );
 };
 
-export default IssueAdd;
+export default IssueDetail;
