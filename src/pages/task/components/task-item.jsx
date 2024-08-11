@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 
 // ----------------------------------------------------------------------
 
-const TaskItem = () => {
+const TaskItem = ({ onClick }) => {
   const theme = useTheme();
 
   const renderStatus = () => {
@@ -38,6 +38,7 @@ const TaskItem = () => {
           borderColor: theme.palette.primary.main,
         },
       }}
+      onClick={onClick}
     >
       <Stack spacing={0.5}>
         <Typography variant={'sm'} color={'text.secondary'}>

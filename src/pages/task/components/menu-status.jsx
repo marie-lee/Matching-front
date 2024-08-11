@@ -2,11 +2,11 @@ import { ButtonBase, MenuItem, Stack, Typography } from '@mui/material';
 import { useCallback, useState } from 'react';
 
 import { CustomPopover } from '@/components/custom-popover';
-import { PRIORITY_LIST } from '@/pages/task/constants';
+import { STATUS_LIST } from '@/pages/task/constants';
 import { useTheme } from '@mui/material/styles';
 import { Icon } from '@iconify/react';
 
-const MenuPriority = ({ editable = true }) => {
+const MenuStatus = ({ editable = true }) => {
   const theme = useTheme();
   const [open, setOpen] = useState(null);
 
@@ -49,18 +49,18 @@ const MenuPriority = ({ editable = true }) => {
   return (
     <>
       <ButtonBase disabled={!editable} onClick={editable && handleOpenPopover}>
-        {renderChip(PRIORITY_LIST[0], editable)}
+        {renderChip(STATUS_LIST[0], editable)}
       </ButtonBase>
 
       <CustomPopover
         open={open}
         onClose={handleClosePopover}
         arrow={'top-left'}
-        sx={{ width: 70, mt: 1 }}
+        sx={{ width: 100, mt: 1 }}
       >
-        {PRIORITY_LIST.map((priority) => (
-          <MenuItem key={priority.label} sx={{ width: 70 }}>
-            {renderChip(priority)}
+        {STATUS_LIST.map((status) => (
+          <MenuItem key={status.label} sx={{ width: 100 }}>
+            {renderChip(status)}
           </MenuItem>
         ))}
       </CustomPopover>
@@ -68,4 +68,4 @@ const MenuPriority = ({ editable = true }) => {
   );
 };
 
-export default MenuPriority;
+export default MenuStatus;
