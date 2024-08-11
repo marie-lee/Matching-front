@@ -7,13 +7,13 @@ import {
   Radio,
   Container,
 } from '@mui/material';
-import StepperComponent from '@/pages/wbs/components/stepperComponent';
+import StepperComponent from '@/pages/wbs/components/stepper-component';
 
 import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/routes/paths';
-import ProjectInfo from '@/pages/wbs/components/projectInfo';
-import UserAdd from '@/pages/wbs/components/userAdd';
-import WbsTable, { createMergedTable } from '@/pages/wbs/components/wbsTable';
+import ProjectInfo from '@/pages/wbs/components/project-info';
+import UserAdd from '@/pages/wbs/components/user-add';
+import WbsTable, { createMergedTable } from '@/pages/wbs/components/wbs-table';
 import { wbsData } from '@/pages/wbs/components/constants';
 
 const BasicInfo = () => {

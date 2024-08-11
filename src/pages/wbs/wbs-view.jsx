@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { Stack, Container } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { setTableData } from '@/store/wbsSlice';
-import WbsInputTable from '@/pages/wbs/components/wbsInputTable';
-import TopBar from '@/pages/wbs/components/topBar';
+import WbsInputTable from '@/pages/wbs/components/wbs-input-table';
+import TopBar from '@/pages/wbs/components/top-bar';
 
 const members = [
   '김영호',
@@ -22,6 +22,7 @@ const WbsView = () => {
   const [localTableData, setLocalTableData] = useState([]);
   const [save, setSave] = useState(true);
   const [view, setView] = useState(true);
+  const [tracking, setTracking] = useState(true);
 
   useEffect(() => {
     const modifiedData = tableData.map((row) => [...row]);
@@ -53,6 +54,9 @@ const WbsView = () => {
   const handleView = () => {
     setView((prev) => !prev);
   };
+  const handleTracking = () => {
+    setTracking((prev) => !prev);
+  };
 
   return (
     <>
@@ -63,13 +67,15 @@ const WbsView = () => {
           handleSave={handleSave}
           view={view}
           handleView={handleView}
+          handleTracking={handleTracking}
+          tracking={tracking}
         />
         <Stack mt={5}>
           <WbsInputTable
             tableData={localTableData}
             handleCellChange={handleCellChange}
             members={members}
-            width={view ? 100 : 60}
+            width={tracking ? 100 : 60}
           />
         </Stack>
       </Container>

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { createMergedTable } from '@/pages/wbs/components/wbsTable';
+import { createMergedTable } from '@/pages/wbs/components/wbs-table';
 import { wbsData } from '@/pages/wbs/components/constants';
 
 const initialState = {

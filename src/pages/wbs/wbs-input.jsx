@@ -3,8 +3,8 @@ import { Button, Stack, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setTableData } from '@/store/wbsSlice';
-import StepperComponent from '@/pages/wbs/components/stepperComponent';
-import WbsInputTable from '@/pages/wbs/components/wbsInputTable';
+import StepperComponent from '@/pages/wbs/components/stepper-component';
+import WbsInputTable from '@/pages/wbs/components/wbs-input-table';
 import { PATHS } from '@/routes/paths';
 
 const members = [

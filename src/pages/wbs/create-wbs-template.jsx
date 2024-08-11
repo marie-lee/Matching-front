@@ -2,8 +2,8 @@
 import { Button, Stack, Container } from '@mui/material';
 import { template1, template2, template3 } from './components/constants';
 import { useState } from 'react';
-import TemplateBox from '@/pages/wbs/components/templateBox';
-import StepperComponent from '@/pages/wbs/components/stepperComponent';
+import TemplateBox from '@/pages/wbs/components/template-box';
+import StepperComponent from '@/pages/wbs/components/stepper-component';
 import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/routes/paths';
 
