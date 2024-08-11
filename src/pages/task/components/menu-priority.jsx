@@ -18,10 +18,6 @@ const MenuPriority = () => {
     setOpen(null);
   }, []);
 
-  const handleClickItem = (path) => {
-    handleClosePopover();
-  };
-
   const renderChip = (value, showCancel = false) => {
     return (
       <Stack

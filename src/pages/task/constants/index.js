@@ -9,6 +9,15 @@ export const taskAddFormDefaultValues = {
   endDt: null,
 };
 
+export const issueAddFormDefaultValues = {
+  task: '',
+  title: '',
+  priority: '',
+  present: [],
+  mention: [],
+  contents: '',
+};
+
 export const LEVEL_LIST = [
   {
     label: 'High',
