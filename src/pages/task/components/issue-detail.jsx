@@ -42,7 +42,7 @@ const IssueDetail = ({ open, setOpen }) => {
 
   return (
     <Dialog open={open} maxWidth={'false'}>
-      <Stack width={'700px'} spacing={3} px={5.5} py={5}>
+      <Stack width={'800px'} spacing={3} px={5.5} py={5}>
         <RhfFormProvider form={issueEditForm}>
           <Stack spacing={3} useFlexGap>
             <Stack direction={'row'} alignItems={'center'}>
