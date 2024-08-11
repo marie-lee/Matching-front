@@ -1,12 +1,14 @@
 import { Chip, Stack, Typography, useTheme } from '@mui/material';
 import { Icon } from '@iconify/react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 import { BasicDataGrid } from '@/components/data-grid';
 
 import { PATHS } from '@/routes/paths';
-import { getProjectList } from '@/services/project';
+import { getProjectList, getProject } from '@/services/project';
+import { getWbs } from '@/services/wbs';
+
 import dayjs from 'dayjs';
 
 // ----------------------------------------------------------------------
@@ -14,6 +16,7 @@ import dayjs from 'dayjs';
 const ProjectStatus = ({ params }) => {
   let color = '';
   let label = params.row.PJT_STTS;
+
   const hasLeaderRole = params.row.hasLeaderRole;
 
   switch (params.row.PJT_STTS) {
@@ -74,7 +77,7 @@ const ProjectEmptyRows = () => {
 
 // ----------------------------------------------------------------------
 
-const ProjectList = () => {
+const ProjectList = ({ name }) => {
   const navigate = useNavigate();
 
   const [isFetching, setIsFetching] = useState(false);
@@ -94,6 +97,19 @@ const ProjectList = () => {
     } catch (error) {
       console.log(error);
       setIsFetching(false);
+    }
+  };
+
+  const fetchProject = async (pjtSn) => {
+    try {
+      const res = await getProject(pjtSn);
+      const res1 = await getWbs(pjtSn);
+
+      res1.data.wbsData === null ? navigate(PATHS.task)
+      : res.data.teamLeader === name ? navigate(PATHS.wbs.root)
+      : alert('프로젝트 리더가 wbs를 만들때까지 기다려 주세요.');
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -152,10 +168,16 @@ const ProjectList = () => {
       getRowId={(row) => row?.PJT_SN}
       loading={isFetching}
       noRows={ProjectEmptyRows}
-      onRowClick={(params) => {
-        navigate(`${PATHS.project.details}/${params.row.PJT_SN}`, {
-          state: { projectData: params.row },
-        });
+      onRowClick={async (params) => {
+        const projectStatus = params.row.PJT_STTS;
+
+        if (projectStatus === 'PROGRESS') {
+          await fetchProject(params.row.PJT_SN);
+        } else {
+          navigate(`${PATHS.project.details}/${params.row.PJT_SN}`, {
+            state: { projectData: params.row },
+          });
+        }
       }}
     />
   );
