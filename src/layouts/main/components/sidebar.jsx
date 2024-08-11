@@ -30,7 +30,7 @@ const Sidebar = () => {
       }}
     >
       <List>
-        <ListItemButton>
+        <ListItemButton href={'/'}>
           <ListItemText
             primary="pmp"
             sx={{ textAlign: 'center', fontWeight: 'bold', fontSize: '24px' }}
@@ -41,7 +41,7 @@ const Sidebar = () => {
             <MenuBookIcon />
           </ListItemIcon>
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton href={'/wbs/wbs-view'}>
           <ListItemIcon sx={{ justifyContent: 'center' }}>
             <AccessTimeIcon />
           </ListItemIcon>
