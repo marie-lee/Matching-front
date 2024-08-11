@@ -6,7 +6,7 @@ import {
   TaskItem,
   IssueItem,
   TaskAdd,
-  IssueAddButton,
+  IssueAdd,
 } from '@/pages/task/components';
 
 // ----------------------------------------------------------------------
@@ -50,7 +50,7 @@ const TaskDashboardPage = () => {
               <Typography variant={'lg'}>Issue</Typography>
               <Typography>1</Typography>
             </Stack>
-            <IssueAddButton />
+            <IssueAdd />
             <IssueItem />
           </Stack>
         </Grid>
