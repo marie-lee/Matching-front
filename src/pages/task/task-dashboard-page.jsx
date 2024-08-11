@@ -7,11 +7,19 @@ import {
   IssueItem,
   TaskAdd,
   IssueAdd,
+  TaskDetail,
 } from '@/pages/task/components';
+import { useState } from 'react';
 
 // ----------------------------------------------------------------------
 
 const TaskDashboardPage = () => {
+  const [taskDialogOpen, setTaskDialogOpen] = useState(false);
+
+  const handleOpenTask = (value) => {
+    setTaskDialogOpen(true);
+  };
+
   // ----------------------------------------------------------------------
 
   return (
@@ -27,8 +35,8 @@ const TaskDashboardPage = () => {
               <Typography variant={'lg'}>Today</Typography>
               <Typography>2</Typography>
             </Stack>
-            <TodayItem />
-            <TodayItem />
+            <TodayItem onClick={handleOpenTask} />
+            <TodayItem onClick={handleOpenTask} />
           </Stack>
         </Grid>
         <Grid item xs={12} md={4}>
@@ -38,10 +46,11 @@ const TaskDashboardPage = () => {
               <Typography>4</Typography>
             </Stack>
             <TaskAdd />
-            <TaskItem />
-            <TaskItem />
-            <TaskItem />
-            <TaskItem />
+            <TaskDetail open={taskDialogOpen} setOpen={setTaskDialogOpen} />
+            <TaskItem onClick={handleOpenTask} />
+            <TaskItem onClick={handleOpenTask} />
+            <TaskItem onClick={handleOpenTask} />
+            <TaskItem onClick={handleOpenTask} />
           </Stack>
         </Grid>
         <Grid item xs={12} md={4}>

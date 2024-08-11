@@ -6,6 +6,8 @@ import TaskAdd from '@/pages/task/components/task-add';
 import IssueAdd from '@/pages/task/components/issue-add.jsx';
 import MenuPriority from '@/pages/task/components/menu-priority';
 import MenuLevel from '@/pages/task/components/menu-level';
+import TaskDetail from '@/pages/task/components/task-detail';
+import MenuStatus from '@/pages/task/components/menu-status.jsx';
 
 export {
   TaskDashBoardTop,
@@ -16,4 +18,6 @@ export {
   IssueAdd,
   MenuPriority,
   MenuLevel,
+  TaskDetail,
+  MenuStatus,
 };
