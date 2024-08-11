@@ -1,0 +1,72 @@
+/* Font */
+@font-face {
+    font-family: 'Pretendard';
+    src: url('./assets/fonts/Pretendard-Thin.ttf');
+    font-weight: 100;
+}
+
+@font-face {
+    font-family: 'Pretendard';
+    src: url('./assets/fonts/Pretendard-ExtraLight.ttf');
+    font-weight: 200;
+}
+
+@font-face {
+    font-family: 'Pretendard';
+    src: url('./assets/fonts/Pretendard-Light.ttf');
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: 'Pretendard';
+    src: url('./assets/fonts/Pretendard-Regular.ttf');
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: 'Pretendard';
+    src: url('./assets/fonts/Pretendard-Medium.ttf');
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: 'Pretendard';
+    src: url('./assets/fonts/Pretendard-SemiBold.ttf');
+    font-weight: 600;
+}
+
+@font-face {
+    font-family: 'Pretendard';
+    src: url('./assets/fonts/Pretendard-Bold.ttf');
+    font-weight: 700;
+}
+
+@font-face {
+    font-family: 'Pretendard';
+    src: url('./assets/fonts/Pretendard-ExtraBold.ttf');
+    font-weight: 800;
+}
+
+@font-face {
+    font-family: 'Pretendard';
+    src: url('./assets/fonts/Pretendard-Black.ttf');
+    font-weight: 900;
+}
+
+@font-face {
+    font-family: 'Esamanru';
+    src: url('./assets/fonts/esamanru-Light.ttf');
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: 'Esamanru';
+    src: url('./assets/fonts/esamanru-Medium.ttf');
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: 'Esamanru';
+    src: url('./assets/fonts/esamanru-Bold.ttf');
+    font-weight: 700;
+}
