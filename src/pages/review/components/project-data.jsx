@@ -1,5 +1,6 @@
 import { ResponsiveImg } from '@/components/img';
 import {
+  Button,
   Chip,
   Grid,
   Paper,
@@ -287,7 +288,10 @@ const ProjectData = () => {
                     <TableCell align="center">{member.USER_NM}</TableCell>
                     <TableCell align="center">{member.CONTRIBUTION}%</TableCell>
                     <TableCell align="center">
-                      {member.ISREVIEWD ? '평가완료' : '평가대기'}
+                      {/* 팀원 평가 버튼 */}
+                      {member.ISREVIEWD ?
+                        <Button disabled>평가 완료</Button>
+                      : <Button>평가 하기</Button>}
                     </TableCell>
                   </TableRow>
                 ))}
