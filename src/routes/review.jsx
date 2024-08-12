@@ -5,6 +5,9 @@ import SidebarLayout from '@/layouts/main/sidebar-layout';
 // ----------------------------------------------------------------------
 
 const PeerReviewPage = lazy(() => import('@/pages/review/review-page'));
+const PeerReviewInputPage = lazy(
+  () => import('@/pages/review/review-input-page'),
+);
 
 // ----------------------------------------------------------------------
 
@@ -15,6 +18,10 @@ const review = {
     {
       index: true,
       element: <PeerReviewPage />,
+    },
+    {
+      path: 'input',
+      element: <PeerReviewInputPage />,
     },
   ],
 };
