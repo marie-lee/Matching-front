@@ -23,6 +23,8 @@ const MemberReview = ({ review }) => {
             p={3}
             bgcolor={'background.default'}
             borderRadius={1}
+            border={1}
+            borderColor={'divider'}
           >
             <Typography variant={'body1'}>{review.ANSWER}</Typography>
           </Stack>

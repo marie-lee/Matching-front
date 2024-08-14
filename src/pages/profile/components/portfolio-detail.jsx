@@ -15,56 +15,11 @@ import CloseIcon from '@mui/icons-material/Close';
 import { ResponsiveImg } from '@/components/img';
 import { getPortfolioDetail } from '@/services/member';
 import { useEffect, useState } from 'react';
+import { MemberReview } from '@/pages/review/components';
 
 const PortfolioDetail = ({ open, setOpen, portfolioId }) => {
   const theme = useTheme();
   const [portfolioData, setPortfolioData] = useState(null);
-  //   PFOL_SN: 5,
-  //   PFOL_NM: 'Pick',
-  //   START_DT: '2022-04-01T00:00:00.000Z',
-  //   END_DT: '2023-05-08T00:00:00.000Z',
-  //   PERIOD: 5,
-  //   INTRO:
-  //     "사용자에게 날씨별로 음악의 듣기/아티스트 정보/앨범정보를 제공해주는 웹 사이트 'Pick'입니다",
-  //   MEM_CNT: 1,
-  //   CONTRIBUTION: 100,
-  //   SERVICE_STTS: 'ACTIVE',
-  //   RESULT: '만족',
-  //   stack: [
-  //     {
-  //       ST_NM: 'React',
-  //     },
-  //     {
-  //       ST_NM: 'ReduxToolKit',
-  //     },
-  //     {
-  //       ST_NM: 'TypeScript',
-  //     },
-  //   ],
-  //   roles: [
-  //     {
-  //       ROLE_NM: '프론트엔드',
-  //     },
-  //   ],
-  //   urls: [
-  //     {
-  //       URL: 'https://react-pick.netlify.app/',
-  //       URL_INTRO: '웹 사이트 링크',
-  //       RELEASE_YN: 0,
-  //       OS: 'Windows',
-  //     },
-  //   ],
-  //   media: [
-  //     {
-  //       URL: 'http://218.232.137.30:20090/matching/profile/USER_4_5.png',
-  //       MAIN_YN: 1,
-  //     },
-  //     {
-  //       URL: 'http://218.232.137.30:20090/matching/profile/USER_4_5.png',
-  //       MAIN_YN: 1,
-  //     },
-  //   ],
-  // };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -270,6 +225,8 @@ const PortfolioDetail = ({ open, setOpen, portfolioId }) => {
               allowFullScreen
             />
           </Box>
+          <Divider />
+          <MemberReview></MemberReview>
         </Stack>
       </DialogContent>
     </Dialog>
