@@ -15,6 +15,7 @@ import { useParams } from 'react-router-dom';
 import { STACKS_OPTIONS } from '@/pages/project/constants';
 import { ProjectDetailsMemberProfiles } from '@/pages/project/components';
 import { getRecommend } from '@/services/project';
+import RatingIcon from './profile-rating-icon';
 
 // ----------------------------------------------------------------------
 
@@ -52,6 +53,9 @@ const MemberItem = ({ member, ...other }) => {
                 />
               ))}
             </Stack>
+          </Grid>
+          <Grid item xs={2}>
+            <RatingIcon></RatingIcon>
           </Grid>
         </Grid>
       </Grid>
