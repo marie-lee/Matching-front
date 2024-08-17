@@ -69,15 +69,6 @@ const WbsIssue = () => {
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        {/* WBS 이슈 확인 버튼*/}
-        <Button
-          variant={'outlined'}
-          size={'large'}
-          onClick={() => setOpen(true)}
-        >
-          <Icon icon={'ic:outline-plus'} fontSize={'28'} />
-        </Button>
-
         {/* 이슈 추가 Dialog */}
         <Dialog open={open} maxWidth={'false'}>
           <Stack width={'700px'} px={3} py={3} spacing={3} useFlexGap>
