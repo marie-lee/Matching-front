@@ -1,4 +1,5 @@
 import { ResponsiveImg } from '@/components/img';
+import WbsIssue from '@/pages/wbs/components/wbs-issue';
 import {
   Button,
   Chip,
@@ -299,6 +300,7 @@ const ProjectData = () => {
             </Table>
           </TableContainer>
         </Stack>
+        <WbsIssue />
       </Stack>
     </Grid>
   );
