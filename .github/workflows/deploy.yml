@@ -21,19 +21,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 16
 
       - name: Install dependencies
         run: npm install
 
       - name: Build
         run: npm run build
-
-      - name: Output build logs
-        run: cat vite.config.js
-
-      - name: Verify build output
-        run: ls -la
 
       - name: Copy build artifacts to Raspberry Pi
         uses: appleboy/scp-action@master
