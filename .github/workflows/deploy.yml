@@ -33,7 +33,7 @@ jobs:
         run: cat vite.config.js
 
       - name: Verify build output
-        run: ls -la dist
+        run: ls -la
 
       - name: Copy build artifacts to Raspberry Pi
         uses: appleboy/scp-action@master
