@@ -25,6 +25,11 @@ export const getRecommend = (pjtSn) => {
   return instance.get(`${URL_GET_Recommend}/${pjtSn}`);
 };
 
+export const URL_GET_ReviewMembers = '/project/rate';
+export const getReviewMembers = (pjtSn) => {
+  return instance.get(`${URL_GET_ReviewMembers}/${pjtSn}`);
+};
+
 // ----------------------------------------------------------------------
 // POST
 // ----------------------------------------------------------------------

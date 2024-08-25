@@ -17,6 +17,7 @@ const review = {
   children: [
     {
       index: true,
+      path: ':pjtSn',
       element: <PeerReviewPage />,
     },
     {

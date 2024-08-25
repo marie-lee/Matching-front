@@ -1,5 +1,6 @@
 import { ResponsiveImg } from '@/components/img';
 import WbsIssue from '@/pages/wbs/components/wbs-issue';
+import { getReviewMembers } from '@/services/project';
 import {
   Button,
   Chip,
@@ -15,9 +16,27 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 const ProjectData = () => {
   const theme = useTheme();
+  const { pjtSn } = useParams();
+  const [reviewMembers, setReviewMembers] = useState([]);
+
+  const fetchReviewMembers = async () => {
+    try {
+      const reviewMembers = await getReviewMembers(pjtSn);
+      setReviewMembers(reviewMembers.data);
+      console.log('reviewMembers', reviewMembers.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchReviewMembers();
+  }, []);
 
   const portfolioData = {
     PFOL_NM: 'Pick',
@@ -283,14 +302,14 @@ const ProjectData = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {portfolioData.members.map((member, index) => (
+                {reviewMembers.map((member, index) => (
                   <TableRow key={index}>
-                    <TableCell align="center">{member.ROLE}</TableCell>
-                    <TableCell align="center">{member.USER_NM}</TableCell>
-                    <TableCell align="center">{member.CONTRIBUTION}%</TableCell>
+                    <TableCell align="center">{member.part}</TableCell>
+                    <TableCell align="center">{member.userNm}</TableCell>
+                    <TableCell align="center">{member.contribution}%</TableCell>
                     <TableCell align="center">
                       {/* 팀원 평가 버튼 */}
-                      {member.ISREVIEWD ?
+                      {member.isRated ?
                         <Button disabled>평가 완료</Button>
                       : <Button>평가 하기</Button>}
                     </TableCell>
