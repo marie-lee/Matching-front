@@ -37,7 +37,7 @@ const CreateWbsTemplatePage = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ p: '24px' }}>
+    <Container maxWidth="lg" sx={{ p: '30px' }}>
       <Stack spacing={3}>
         <Stack
           direction="row"
@@ -65,13 +65,13 @@ const CreateWbsTemplatePage = () => {
             </Button>
           </Stack>
         </Stack>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={3}>
           {renderTemplate(template1)}
         </Stack>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={3}>
           {renderTemplate(template2)}
         </Stack>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={3}>
           {renderTemplate(template3)}
         </Stack>
       </Stack>

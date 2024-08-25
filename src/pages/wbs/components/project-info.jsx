@@ -16,9 +16,9 @@ const ProjectInfo = () => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ pl: 3 }}>
       <Grid container spacing={3}>
-        <Grid container xs={12} justifyContent="flex-end" mb={5}>
+        <Grid container xs={12} justifyContent="flex-end" mb={5} mt={10}>
           <Box
             sx={{
               display: 'flex',

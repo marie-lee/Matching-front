@@ -27,7 +27,7 @@ const WbsView = () => {
   useEffect(() => {
     const modifiedData = tableData.map((row) => [...row]);
     setLocalTableData(modifiedData);
-  }, [tableData]);
+  }, [tableData, save]);
 
   const handleCellChange = (rowIndex, cellIndex, newValue) => {
     setLocalTableData((prevData) => {
@@ -44,7 +44,7 @@ const WbsView = () => {
 
   const handleSave = () => {
     dispatch(setTableData(localTableData));
-    setSave(false);
+    setSave((prev) => !prev);
   };
 
   const handleClick = () => {
@@ -76,6 +76,7 @@ const WbsView = () => {
             handleCellChange={handleCellChange}
             members={members}
             width={tracking ? 100 : 60}
+            editable={save}
           />
         </Stack>
       </Container>

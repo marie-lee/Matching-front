@@ -30,7 +30,7 @@ const BasicInfo = () => {
 
   return (
     <Container maxWidth="lg" sx={{ p: 3, pb: 10 }}>
-      <Stack spacing={1}>
+      <Stack spacing={3}>
         <Stack
           direction="row"
           justifyContent="space-between"

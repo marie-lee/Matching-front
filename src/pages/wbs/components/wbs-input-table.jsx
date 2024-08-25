@@ -95,18 +95,26 @@ const renderTextField = (value, onChange) => (
 );
 
 const Cell = memo(
-  ({ cell, rowIndex, cellIndex, handleCellChange, members }) => {
+  ({ cell, rowIndex, cellIndex, handleCellChange, members, editable }) => {
     const handleChange = useCallback(
       (e) => handleCellChange(rowIndex, cellIndex, e.target.value),
       [rowIndex, cellIndex, handleCellChange],
     );
+    const cellStyleWithEditable = {
+      ...cellStyle,
+      pointerEvents: editable ? 'none' : 'auto', // editable이 false이면 클릭 불가
+    };
 
     if (cellIndex === 4 || cellIndex === 5) {
       // 날짜
       return (
-        <TableCell key={cellIndex} rowSpan={cell.rowSpan} sx={cellStyle}>
+        <TableCell
+          key={cellIndex}
+          rowSpan={cell.rowSpan}
+          sx={cellStyleWithEditable}
+        >
           {renderDatePicker(cell.value, (date) =>
-            handleCellChange(rowIndex, cellIndex, date),
+            !editable ? handleCellChange(rowIndex, cellIndex, date) : null,
           )}
         </TableCell>
       );
@@ -115,8 +123,16 @@ const Cell = memo(
     if (cellIndex === 3) {
       // 엔지니어
       return (
-        <TableCell key={cellIndex} rowSpan={cell.rowSpan} sx={cellStyle}>
-          {renderSelectField(cell.value, handleChange, members)}
+        <TableCell
+          key={cellIndex}
+          rowSpan={cell.rowSpan}
+          sx={cellStyleWithEditable}
+        >
+          {renderSelectField(
+            cell.value,
+            !editable ? handleChange : () => {},
+            members,
+          )}
         </TableCell>
       );
     }
@@ -124,8 +140,12 @@ const Cell = memo(
     if (cellIndex === 6) {
       // 상태
       return (
-        <TableCell key={cellIndex} rowSpan={cell.rowSpan} sx={cellStyle}>
-          {renderSelectField(cell.value, handleChange, [
+        <TableCell
+          key={cellIndex}
+          rowSpan={cell.rowSpan}
+          sx={cellStyleWithEditable}
+        >
+          {renderSelectField(cell.value, !editable ? handleChange : () => {}, [
             '대기',
             '진행중',
             '완료',
@@ -136,8 +156,12 @@ const Cell = memo(
 
     // 텍스트 필드
     return (
-      <TableCell key={cellIndex} rowSpan={cell.rowSpan} sx={cellStyle}>
-        {renderTextField(cell.value, handleChange)}
+      <TableCell
+        key={cellIndex}
+        rowSpan={cell.rowSpan}
+        sx={cellStyleWithEditable}
+      >
+        {renderTextField(cell.value, !editable ? handleChange : () => {})}
       </TableCell>
     );
   },
@@ -145,13 +169,14 @@ const Cell = memo(
     return (
       prevProps.cell.value === nextProps.cell.value &&
       prevProps.cell.rowSpan === nextProps.cell.rowSpan &&
-      prevProps.members === nextProps.members
+      prevProps.members === nextProps.members &&
+      prevProps.editable === nextProps.editable
     );
   },
 );
 
 const WbsInputTable = memo(
-  ({ tableData, handleCellChange, members, width }) => {
+  ({ tableData, handleCellChange, members, width, editable }) => {
     const isFullWidth = width === 100;
 
     return (
@@ -209,6 +234,7 @@ const WbsInputTable = memo(
                         cellIndex={cellIndex}
                         handleCellChange={handleCellChange}
                         members={members}
+                        editable={editable}
                       />
                     ),
                 )}
