@@ -24,10 +24,15 @@ export const URL_GET_Recommend = '/recommendation/project';
 export const getRecommend = (pjtSn) => {
   return instance.get(`${URL_GET_Recommend}/${pjtSn}`);
 };
-
+// 프로젝트 평가한 멤버들 조회
 export const URL_GET_ReviewMembers = '/project/rate';
 export const getReviewMembers = (pjtSn) => {
   return instance.get(`${URL_GET_ReviewMembers}/${pjtSn}`);
+};
+// 프로젝트 팀원 평가 조회
+export const URL_GET_MyPeerReview = '/project/myRate';
+export const getMyPeerReview = (pjtSn) => {
+  return instance.get(`${URL_GET_MyPeerReview}/${pjtSn}`);
 };
 
 // ----------------------------------------------------------------------

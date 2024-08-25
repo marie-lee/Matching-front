@@ -16,27 +16,10 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 
-const ProjectData = () => {
+const ProjectData = ({ reviewMembers }) => {
   const theme = useTheme();
-  const { pjtSn } = useParams();
-  const [reviewMembers, setReviewMembers] = useState([]);
-
-  const fetchReviewMembers = async () => {
-    try {
-      const reviewMembers = await getReviewMembers(pjtSn);
-      setReviewMembers(reviewMembers.data);
-      console.log('reviewMembers', reviewMembers.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchReviewMembers();
-  }, []);
+  console.log('reviewMembers', reviewMembers);
 
   const portfolioData = {
     PFOL_NM: 'Pick',
