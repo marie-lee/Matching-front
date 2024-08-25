@@ -1,6 +1,6 @@
 import { Chip, Stack, Typography, useTheme } from '@mui/material';
 import { Icon } from '@iconify/react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 import { BasicDataGrid } from '@/components/data-grid';
