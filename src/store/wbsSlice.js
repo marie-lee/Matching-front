@@ -10,6 +10,7 @@ const initialState = {
     { value: '', rowSpan: 1 },
     { value: '대기', rowSpan: 1 },
   ]),
+  participants: [],
 };
 
 const wbsSlice = createSlice({
@@ -18,7 +19,6 @@ const wbsSlice = createSlice({
   reducers: {
     updateCell: (state, action) => {
       const { rowIndex, cellIndex, newValue } = action.payload;
-
       if (state.tableData[rowIndex] && state.tableData[rowIndex][cellIndex]) {
         state.tableData[rowIndex][cellIndex].value = newValue;
       }
@@ -26,9 +26,12 @@ const wbsSlice = createSlice({
     setTableData: (state, action) => {
       state.tableData = action.payload;
     },
+    setParticipants: (state, action) => {
+      state.participants = action.payload;
+    },
   },
 });
 
-export const { updateCell, setTableData } = wbsSlice.actions;
+export const { updateCell, setTableData, setParticipants } = wbsSlice.actions;
 
 export default wbsSlice.reducer;

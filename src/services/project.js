@@ -15,6 +15,10 @@ export const getProject = (pjtSn) => {
   return instance.get(`${URL_GET_PROJECT}/${pjtSn}`);
 };
 
+export const getProjectMember = (pjtSn) => {
+  return instance.get(`${URL_GET_PROJECT}/member/${pjtSn}`);
+};
+
 export const URL_GET_STATUS = '/status';
 export const getSTATUS = () => {
   return instance.get(URL_GET_STATUS);

@@ -106,7 +106,8 @@ const ProjectList = ({ name }) => {
       const res1 = await getWbs(pjtSn);
 
       res1.data.wbsData === null ? navigate(PATHS.task)
-      : res.data.teamLeader === name ? navigate(PATHS.wbs.root)
+      : res.data.teamLeader === name ?
+        navigate(PATHS.wbs.root, { state: { pjtSn } })
       : alert('프로젝트 리더가 wbs를 만들때까지 기다려 주세요.');
     } catch (error) {
       console.error(error);

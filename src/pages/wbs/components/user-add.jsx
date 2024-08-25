@@ -18,22 +18,11 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-const initialParticipants = [];
-const members = [
-  '김영호',
-  '박미영',
-  '한민규',
-  '이세진',
-  '임동현',
-  '백예나',
-  '박지민',
-  '이영현',
-];
-const roles = ['F.E.', 'B.E.', 'Design', 'Manager', '직접 입력'];
 const permissions = ['member', 'owner'];
 
-const UserAdd = () => {
-  const [participants, setParticipants] = useState(initialParticipants);
+const UserAdd = ({ userNames, roles }) => {
+  // roles를 prop으로 받음
+  const [participants, setParticipants] = useState([]);
   const [isCustomRole, setIsCustomRole] = useState([]);
   const [isInitialRender, setIsInitialRender] = useState(true);
   const tableEndRef = useRef(null);
@@ -149,7 +138,7 @@ const UserAdd = () => {
                         >
                           {(field === 'role' ? roles
                           : field === 'permission' ? permissions
-                          : members
+                          : userNames
                           ).map((option) => (
                             <MenuItem key={option} value={option}>
                               {option}

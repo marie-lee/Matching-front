@@ -4,13 +4,15 @@ import { template1, template2, template3 } from './components/constants';
 import { useState } from 'react';
 import TemplateBox from '@/pages/wbs/components/template-box';
 import StepperComponent from '@/pages/wbs/components/stepper-component';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { PATHS } from '@/routes/paths';
 
 // ----------------------------------------------------------------------
 
 const CreateWbsTemplatePage = () => {
   const [selectedBox, setSelectedBox] = useState(null);
+  const location = useLocation();
+  const { pjtSn } = location.state || {};
 
   const handleBoxClick = (id) => {
     setSelectedBox(id === selectedBox ? null : id);
@@ -19,7 +21,7 @@ const CreateWbsTemplatePage = () => {
   const navigate = useNavigate();
 
   const handleCreateWbs = () => {
-    navigate(PATHS.wbs.basicinfo);
+    navigate(PATHS.wbs.basicinfo, { state: { pjtSn } });
   };
   const handleBack = () => {
     navigate(PATHS.wbs.root);
