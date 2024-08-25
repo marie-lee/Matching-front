@@ -43,3 +43,12 @@ export const URL_POST_PROJECT = '/project/add';
 export const postProject = (payload) => {
   return instance.post(URL_POST_PROJECT, payload);
 };
+
+// 프로젝트 멤버 평가하기
+export const URL_POST_PROJECT_RATE = '/project/rate';
+export const postProjectRate = (payload, pjtSn, targetSn) => {
+  return instance.post(
+    `${URL_POST_PROJECT_RATE}/${pjtSn}/${targetSn}`,
+    payload,
+  );
+};

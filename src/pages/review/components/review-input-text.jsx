@@ -1,7 +1,7 @@
 import { AccountCircle } from '@mui/icons-material';
 import { Button, Grid, Stack, TextField, Typography } from '@mui/material';
 
-const ReviewInputText = ({ review, setReview }) => {
+const ReviewInputText = ({ review, setTextData, handleSubmit }) => {
   return (
     <Grid item xs={12}>
       <Stack spacing={2}>
@@ -23,6 +23,7 @@ const ReviewInputText = ({ review, setReview }) => {
             InputProps={{
               disableUnderline: true, // <== added this
             }}
+            onChange={(e) => setTextData(e.target.value)}
           />
         </Stack>
         {/* 제출 버튼 */}
@@ -31,7 +32,7 @@ const ReviewInputText = ({ review, setReview }) => {
             variant={'contained'}
             color={'primary'}
             onClick={() => {
-              // 리뷰 제출
+              handleSubmit();
             }}
           >
             제출

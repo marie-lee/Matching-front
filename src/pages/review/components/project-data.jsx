@@ -16,10 +16,17 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const ProjectData = ({ reviewMembers }) => {
+  const navigate = useNavigate();
   const theme = useTheme();
+  const { pjtSn } = useParams();
   console.log('reviewMembers', reviewMembers);
+
+  const handleClick = (member) => {
+    navigate(`/review/input/${member.userSn}`, { state: { ...member, pjtSn } });
+  };
 
   const portfolioData = {
     PFOL_NM: 'Pick',
@@ -294,7 +301,10 @@ const ProjectData = ({ reviewMembers }) => {
                       {/* 팀원 평가 버튼 */}
                       {member.isRated ?
                         <Button disabled>평가 완료</Button>
-                      : <Button>평가 하기</Button>}
+                      : <Button onClick={() => handleClick(member)}>
+                          평가 하기
+                        </Button>
+                      }
                     </TableCell>
                   </TableRow>
                 ))}

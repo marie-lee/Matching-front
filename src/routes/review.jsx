@@ -21,7 +21,7 @@ const review = {
       element: <PeerReviewPage />,
     },
     {
-      path: 'input',
+      path: 'input/:userSn',
       element: <PeerReviewInputPage />,
     },
   ],
