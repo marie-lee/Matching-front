@@ -114,6 +114,31 @@ const generateDateRange = (startDate, endDate) => {
   return dates;
 };
 
+const groupDatesByMonth = (dates) => {
+  const groupedDates = [];
+  let currentMonth = null;
+  let currentMonthDates = [];
+
+  dates.forEach((date) => {
+    const month = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+
+    if (currentMonth === null || currentMonth === month) {
+      currentMonthDates.push(date);
+    } else {
+      groupedDates.push({ month: currentMonth, dates: currentMonthDates });
+      currentMonthDates = [date];
+    }
+
+    currentMonth = month;
+  });
+
+  if (currentMonthDates.length) {
+    groupedDates.push({ month: currentMonth, dates: currentMonthDates });
+  }
+
+  return groupedDates;
+};
+
 const Cell = memo(
   ({ cell, rowIndex, cellIndex, handleCellChange, members, editable }) => {
     const handleChange = useCallback(
@@ -205,6 +230,7 @@ const GanttChart = memo(
     projectEndDate,
   }) => {
     const dateRange = generateDateRange(projectStartDate, projectEndDate);
+    const groupedDateRange = groupDatesByMonth(dateRange);
 
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -266,23 +292,26 @@ const GanttChart = memo(
                 ))}
               </colgroup>
               <TableHead>
+                {/* Month Header */}
                 <TableRow>
-                  {dateRange.map((date, index) => (
+                  {groupedDateRange.map(({ month, dates }, index) => (
                     <TableCell
                       key={index}
+                      colSpan={dates.length}
                       sx={{
                         ...cellStyle,
-                        textAlign: 'center',
+                        textAlign: 'left',
                         fontSize: '11px',
                         fontWeight: 'fontWeightSemiBold',
                         borderRight: 'none',
-                        height: '30px', 
+                        height: '30px',
                       }}
                     >
-                      {date.toLocaleDateString('en-US', { month: 'short' })}
+                      {month}
                     </TableCell>
                   ))}
                 </TableRow>
+                {/* Day Header */}
                 <TableRow>
                   {dateRange.map((date, index) => (
                     <TableCell
@@ -337,7 +366,7 @@ const GanttChart = memo(
                             members={members}
                             editable={editable}
                           />
-                        )
+                        ),
                     )}
                   </TableRow>
                 ))}
@@ -347,7 +376,12 @@ const GanttChart = memo(
           {/* 간트 차트 내용 */}
           <TableContainer
             component={Paper}
-            sx={{ width: '34%', height: '80%', overflowX: 'auto', overflowY: 'hidden' }}
+            sx={{
+              width: '34%',
+              height: '80%',
+              overflowX: 'auto',
+              overflowY: 'hidden',
+            }}
             elevation={0}
           >
             <Table sx={{ tableLayout: 'fixed', height: '100%' }}>
