@@ -174,7 +174,6 @@ const Cell = memo(
       );
     }
 
-    // 텍스트 필드
     return (
       <TableCell
         key={cellIndex}
@@ -196,135 +195,207 @@ const Cell = memo(
 );
 
 const GanttChart = memo(
-  ({ tableData, handleCellChange, members, width, editable, projectStartDate, projectEndDate }) => {
+  ({
+    tableData,
+    handleCellChange,
+    members,
+    width,
+    editable,
+    projectStartDate,
+    projectEndDate,
+  }) => {
     const dateRange = generateDateRange(projectStartDate, projectEndDate);
 
     return (
-      <Box sx={{ display: 'flex', width: '100%', height: '600px' /* 원하는 높이로 설정 */, overflowX: 'auto' }}>
-        {/* WBS Table */}
-        <TableContainer
-          component={Paper}
-          sx={{ flex: '2 1 66%', overflowX: 'auto', overflowY: 'hidden', height: '100%' }}
-          elevation={0}
-        >
-          <Table sx={{ tableLayout: 'fixed', width: '100%', height: '100%' }}>
-            <colgroup>
-              <col style={{ width: '15%' }} />
-              <col style={{ width: '15%' }} />
-              <col style={{ width: '25%' }} />
-              <col style={{ width: '15%' }} />
-              <col style={{ width: '10%' }} />
-              <col style={{ width: '10%' }} />
-              <col style={{ width: '10%' }} />
-            </colgroup>
-            <TableHead>
-              <TableRow>
-                {[
-                  'Part',
-                  'Division',
-                  'Work',
-                  'Engineer',
-                  'Start-Date',
-                  'Due-Date',
-                  'Status',
-                ].map((header, index) => (
-                  <TableCell
-                    key={index}
-                    sx={{
-                      ...cellStyle,
-                      textAlign: 'center',
-                      fontSize: '11px',
-                      fontWeight: 'fontWeightSemiBold',
-                    }}
-                  >
-                    {header}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {tableData.map((row, rowIndex) => (
-                <TableRow key={rowIndex}>
-                  {row.map(
-                    (cell, cellIndex) =>
-                      cell && (
-                        <Cell
-                          key={cellIndex}
-                          cell={cell}
-                          rowIndex={rowIndex}
-                          cellIndex={cellIndex}
-                          handleCellChange={handleCellChange}
-                          members={members}
-                          editable={editable}
-                        />
-                      ),
-                  )}
+      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+        {/* WBS 헤더 */}
+        <Box sx={{ display: 'flex' }}>
+          <TableContainer
+            component={Paper}
+            sx={{ width: '66%', overflowX: 'hidden' }}
+            elevation={0}
+          >
+            <Table>
+              <colgroup>
+                <col style={{ width: '10%' }} />
+                <col style={{ width: '20%' }} />
+                <col style={{ width: '30%' }} />
+                <col style={{ width: '10%' }} />
+                <col style={{ width: '10%' }} />
+                <col style={{ width: '10%' }} />
+                <col style={{ width: '10%' }} />
+              </colgroup>
+              <TableHead>
+                <TableRow>
+                  {[
+                    'Part',
+                    'Division',
+                    'Work',
+                    'Engineer',
+                    'Start-Date',
+                    'Due-Date',
+                    'Status',
+                  ].map((header, index) => (
+                    <TableCell
+                      key={index}
+                      sx={{
+                        ...cellStyle,
+                        textAlign: 'center',
+                        fontSize: '14px',
+                        fontWeight: 'fontWeightSemiBold',
+                        height: '60px',
+                      }}
+                    >
+                      {header}
+                    </TableCell>
+                  ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        {/* Gantt 차트 Table */}
-        <TableContainer
-          component={Paper}
-          sx={{ flex: '1 1 34%', overflowX: 'auto', overflowY: 'hidden', height: '100%' }}
-          elevation={0}
-        >
-          <Table sx={{ tableLayout: 'fixed', width: '100%', height: '100%' }}>
-            <colgroup>
-              {dateRange.map((_, index) => (
-                <col key={index} style={{ width: '15px' }} />
-              ))}
-            </colgroup>
-            <TableHead>
-              <TableRow>
-                {dateRange.map((date, index) => (
-                  <TableCell
-                    key={index}
-                    sx={{
-                      ...cellStyle,
-                      textAlign: 'center',
-                      fontSize: '11px',
-                      fontWeight: 'fontWeightSemiBold',
-                      borderRight: 'none', 
-                    }}
-                  >
-                    {date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}
-                  </TableCell>
+              </TableHead>
+            </Table>
+          </TableContainer>
+          {/* 간트 차트 헤더 */}
+          <TableContainer
+            component={Paper}
+            sx={{ width: '34%', overflowX: 'auto', overflowY: 'hidden' }}
+            elevation={0}
+          >
+            <Table sx={{ tableLayout: 'fixed' }}>
+              <colgroup>
+                {dateRange.map((_, index) => (
+                  <col key={index} style={{ width: '15px' }} />
                 ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {tableData.map((row, rowIndex) => (
-                <TableRow key={rowIndex}>
-                  {dateRange.map((date, dateIndex) => {
-                    const taskStartDate = row[4]?.value ? new Date(row[4].value) : null;
-                    const taskDueDate = row[5]?.value ? new Date(row[5].value) : null;
-                    const isInRange =
-                      taskStartDate && taskDueDate && date >= taskStartDate && date <= taskDueDate;
-
-                    return (
-                      <TableCell
-                        key={dateIndex}
-                        sx={{
-                          borderRight: 'none',
-                          backgroundColor: isInRange ? '#3f51b5' : 'transparent',
-                          width: '15px',
-                          minWidth: '15px',
-                          height: '30px',
-                        }}
-                      ></TableCell>
-                    );
-                  })}
+              </colgroup>
+              <TableHead>
+                <TableRow>
+                  {dateRange.map((date, index) => (
+                    <TableCell
+                      key={index}
+                      sx={{
+                        ...cellStyle,
+                        textAlign: 'center',
+                        fontSize: '11px',
+                        fontWeight: 'fontWeightSemiBold',
+                        borderRight: 'none',
+                        height: '30px', 
+                      }}
+                    >
+                      {date.toLocaleDateString('en-US', { month: 'short' })}
+                    </TableCell>
+                  ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                <TableRow>
+                  {dateRange.map((date, index) => (
+                    <TableCell
+                      key={index}
+                      sx={{
+                        ...cellStyle,
+                        textAlign: 'center',
+                        fontSize: '11px',
+                        fontWeight: 'fontWeightSemiBold',
+                        borderRight: 'none',
+                        height: '30px',
+                      }}
+                    >
+                      {date.toLocaleDateString('en-US', { day: 'numeric' })}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+            </Table>
+          </TableContainer>
+        </Box>
+
+        <Box sx={{ display: 'flex' }}>
+          {/* WBS 내용 */}
+          <TableContainer
+            component={Paper}
+            sx={{ width: '66%', overflowX: 'hidden' }}
+            elevation={0}
+          >
+            <Table sx={{ height: '100%' }}>
+              <colgroup>
+                <col style={{ width: '10%' }} />
+                <col style={{ width: '20%' }} />
+                <col style={{ width: '30%' }} />
+                <col style={{ width: '10%' }} />
+                <col style={{ width: '10%' }} />
+                <col style={{ width: '10%' }} />
+                <col style={{ width: '10%' }} />
+              </colgroup>
+              <TableBody>
+                {tableData.map((row, rowIndex) => (
+                  <TableRow key={rowIndex}>
+                    {row.map(
+                      (cell, cellIndex) =>
+                        cell && (
+                          <Cell
+                            key={cellIndex}
+                            cell={cell}
+                            rowIndex={rowIndex}
+                            cellIndex={cellIndex}
+                            handleCellChange={handleCellChange}
+                            members={members}
+                            editable={editable}
+                          />
+                        )
+                    )}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          {/* 간트 차트 내용 */}
+          <TableContainer
+            component={Paper}
+            sx={{ width: '34%', height: '80%', overflowX: 'auto', overflowY: 'hidden' }}
+            elevation={0}
+          >
+            <Table sx={{ tableLayout: 'fixed', height: '100%' }}>
+              <colgroup>
+                {dateRange.map((_, index) => (
+                  <col key={index} style={{ width: '15px' }} />
+                ))}
+              </colgroup>
+              <TableBody>
+                {tableData.map((row, rowIndex) => (
+                  <TableRow key={rowIndex}>
+                    {dateRange.map((date, dateIndex) => {
+                      const taskStartDate = row[4]?.value
+                        ? new Date(row[4].value)
+                        : null;
+                      const taskDueDate = row[5]?.value
+                        ? new Date(row[5].value)
+                        : null;
+                      const isInRange =
+                        taskStartDate &&
+                        taskDueDate &&
+                        date >= taskStartDate &&
+                        date <= taskDueDate;
+
+                      return (
+                        <TableCell
+                          key={dateIndex}
+                          sx={{
+                            borderRight: 'none',
+                            backgroundColor: isInRange
+                              ? '#3f51b5'
+                              : 'transparent',
+                            width: '15px',
+                            minWidth: '15px',
+                            height: '30px',
+                          }}
+                        ></TableCell>
+                      );
+                    })}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
       </Box>
     );
-  },
+  }
 );
 
 export default GanttChart;

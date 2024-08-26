@@ -24,7 +24,9 @@ const WbsInput = () => {
   const tableData = useSelector((state) => state.wbs.tableData);
   const [localTableData, setLocalTableData] = useState([]);
 
-  // Project Start and End Dates for Gantt Chart
+  /*
+    임시 프로젝트 시작 날짜와 끝나는 날짜
+  */
   const ProjectStartDate = new Date('2024-01-01');
   const ProjectEndDate = new Date('2024-10-31');
 
@@ -78,7 +80,6 @@ const WbsInput = () => {
         </Stack>
       </Container>
 
-      {/* GanttChart 컴포넌트 렌더링 */}
       <Container maxWidth="xl">
         <Grid container spacing={2}>
           <Grid item xs={12}>
