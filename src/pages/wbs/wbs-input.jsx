@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Button, Stack, Container } from '@mui/material';
+import { Button, Stack, Container, Grid, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setTableData } from '@/store/wbsSlice';
 import StepperComponent from '@/pages/wbs/components/stepper-component';
-import WbsInputTable from '@/pages/wbs/components/wbs-input-table';
+import GanttChart from '@/pages/wbs/components/gantt-chart';
 import { PATHS } from '@/routes/paths';
 
 const members = [
@@ -24,9 +24,15 @@ const WbsInput = () => {
   const tableData = useSelector((state) => state.wbs.tableData);
   const [localTableData, setLocalTableData] = useState([]);
 
+  // Project Start and End Dates for Gantt Chart
+  const ProjectStartDate = new Date('2024-01-01');
+  const ProjectEndDate = new Date('2024-10-31');
+
   useEffect(() => {
-    const modifiedData = tableData.map((row) => [...row]);
-    setLocalTableData(modifiedData);
+    if (tableData && tableData.length > 0) {
+      const modifiedData = tableData.map((row) => [...row]);
+      setLocalTableData(modifiedData);
+    }
   }, [tableData]);
 
   const handleCellChange = (rowIndex, cellIndex, newValue) => {
@@ -59,39 +65,36 @@ const WbsInput = () => {
   return (
     <>
       <Container maxWidth="lg" sx={{ p: 3 }}>
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="start"
-        >
+        <Stack direction="row" justifyContent="space-between" alignItems="start">
           <StepperComponent activeStep={2} />
           <Stack direction="row" spacing={1}>
-            <Button
-              color="greyButton"
-              sx={{ width: '100px' }}
-              onClick={handleBack}
-            >
+            <Button color="greyButton" sx={{ width: '100px' }} onClick={handleBack}>
               BACK
             </Button>
-            <Button
-              color="basicButton"
-              sx={{ width: '100px' }}
-              onClick={handleNext}
-            >
+            <Button color="basicButton" sx={{ width: '100px' }} onClick={handleNext}>
               SAVE
             </Button>
           </Stack>
         </Stack>
       </Container>
+
+      {/* GanttChart 컴포넌트 렌더링 */}
       <Container maxWidth="xl">
-        <Stack mt={3}>
-          <WbsInputTable
-            tableData={localTableData}
-            handleCellChange={handleCellChange}
-            members={members}
-            width={70}
-          />
-        </Stack>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Box sx={{ overflowX: 'auto', maxHeight: '100%' }}>
+              <GanttChart
+                tableData={localTableData}
+                handleCellChange={handleCellChange}
+                members={members}
+                width={100}
+                editable={false}
+                projectStartDate={ProjectStartDate}
+                projectEndDate={ProjectEndDate}
+              />
+            </Box>
+          </Grid>
+        </Grid>
       </Container>
     </>
   );
