@@ -17,10 +17,11 @@ const review = {
   children: [
     {
       index: true,
+      path: ':pjtSn',
       element: <PeerReviewPage />,
     },
     {
-      path: 'input',
+      path: 'input/:userSn',
       element: <PeerReviewInputPage />,
     },
   ],
