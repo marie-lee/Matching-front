@@ -33,7 +33,7 @@ const BasicInfo = () => {
         const namesArray = res.data.map((member) => member.userNm);
         setUserNames(namesArray);
 
-        const rolesArray = res.data.map((member) => member.part);
+        const rolesArray = [...new Set(res.data.map((member) => member.part))];
         setRoles(rolesArray);
       } catch (error) {
         console.error('Failed to fetch project members:', error);
