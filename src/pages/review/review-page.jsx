@@ -5,7 +5,7 @@ import {
   MemberFeedback,
   MemberReview,
 } from '@/pages/review/components';
-import { getMyPeerReview, getReviewMembers } from '@/services/project';
+import { getMyPeerReview, getReviewRate } from '@/services/project';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
@@ -15,13 +15,15 @@ const PeerReviewPage = () => {
   // ----------------------------------------------------------------------
   const { pjtSn } = useParams();
   const [reviewMembers, setReviewMembers] = useState([]);
+  const [projectInfo, setProjectInfo] = useState({});
   const [peerReview, setPeerReview] = useState([]);
 
-  const fetchReviewMembers = async () => {
+  const fetchReviewRate = async () => {
     try {
-      const reviewMembers = await getReviewMembers(pjtSn);
-      setReviewMembers(reviewMembers.data);
-      console.log('reviewMembers', reviewMembers.data);
+      const reviewData = await getReviewRate(pjtSn);
+      console.log('reviewMembers', reviewData.data);
+      setReviewMembers(reviewData.data.rateMemberList);
+      setProjectInfo(reviewData.data.projectInfo);
     } catch (error) {
       console.error(error);
     }
@@ -38,14 +40,14 @@ const PeerReviewPage = () => {
   };
 
   useEffect(() => {
-    fetchReviewMembers();
+    fetchReviewRate();
     fetchPeerReview();
   }, []);
 
   return (
     <Container maxWidth={'xl'}>
       <Grid container spacing={1.5} px={20} pt={3}>
-        <ProjectData reviewMembers={reviewMembers} />
+        <ProjectData reviewMembers={reviewMembers} projectInfo={projectInfo} />
         <MemberFeedback feedback={peerReview} />
         <MemberReview review={peerReview} />
       </Grid>

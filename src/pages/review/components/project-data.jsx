@@ -1,6 +1,5 @@
 import { ResponsiveImg } from '@/components/img';
 import WbsIssue from '@/pages/wbs/components/wbs-issue';
-import { getReviewMembers } from '@/services/project';
 import {
   Button,
   Chip,
@@ -18,11 +17,10 @@ import {
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 
-const ProjectData = ({ reviewMembers }) => {
+const ProjectData = ({ reviewMembers, projectInfo }) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const { pjtSn } = useParams();
-  console.log('reviewMembers', reviewMembers);
 
   const handleClick = (member) => {
     navigate(`/review/input/${member.userSn}`, { state: { ...member, pjtSn } });
@@ -82,54 +80,37 @@ const ProjectData = ({ reviewMembers }) => {
     ],
   };
 
-  return (
-    <Grid item xs={12}>
-      <Stack spacing={2}>
-        <Typography variant={'lg'} fontWeight={'fontWeightSemiBold'}>
-          프로젝트명
-        </Typography>
-        <Stack
-          spacing={2}
-          p={3}
-          bgcolor={'background.default'}
-          borderRadius={1}
-        >
-          <Grid container>
-            <Grid item xs={12} md={4} sx={{ px: 1 }}>
-              <ResponsiveImg
-                src={portfolioData.media[0].URL}
-                alt={portfolioData.PFOL_NM}
-                width={360}
-                height={200}
-              />
-            </Grid>
-            <Grid
-              item
-              container
-              xs={12}
-              md={8}
-              sx={{ px: 1 }}
-              alignItems={'center'}
-            >
-              <Grid item container xs={6} direction="column" spacing={1}>
-                <Grid
-                  item
-                  container
-                  direction="row"
-                  spacing={1}
-                  alignItems="center"
-                >
-                  {/* 기간 */}
-                  <Grid item xs={3}>
-                    <Typography variant="md">기간</Typography>
-                  </Grid>
-                  <Grid item xs={9}>
-                    <Typography
-                      variant="sm"
-                      color={theme.palette.text.secondary}
-                    >{`${portfolioData.START_DT} ~ ${portfolioData.END_DT}`}</Typography>
-                  </Grid>
-                  {/* 인원 */}
+  return !projectInfo.length ?
+      <div>loading</div>
+    : <Grid item xs={12}>
+        <Stack spacing={2}>
+          <Typography variant={'lg'} fontWeight={'fontWeightSemiBold'}>
+            {projectInfo[0].pjtNm}
+          </Typography>
+          <Stack
+            spacing={2}
+            p={3}
+            bgcolor={'background.default'}
+            borderRadius={1}
+          >
+            <Grid container>
+              <Grid item xs={12} md={4} sx={{ px: 1 }}>
+                <ResponsiveImg
+                  src={projectInfo[0].pjtImg}
+                  alt={projectInfo[0].pjtNm}
+                  width={360}
+                  height={200}
+                />
+              </Grid>
+              <Grid
+                item
+                container
+                xs={12}
+                md={8}
+                sx={{ px: 1 }}
+                alignItems={'center'}
+              >
+                <Grid item container xs={6} direction="column" spacing={1}>
                   <Grid
                     item
                     container
@@ -137,60 +118,66 @@ const ProjectData = ({ reviewMembers }) => {
                     spacing={1}
                     alignItems="center"
                   >
+                    {/* 기간 */}
                     <Grid item xs={3}>
-                      <Typography variant="md">인원</Typography>
+                      <Typography variant="md">기간</Typography>
                     </Grid>
                     <Grid item xs={9}>
-                      <Typography variant="sm">1명</Typography>
+                      <Typography
+                        variant="sm"
+                        color={theme.palette.text.secondary}
+                      >{`${projectInfo[0].startDt} ~ ${projectInfo[0].endDt}`}</Typography>
                     </Grid>
-                  </Grid>
-                  {/* 역할 */}
-                  <Grid
-                    item
-                    container
-                    direction="row"
-                    spacing={1}
-                    alignItems="center"
-                  >
-                    <Grid item xs={3}>
-                      <Typography variant="md">역할</Typography>
+                    {/* 인원 */}
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      spacing={1}
+                      alignItems="center"
+                    >
+                      <Grid item xs={3}>
+                        <Typography variant="md">인원</Typography>
+                      </Grid>
+                      <Grid item xs={9}>
+                        <Typography variant="sm">
+                          {projectInfo[0].totalMembers}명
+                        </Typography>
+                      </Grid>
                     </Grid>
-                    <Grid item xs={9}>
-                      {portfolioData.roles.map((role, index) => (
-                        <Chip
-                          key={`${portfolioData.PFOL_NM}_role_${index}`}
-                          label={role.ROLE_NM}
-                          size={'small'}
-                        />
-                      ))}
+                    {/* 역할 */}
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      spacing={1}
+                      alignItems="center"
+                    >
+                      <Grid item xs={3}>
+                        <Typography variant="md">역할</Typography>
+                      </Grid>
+                      <Grid item xs={9}>
+                        <Chip label={projectInfo[0].role} size={'small'} />
+                      </Grid>
                     </Grid>
-                  </Grid>
-                  {/* 서비스 상태 */}
-                  <Grid
-                    item
-                    container
-                    direction="row"
-                    spacing={1}
-                    alignItems="center"
-                  >
-                    <Grid item xs={3}>
-                      <Typography variant="md">서비스 상태</Typography>
-                    </Grid>
-                    <Grid item xs={9}>
-                      <Typography variant="sm">운영 중</Typography>
+                    {/* 서비스 상태 */}
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      spacing={1}
+                      alignItems="center"
+                    >
+                      <Grid item xs={3}>
+                        <Typography variant="md">서비스 상태</Typography>
+                      </Grid>
+                      <Grid item xs={9}>
+                        <Typography variant="sm">운영 중</Typography>
+                      </Grid>
                     </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
-              <Grid item container xs={6} direction="column" spacing={1}>
-                <Grid
-                  item
-                  container
-                  direction="row"
-                  spacing={1}
-                  alignItems="center"
-                >
-                  {/* 링크 */}
+                <Grid item container xs={6} direction="column" spacing={1}>
                   <Grid
                     item
                     container
@@ -198,124 +185,135 @@ const ProjectData = ({ reviewMembers }) => {
                     spacing={1}
                     alignItems="center"
                   >
-                    <Grid item xs={3}>
-                      <Typography variant="md">링크</Typography>
+                    {/* 링크 */}
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      spacing={1}
+                      alignItems="center"
+                    >
+                      <Grid item xs={3}>
+                        <Typography variant="md">링크</Typography>
+                      </Grid>
+                      <Grid item xs={9}>
+                        {portfolioData.urls.map((url, index) => (
+                          <a
+                            key={`${portfolioData.PFOL_NM}_url_${index}`}
+                            href={url.URL}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {url.URL}
+                          </a>
+                        ))}
+                      </Grid>
                     </Grid>
-                    <Grid item xs={9}>
-                      {portfolioData.urls.map((url, index) => (
-                        <a
-                          key={`${portfolioData.PFOL_NM}_url_${index}`}
-                          href={url.URL}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {url.URL}
-                        </a>
-                      ))}
+                    {/* 내 기여도 */}
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      spacing={1}
+                      alignItems="center"
+                    >
+                      <Grid item xs={3}>
+                        <Typography variant="md">내 기여도</Typography>
+                      </Grid>
+                      <Grid item xs={9}>
+                        <Typography variant={'sm'}>
+                          {projectInfo[0].contribution}%
+                        </Typography>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                  {/* 내 기여도 */}
-                  <Grid
-                    item
-                    container
-                    direction="row"
-                    spacing={1}
-                    alignItems="center"
-                  >
-                    <Grid item xs={3}>
-                      <Typography variant="md">내 기여도</Typography>
+                    {/* 스택 */}
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      spacing={1}
+                      alignItems="center"
+                    >
+                      <Grid item xs={3}>
+                        <Typography variant="md">스택</Typography>
+                      </Grid>
+                      <Grid item xs={9}>
+                        {projectInfo[0].stack.split(',').map((stack, index) => (
+                          <Chip
+                            key={`${projectInfo[0].pjtNm}_stack_${index}`}
+                            label={stack}
+                            size={'small'}
+                            sx={{ mr: 1 }}
+                          />
+                        ))}
+                      </Grid>
                     </Grid>
-                    <Grid item xs={9}>
-                      <Typography variant={'sm'}>
-                        {portfolioData.CONTRIBUTION}%
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                  {/* 스택 */}
-                  <Grid
-                    item
-                    container
-                    direction="row"
-                    spacing={1}
-                    alignItems="center"
-                  >
-                    <Grid item xs={3}>
-                      <Typography variant="md">스택</Typography>
-                    </Grid>
-                    <Grid item xs={9}>
-                      {portfolioData.stack.map((stack, index) => (
-                        <Chip
-                          key={`${portfolioData.pfolNm}_stack_${index}`}
-                          label={stack.ST_NM}
-                          size={'small'}
-                          sx={{ mr: 1 }}
-                        />
-                      ))}
-                    </Grid>
-                  </Grid>
-                  {/* 성과 */}
-                  <Grid
-                    item
-                    container
-                    direction="row"
-                    spacing={1}
-                    alignItems="center"
-                  >
-                    <Grid item xs={3}>
-                      <Typography variant="md">성과</Typography>
-                    </Grid>
-                    <Grid item xs={9}>
-                      <Typography variant="sm">
-                        {portfolioData.RESULT}
-                      </Typography>
+                    {/* 성과 */}
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      spacing={1}
+                      alignItems="center"
+                    >
+                      <Grid item xs={3}>
+                        <Typography variant="md">성과</Typography>
+                      </Grid>
+                      <Grid item xs={9}>
+                        <Typography variant="sm">
+                          {portfolioData.RESULT}
+                        </Typography>
+                      </Grid>
                     </Grid>
                   </Grid>
                 </Grid>
               </Grid>
             </Grid>
-          </Grid>
-        </Stack>
-        <Stack
-          spacing={2}
-          p={3}
-          bgcolor={'background.default'}
-          borderRadius={1}
-        >
-          <TableContainer component={Paper} sx={{ borderRadius: 0 }}>
-            <Table sx={{ textAlign: 'center' }}>
-              <TableHead sx={{ backgroundColor: 'rgba(184, 184, 184, 0.33)' }}>
-                <TableRow>
-                  <TableCell align="center">역할</TableCell>
-                  <TableCell align="center">이름</TableCell>
-                  <TableCell align="center">기여도</TableCell>
-                  <TableCell align="center">상호평가</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {reviewMembers.map((member, index) => (
-                  <TableRow key={index}>
-                    <TableCell align="center">{member.part}</TableCell>
-                    <TableCell align="center">{member.userNm}</TableCell>
-                    <TableCell align="center">{member.contribution}%</TableCell>
-                    <TableCell align="center">
-                      {/* 팀원 평가 버튼 */}
-                      {member.isRated ?
-                        <Button disabled>평가 완료</Button>
-                      : <Button onClick={() => handleClick(member)}>
-                          평가 하기
-                        </Button>
-                      }
-                    </TableCell>
+          </Stack>
+          <Stack
+            spacing={2}
+            p={3}
+            bgcolor={'background.default'}
+            borderRadius={1}
+          >
+            <TableContainer component={Paper} sx={{ borderRadius: 0 }}>
+              <Table sx={{ textAlign: 'center' }}>
+                <TableHead
+                  sx={{ backgroundColor: 'rgba(184, 184, 184, 0.33)' }}
+                >
+                  <TableRow>
+                    <TableCell align="center">역할</TableCell>
+                    <TableCell align="center">이름</TableCell>
+                    <TableCell align="center">기여도</TableCell>
+                    <TableCell align="center">상호평가</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {reviewMembers.map((member, index) => (
+                    <TableRow key={index}>
+                      <TableCell align="center">{member.part}</TableCell>
+                      <TableCell align="center">{member.userNm}</TableCell>
+                      <TableCell align="center">
+                        {member.contribution}%
+                      </TableCell>
+                      <TableCell align="center">
+                        {/* 팀원 평가 버튼 */}
+                        {member.isRated ?
+                          <Button disabled>평가 완료</Button>
+                        : <Button onClick={() => handleClick(member)}>
+                            평가 하기
+                          </Button>
+                        }
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Stack>
+          <WbsIssue />
         </Stack>
-        <WbsIssue />
-      </Stack>
-    </Grid>
-  );
+      </Grid>;
 };
 
 export default ProjectData;
