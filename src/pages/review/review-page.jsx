@@ -5,7 +5,7 @@ import {
   MemberFeedback,
   MemberReview,
 } from '@/pages/review/components';
-import { getMyPeerReview, getReviewRate } from '@/services/project';
+import { getMyRate, getReviewRate } from '@/services/project';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
@@ -31,7 +31,7 @@ const PeerReviewPage = () => {
 
   const fetchPeerReview = async () => {
     try {
-      const peerReview = await getMyPeerReview(pjtSn);
+      const peerReview = await getMyRate(pjtSn);
       setPeerReview(peerReview.data);
       console.log('peerReview', peerReview.data);
     } catch (error) {

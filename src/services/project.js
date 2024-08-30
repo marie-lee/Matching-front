@@ -29,10 +29,11 @@ export const URL_GET_ReviewRate = '/project/rate';
 export const getReviewRate = (pjtSn) => {
   return instance.get(`${URL_GET_ReviewRate}/${pjtSn}`);
 };
-// 프로젝트 팀원 평가 조회
-export const URL_GET_MyPeerReview = '/project/myRate';
-export const getMyPeerReview = (pjtSn) => {
-  return instance.get(`${URL_GET_MyPeerReview}/${pjtSn}`);
+
+// 나에 대한 평가 조회
+export const URL_GET_MY_RATE = '/project/myRate';
+export const getMyRate = (pjtSn) => {
+  return instance.get(`${URL_GET_MY_RATE}/${pjtSn}`);
 };
 
 // ----------------------------------------------------------------------
