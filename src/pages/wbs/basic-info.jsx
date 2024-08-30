@@ -22,6 +22,7 @@ const BasicInfo = () => {
   const tableData = createMergedTable(wbsData);
   const location = useLocation();
   const { pjtSn } = location.state || {};
+
   const [userNames, setUserNames] = useState([]);
   const [roles, setRoles] = useState([]);
 

@@ -120,7 +120,10 @@ const groupDatesByMonth = (dates) => {
   let currentMonthDates = [];
 
   dates.forEach((date) => {
-    const month = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    const month = date.toLocaleDateString('en-US', {
+      month: 'short',
+      year: 'numeric',
+    });
 
     if (currentMonth === null || currentMonth === month) {
       currentMonthDates.push(date);
@@ -394,12 +397,10 @@ const GanttChart = memo(
                 {tableData.map((row, rowIndex) => (
                   <TableRow key={rowIndex}>
                     {dateRange.map((date, dateIndex) => {
-                      const taskStartDate = row[4]?.value
-                        ? new Date(row[4].value)
-                        : null;
-                      const taskDueDate = row[5]?.value
-                        ? new Date(row[5].value)
-                        : null;
+                      const taskStartDate =
+                        row[4]?.value ? new Date(row[4].value) : null;
+                      const taskDueDate =
+                        row[5]?.value ? new Date(row[5].value) : null;
                       const isInRange =
                         taskStartDate &&
                         taskDueDate &&
@@ -411,9 +412,8 @@ const GanttChart = memo(
                           key={dateIndex}
                           sx={{
                             borderRight: 'none',
-                            backgroundColor: isInRange
-                              ? '#3f51b5'
-                              : 'transparent',
+                            backgroundColor:
+                              isInRange ? '#3f51b5' : 'transparent',
                             width: '15px',
                             minWidth: '15px',
                             height: '30px',
@@ -429,7 +429,7 @@ const GanttChart = memo(
         </Box>
       </Box>
     );
-  }
+  },
 );
 
 export default GanttChart;

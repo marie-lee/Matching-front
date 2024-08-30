@@ -1,19 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Grid, Typography, TextField, Box } from '@mui/material';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPjtData } from '@/store/wbsSlice';
 
 const ProjectInfo = () => {
-  const [startDate, setStartDate] = useState(new Date('2024-06-30'));
-  const [endDate, setEndDate] = useState(new Date());
+  const dispatch = useDispatch();
+  const pjtData = useSelector((state) => state.wbs.pjtData || {});
+
+  const [startDate, setStartDate] = useState(
+    new Date(pjtData.startDt || '2024-06-30'),
+  );
+  const [endDate, setEndDate] = useState(new Date(pjtData.endDt || new Date()));
 
   const handleStartDateChange = (date) => {
     setStartDate(date);
+    updatePjtData(date, endDate);
   };
 
   const handleEndDateChange = (date) => {
     setEndDate(date);
+    updatePjtData(startDate, date);
   };
+
+  const updatePjtData = (start, end) => {
+    dispatch(
+      setPjtData({
+        startDt: start.toISOString().split('T')[0],
+        endDt: end.toISOString().split('T')[0],
+      }),
+    );
+  };
+
+  useEffect(() => {
+    setStartDate(new Date(pjtData.startDt || '2024-06-30'));
+    setEndDate(new Date(pjtData.endDt || new Date()));
+  }, [pjtData]);
 
   return (
     <Box sx={{ pl: 3 }}>
