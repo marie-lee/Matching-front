@@ -4,10 +4,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setTableData, resetState } from '@/store/wbsSlice';
 import StepperComponent from '@/pages/wbs/components/stepper-component';
-import GanttChart from '@/pages/wbs/components/gantt-chart';
 import { PATHS } from '@/routes/paths';
 import { mergeTableDataByRowSpan } from '@/pages/wbs/components/merge-table-data';
 import { postWbs } from '@/services/wbs';
+import WbsFull from '@/pages/wbs/components/wbs-full';
+import GanttFull from '@/pages/wbs/components/gantt-full';
 
 const WbsInput = () => {
   const navigate = useNavigate();
@@ -112,15 +113,32 @@ const WbsInput = () => {
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Box sx={{ overflowX: 'auto', maxHeight: '100%' }}>
-              <GanttChart
-                tableData={localTableData}
-                handleCellChange={handleCellChange}
-                members={memberNames}
-                width={100}
-                editable={false}
-                projectStartDate={ProjectStartDate}
-                projectEndDate={ProjectEndDate}
-              />
+              <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', flex: 6 }}>
+                  <WbsFull
+                    tableData={localTableData}
+                    handleCellChange={handleCellChange}
+                    members={memberNames}
+                    editable={false}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflowX: 'auto',
+                    flex: 3,
+                  }}
+                >
+                  <GanttFull
+                    tableData={localTableData}
+                    projectStartDate={ProjectStartDate}
+                    projectEndDate={ProjectEndDate}
+                  />
+                  ;
+                </Box>
+              </Box>
+              ;
             </Box>
           </Grid>
         </Grid>
