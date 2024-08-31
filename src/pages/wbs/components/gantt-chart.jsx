@@ -16,7 +16,9 @@ import {
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-{/* 테이블 스타일 */}
+{
+  /* 테이블 스타일 */
+}
 const cellStyle = {
   border: '1px solid #000',
   padding: '2px 4px',
@@ -39,7 +41,9 @@ const textFieldStyle = {
   },
 };
 
-{/* 달력 */}
+{
+  /* 달력 */
+}
 const renderDatePicker = (value, onChange) => (
   <DatePicker
     selected={value ? new Date(value) : null}
@@ -55,7 +59,9 @@ const renderDatePicker = (value, onChange) => (
   />
 );
 
-{/* 드롭다운 */}
+{
+  /* 드롭다운 */
+}
 const renderSelectField = (value, onChange, options) => (
   <FormControl fullWidth variant="outlined">
     <Select
@@ -94,12 +100,16 @@ const renderSelectField = (value, onChange, options) => (
   </FormControl>
 );
 
-{/* WBS 데이터 입력 */}
+{
+  /* WBS 데이터 입력 */
+}
 const renderTextField = (value, onChange) => (
   <TextField value={value} onChange={onChange} fullWidth sx={textFieldStyle} />
 );
 
-{/* gantt 날짜 구간 생성 */}
+{
+  /* gantt 날짜 구간 생성 */
+}
 const generateDateRange = (startDate, endDate) => {
   const dates = [];
   const currentDate = new Date(startDate);
@@ -112,7 +122,9 @@ const generateDateRange = (startDate, endDate) => {
   return dates;
 };
 
-{/* 월별 날짜 구분 */}
+{
+  /* 월별 날짜 구분 */
+}
 const groupDatesByMonth = (dates) => {
   const groupedDates = [];
   let currentMonth = null;
@@ -141,7 +153,9 @@ const groupDatesByMonth = (dates) => {
   return groupedDates;
 };
 
-{/* WBS Cell */}
+{
+  /* WBS Cell */
+}
 const Cell = memo(
   ({ cell, rowIndex, cellIndex, handleCellChange, members, editable }) => {
     const handleChange = useCallback(
@@ -235,7 +249,9 @@ const GanttChart = memo(
     const dateRange = generateDateRange(projectStartDate, projectEndDate);
     const groupedDateRange = groupDatesByMonth(dateRange);
 
-    {/* gantt 동시 스크롤 */}
+    {
+      /* gantt 동시 스크롤 */
+    }
     const ganttHeaderRef = useRef(null);
     const ganttBodyRef = useRef(null);
 
@@ -275,7 +291,7 @@ const GanttChart = memo(
             sx={{
               width: '100vh',
               overflowX: 'hidden',
-              borderRadius: '0'
+              borderRadius: '0',
             }}
             elevation={0}
           >

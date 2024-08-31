@@ -3,6 +3,11 @@ import { createMergedTable } from '@/pages/wbs/components/wbs-table';
 import { wbsData } from '@/pages/wbs/components/constants';
 
 const initialState = {
+  pjtData: {
+    startDt: '',
+    endDt: '',
+  },
+  memberData: [],
   tableData: createMergedTable(wbsData).map((row) => [
     ...row,
     { value: '', rowSpan: 1 },
@@ -29,9 +34,25 @@ const wbsSlice = createSlice({
     setParticipants: (state, action) => {
       state.participants = action.payload;
     },
+    setPjtData: (state, action) => {
+      state.pjtData = action.payload;
+    },
+    setMemberData: (state, action) => {
+      state.memberData = action.payload;
+    },
+    resetState: (state) => {
+      return initialState;
+    },
   },
 });
 
-export const { updateCell, setTableData, setParticipants } = wbsSlice.actions;
+export const {
+  updateCell,
+  setTableData,
+  setParticipants,
+  setPjtData,
+  setMemberData,
+  resetState,
+} = wbsSlice.actions;
 
 export default wbsSlice.reducer;
