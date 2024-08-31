@@ -28,6 +28,17 @@ export const URL_GET_Recommend = '/recommendation/project';
 export const getRecommend = (pjtSn) => {
   return instance.get(`${URL_GET_Recommend}/${pjtSn}`);
 };
+// 프로젝트 정보 및 평가자 목록 조회
+export const URL_GET_ReviewRate = '/project/rate';
+export const getReviewRate = (pjtSn) => {
+  return instance.get(`${URL_GET_ReviewRate}/${pjtSn}`);
+};
+
+// 나에 대한 평가 조회
+export const URL_GET_MY_RATE = '/project/myRate';
+export const getMyRate = (pjtSn) => {
+  return instance.get(`${URL_GET_MY_RATE}/${pjtSn}`);
+};
 
 // ----------------------------------------------------------------------
 // POST
@@ -36,4 +47,13 @@ export const getRecommend = (pjtSn) => {
 export const URL_POST_PROJECT = '/project/add';
 export const postProject = (payload) => {
   return instance.post(URL_POST_PROJECT, payload);
+};
+
+// 프로젝트 멤버 평가하기
+export const URL_POST_PROJECT_RATE = '/project/rate';
+export const postProjectRate = (payload, pjtSn, targetSn) => {
+  return instance.post(
+    `${URL_POST_PROJECT_RATE}/${pjtSn}/${targetSn}`,
+    payload,
+  );
 };

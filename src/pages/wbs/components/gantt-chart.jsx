@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useEffect, useRef } from 'react';
 import {
   Table,
   TableBody,
@@ -16,6 +16,9 @@ import {
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
+{
+  /* 테이블 스타일 */
+}
 const cellStyle = {
   border: '1px solid #000',
   padding: '2px 4px',
@@ -38,6 +41,9 @@ const textFieldStyle = {
   },
 };
 
+{
+  /* 달력 */
+}
 const renderDatePicker = (value, onChange) => (
   <DatePicker
     selected={value ? new Date(value) : null}
@@ -53,6 +59,9 @@ const renderDatePicker = (value, onChange) => (
   />
 );
 
+{
+  /* 드롭다운 */
+}
 const renderSelectField = (value, onChange, options) => (
   <FormControl fullWidth variant="outlined">
     <Select
@@ -91,17 +100,16 @@ const renderSelectField = (value, onChange, options) => (
   </FormControl>
 );
 
+{
+  /* WBS 데이터 입력 */
+}
 const renderTextField = (value, onChange) => (
   <TextField value={value} onChange={onChange} fullWidth sx={textFieldStyle} />
 );
 
-const calculateDaysDifference = (startDate, endDate) => {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  const differenceInTime = end - start;
-  return Math.ceil(differenceInTime / (1000 * 3600 * 24));
-};
-
+{
+  /* gantt 날짜 구간 생성 */
+}
 const generateDateRange = (startDate, endDate) => {
   const dates = [];
   const currentDate = new Date(startDate);
@@ -114,6 +122,9 @@ const generateDateRange = (startDate, endDate) => {
   return dates;
 };
 
+{
+  /* 월별 날짜 구분 */
+}
 const groupDatesByMonth = (dates) => {
   const groupedDates = [];
   let currentMonth = null;
@@ -142,6 +153,9 @@ const groupDatesByMonth = (dates) => {
   return groupedDates;
 };
 
+{
+  /* WBS Cell */
+}
 const Cell = memo(
   ({ cell, rowIndex, cellIndex, handleCellChange, members, editable }) => {
     const handleChange = useCallback(
@@ -235,13 +249,50 @@ const GanttChart = memo(
     const dateRange = generateDateRange(projectStartDate, projectEndDate);
     const groupedDateRange = groupDatesByMonth(dateRange);
 
+    {
+      /* gantt 동시 스크롤 */
+    }
+    const ganttHeaderRef = useRef(null);
+    const ganttBodyRef = useRef(null);
+
+    const syncScroll = (source) => {
+      if (!source || !ganttHeaderRef.current || !ganttBodyRef.current) return;
+
+      if (source === ganttHeaderRef.current) {
+        ganttBodyRef.current.scrollLeft = ganttHeaderRef.current.scrollLeft;
+      } else if (source === ganttBodyRef.current) {
+        ganttHeaderRef.current.scrollLeft = ganttBodyRef.current.scrollLeft;
+      }
+    };
+
+    useEffect(() => {
+      const header = ganttHeaderRef.current;
+      const body = ganttBodyRef.current;
+
+      if (header && body) {
+        const handleScroll = (e) => syncScroll(e.target);
+
+        header.addEventListener('scroll', handleScroll);
+        body.addEventListener('scroll', handleScroll);
+
+        return () => {
+          header.removeEventListener('scroll', handleScroll);
+          body.removeEventListener('scroll', handleScroll);
+        };
+      }
+    }, []);
+
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        {/* WBS 헤더 */}
-        <Box sx={{ display: 'flex' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          {/* WBS 헤더 */}
           <TableContainer
             component={Paper}
-            sx={{ width: '66%', overflowX: 'hidden' }}
+            sx={{
+              width: '100vh',
+              overflowX: 'hidden',
+              borderRadius: '0',
+            }}
             elevation={0}
           >
             <Table>
@@ -282,16 +333,68 @@ const GanttChart = memo(
               </TableHead>
             </Table>
           </TableContainer>
+          {/* WBS 내용 */}
+          <TableContainer
+            component={Paper}
+            sx={{ width: '100%', overflowX: 'hidden', borderRadius: '0' }}
+            elevation={0}
+          >
+            <Table sx={{ height: '100vh' }}>
+              <colgroup>
+                <col style={{ width: '10%' }} />
+                <col style={{ width: '20%' }} />
+                <col style={{ width: '30%' }} />
+                <col style={{ width: '10%' }} />
+                <col style={{ width: '10%' }} />
+                <col style={{ width: '10%' }} />
+                <col style={{ width: '10%' }} />
+              </colgroup>
+              <TableBody>
+                {tableData.map((row, rowIndex) => (
+                  <TableRow key={rowIndex}>
+                    {row.map(
+                      (cell, cellIndex) =>
+                        cell && (
+                          <Cell
+                            key={cellIndex}
+                            cell={cell}
+                            rowIndex={rowIndex}
+                            cellIndex={cellIndex}
+                            handleCellChange={handleCellChange}
+                            members={members}
+                            editable={editable}
+                          />
+                        ),
+                    )}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+
+        <Box
+          sx={{ display: 'flex', flexDirection: 'column', overflowX: 'auto' }}
+        >
           {/* 간트 차트 헤더 */}
           <TableContainer
             component={Paper}
-            sx={{ width: '34%', overflowX: 'auto', overflowY: 'hidden' }}
+            ref={ganttHeaderRef}
+            sx={{
+              width: '100vh',
+              overflowX: 'auto',
+              overflowY: 'hidden',
+              borderRadius: '0',
+              '&::-webkit-scrollbar': { display: 'none' },
+              '-ms-overflow-style': 'none',
+              'scrollbar-width': 'none',
+            }}
             elevation={0}
           >
             <Table sx={{ tableLayout: 'fixed' }}>
               <colgroup>
                 {dateRange.map((_, index) => (
-                  <col key={index} style={{ width: '15px' }} />
+                  <col key={index} style={{ width: '20px' }} />
                 ))}
               </colgroup>
               <TableHead>
@@ -335,62 +438,26 @@ const GanttChart = memo(
               </TableHead>
             </Table>
           </TableContainer>
-        </Box>
-
-        <Box sx={{ display: 'flex' }}>
-          {/* WBS 내용 */}
-          <TableContainer
-            component={Paper}
-            sx={{ width: '66%', overflowX: 'hidden' }}
-            elevation={0}
-          >
-            <Table sx={{ height: '100%' }}>
-              <colgroup>
-                <col style={{ width: '10%' }} />
-                <col style={{ width: '20%' }} />
-                <col style={{ width: '30%' }} />
-                <col style={{ width: '10%' }} />
-                <col style={{ width: '10%' }} />
-                <col style={{ width: '10%' }} />
-                <col style={{ width: '10%' }} />
-              </colgroup>
-              <TableBody>
-                {tableData.map((row, rowIndex) => (
-                  <TableRow key={rowIndex}>
-                    {row.map(
-                      (cell, cellIndex) =>
-                        cell && (
-                          <Cell
-                            key={cellIndex}
-                            cell={cell}
-                            rowIndex={rowIndex}
-                            cellIndex={cellIndex}
-                            handleCellChange={handleCellChange}
-                            members={members}
-                            editable={editable}
-                          />
-                        ),
-                    )}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
           {/* 간트 차트 내용 */}
           <TableContainer
             component={Paper}
+            ref={ganttBodyRef}
             sx={{
-              width: '34%',
-              height: '80%',
+              width: '100vh',
+              height: '100vh',
               overflowX: 'auto',
               overflowY: 'hidden',
+              borderRadius: '0',
+              '&::-webkit-scrollbar': { display: 'none' },
+              '-ms-overflow-style': 'none',
+              'scrollbar-width': 'none',
             }}
             elevation={0}
           >
             <Table sx={{ tableLayout: 'fixed', height: '100%' }}>
               <colgroup>
                 {dateRange.map((_, index) => (
-                  <col key={index} style={{ width: '15px' }} />
+                  <col key={index} style={{ width: '20px' }} />
                 ))}
               </colgroup>
               <TableBody>
@@ -400,7 +467,13 @@ const GanttChart = memo(
                       const taskStartDate =
                         row[4]?.value ? new Date(row[4].value) : null;
                       const taskDueDate =
-                        row[5]?.value ? new Date(row[5].value) : null;
+                        row[5]?.value ?
+                          new Date(
+                            new Date(row[5].value).setDate(
+                              new Date(row[5].value).getDate() + 1,
+                            ),
+                          )
+                        : null;
                       const isInRange =
                         taskStartDate &&
                         taskDueDate &&
