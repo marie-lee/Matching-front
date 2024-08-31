@@ -4,6 +4,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Box,
 } from '@mui/material';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -20,51 +21,56 @@ const Sidebar = () => {
       variant="permanent"
       sx={{
         width: drawerWidth,
-        flexShrink: 0,
         '& .MuiDrawer-paper': {
           width: drawerWidth,
-          boxSizing: 'border-box',
-          backgroundColor: '#f5f5f5', // 사이드바 배경색 설정
         },
       }}
     >
-      <List>
-        <ListItemButton href={'/'}>
-          <ListItemText
-            primary="pmp"
-            sx={{ textAlign: 'center', fontWeight: 'bold', fontSize: '24px' }}
-          />
-        </ListItemButton>
-        <ListItemButton href={'/task'}>
-          <ListItemIcon sx={{ justifyContent: 'center' }}>
-            <MenuBookIcon />
-          </ListItemIcon>
-        </ListItemButton>
-        <ListItemButton href={'/wbs/wbs-view'}>
-          <ListItemIcon sx={{ justifyContent: 'center' }}>
-            <AccessTimeIcon />
-          </ListItemIcon>
-        </ListItemButton>
-        <ListItemButton>
-          <ListItemIcon sx={{ justifyContent: 'center' }}>
-            <GroupIcon />
-          </ListItemIcon>
-        </ListItemButton>
-        <ListItemButton>
-          <ListItemIcon sx={{ justifyContent: 'center' }}>
-            <StarIcon />
-          </ListItemIcon>
-        </ListItemButton>
-        <ListItemButton>
-          <ListItemIcon sx={{ justifyContent: 'center' }}>
-            <NotificationsIcon />
-          </ListItemIcon>
-        </ListItemButton>
-        <ListItemButton>
-          <ListItemIcon sx={{ justifyContent: 'center' }}>
-            <PersonIcon />
-          </ListItemIcon>
-        </ListItemButton>
+      <List
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          height: '100%',
+        }}
+      >
+        <Box>
+          <ListItemButton href={'/'}>
+            <ListItemText primary="pmp" sx={{ textAlign: 'center' }} />
+          </ListItemButton>
+          <ListItemButton href={'/task'} sx={{ mt: 7 }}>
+            <ListItemIcon sx={{ justifyContent: 'center' }}>
+              <MenuBookIcon />
+            </ListItemIcon>
+          </ListItemButton>
+          <ListItemButton href={'/wbs/wbs-view'} sx={{ mt: 3 }}>
+            <ListItemIcon sx={{ justifyContent: 'center' }}>
+              <AccessTimeIcon />
+            </ListItemIcon>
+          </ListItemButton>
+          <ListItemButton sx={{ mt: 3 }}>
+            <ListItemIcon sx={{ justifyContent: 'center' }}>
+              <GroupIcon />
+            </ListItemIcon>
+          </ListItemButton>
+          <ListItemButton sx={{ mt: 3 }}>
+            <ListItemIcon sx={{ justifyContent: 'center' }}>
+              <StarIcon />
+            </ListItemIcon>
+          </ListItemButton>
+        </Box>
+        <Box>
+          <ListItemButton sx={{ mt: 3 }}>
+            <ListItemIcon sx={{ justifyContent: 'center' }}>
+              <NotificationsIcon />
+            </ListItemIcon>
+          </ListItemButton>
+          <ListItemButton sx={{ mb: 3 }}>
+            <ListItemIcon sx={{ justifyContent: 'center' }}>
+              <PersonIcon />
+            </ListItemIcon>
+          </ListItemButton>
+        </Box>
       </List>
     </Drawer>
   );

@@ -22,6 +22,7 @@ const BasicInfo = () => {
   const tableData = createMergedTable(wbsData);
   const location = useLocation();
   const { pjtSn } = location.state || {};
+
   const [userNames, setUserNames] = useState([]);
   const [roles, setRoles] = useState([]);
 
@@ -46,7 +47,7 @@ const BasicInfo = () => {
   }, [pjtSn]);
 
   const handleInputWbs = () => {
-    navigate(PATHS.wbs.wbsInput);
+    navigate(PATHS.wbs.wbsInput, { state: { pjtSn } });
   };
 
   const handleBack = () => {

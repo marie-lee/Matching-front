@@ -17,48 +17,47 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useDispatch, useSelector } from 'react-redux';
+import { setMemberData } from '@/store/wbsSlice';
 
 const permissions = ['member', 'owner'];
 
 const UserAdd = ({ userNames, roles }) => {
-  // roles를 prop으로 받음
-  const [participants, setParticipants] = useState([]);
-  const [isCustomRole, setIsCustomRole] = useState([]);
-  const [isInitialRender, setIsInitialRender] = useState(true);
+  const dispatch = useDispatch();
+  const memberData = useSelector((state) => state.wbs.memberData || []);
+  const [participants, setParticipants] = useState(memberData);
+  const [isCustomRole, setIsCustomRole] = useState(memberData.map(() => false));
   const tableEndRef = useRef(null);
 
-  const handleAddRow = () => {
-    const newParticipant = { name: '', role: '', permission: 'member' };
-    setParticipants((prev) => [...prev, newParticipant]);
-    setIsCustomRole((prev) => [...prev, false]);
-  };
-
-  // 화면 스크롤
   useEffect(() => {
-    if (!isInitialRender) {
-      if (tableEndRef.current) {
-        tableEndRef.current.scrollIntoView({ behavior: 'smooth' });
-      }
-    } else {
-      setIsInitialRender(false);
+    dispatch(setMemberData(participants));
+  }, [participants, dispatch]);
+
+  useEffect(() => {
+    if (tableEndRef.current) {
+      tableEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [participants]);
 
-  //업데이트
+  const handleAddRow = () => {
+    setParticipants((prev) => [
+      ...prev,
+      { name: '', role: '', permission: 'member' },
+    ]);
+    setIsCustomRole((prev) => [...prev, false]);
+  };
+
   const handleChange = (index, field, value) => {
-    setParticipants((prev) => {
-      const updatedParticipants = [...prev];
-      updatedParticipants[index] = {
-        ...updatedParticipants[index],
-        [field]: value,
-      };
-      return updatedParticipants;
-    });
+    setParticipants((prev) =>
+      prev.map((p, i) => (i === index ? { ...p, [field]: value } : p)),
+    );
   };
 
   const handleRoleChange = (index, value) => {
     setIsCustomRole((prev) =>
-      prev.map((item, i) => (i === index ? value === '직접 입력' : item)),
+      prev.map((isCustom, i) =>
+        i === index ? value === '직접 입력' : isCustom,
+      ),
     );
     handleChange(index, 'role', value === '직접 입력' ? '' : value);
   };
@@ -91,12 +90,11 @@ const UserAdd = ({ userNames, roles }) => {
                   align="center"
                   sx={{ padding: '4px', border: '4px solid #f4f6f8' }}
                 >
-                  {head ?
-                    head
-                  : <IconButton onClick={handleAddRow}>
+                  {head || (
+                    <IconButton onClick={handleAddRow}>
                       <AddIcon />
                     </IconButton>
-                  }
+                  )}
                 </TableCell>
               ))}
             </TableRow>
@@ -117,13 +115,13 @@ const UserAdd = ({ userNames, roles }) => {
                           handleChange(index, field, e.target.value)
                         }
                         sx={{
-                          '& .MuiOutlinedInput-root': {
-                            '& fieldset': { border: 'none' },
-                          },
                           input: {
                             padding: 0,
                             textAlign: 'center',
                             fontSize: '16px',
+                          },
+                          '& .MuiOutlinedInput-root': {
+                            '& fieldset': { border: 'none' },
                           },
                         }}
                       />
