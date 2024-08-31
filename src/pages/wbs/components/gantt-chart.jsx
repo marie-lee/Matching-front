@@ -16,6 +16,16 @@ import {
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
+const highlightDates = [
+  {
+    group: 1,
+    dates: [
+      { rowIndex: 0, date: '2024-08-02' },
+      { rowIndex: 1, date: '2024-08-03' },
+    ],
+  },
+];
+
 {
   /* 테이블 스타일 */
 }
@@ -208,9 +218,9 @@ const Cell = memo(
           sx={cellStyleWithEditable}
         >
           {renderSelectField(cell.value, !editable ? handleChange : () => {}, [
-            '대기',
-            '진행중',
-            '완료',
+            'WAIT',
+            'IN PROGRESS',
+            'CLOSE',
           ])}
         </TableCell>
       );
@@ -490,6 +500,7 @@ const GanttChart = memo(
                             width: '15px',
                             minWidth: '15px',
                             height: '30px',
+                            position: 'relative',
                           }}
                         ></TableCell>
                       );

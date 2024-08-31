@@ -13,7 +13,7 @@ const initialState = {
     { value: '', rowSpan: 1 },
     { value: '', rowSpan: 1 },
     { value: '', rowSpan: 1 },
-    { value: '대기', rowSpan: 1 },
+    { value: 'WAIT', rowSpan: 1 },
   ]),
   participants: [],
 };
@@ -40,7 +40,7 @@ const wbsSlice = createSlice({
     setMemberData: (state, action) => {
       state.memberData = action.payload;
     },
-    resetState: (state) => {
+    resetState: () => {
       return initialState;
     },
   },
