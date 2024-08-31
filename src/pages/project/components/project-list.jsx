@@ -180,6 +180,10 @@ const ProjectList = ({ name }) => {
 
         if (projectStatus === 'PROGRESS') {
           await fetchProject(params.row.PJT_SN);
+        } else if (projectStatus === 'FINISH') {
+          navigate(`${PATHS.project.review}/${params.row.PJT_SN}`, {
+            state: { projectData: params.row },
+          });
         } else {
           navigate(`${PATHS.project.details}/${params.row.PJT_SN}`, {
             state: { projectData: params.row },
