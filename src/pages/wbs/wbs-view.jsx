@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Stack, Container } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { setTableData } from '@/store/wbsSlice';
+import { setTableData, setPjtData } from '@/store/wbsSlice';
 import WbsInputTable from '@/pages/wbs/components/wbs-input-table';
 import TopBar from '@/pages/wbs/components/top-bar';
 
@@ -19,6 +19,7 @@ const members = [
 const WbsView = () => {
   const dispatch = useDispatch();
   const tableData = useSelector((state) => state.wbs.tableData);
+  const dateData = useSelector((state) => state.wbs.pjtData);
   const [localTableData, setLocalTableData] = useState([]);
   const [save, setSave] = useState(true);
   const [view, setView] = useState(true);
@@ -75,8 +76,10 @@ const WbsView = () => {
             tableData={localTableData}
             handleCellChange={handleCellChange}
             members={members}
-            width={tracking ? 100 : 60}
+            isFullWidth={tracking ? 60 : 100}
             editable={save}
+            projectStartDate={dateData.startDt}
+            projectEndDate={dateData.endDt}
           />
         </Stack>
       </Container>

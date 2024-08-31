@@ -20,17 +20,26 @@ import { MemberReview } from '@/pages/review/components';
 const PortfolioDetail = ({ open, setOpen, portfolioId }) => {
   const theme = useTheme();
   const [portfolioData, setPortfolioData] = useState(null);
+  const [peerReview, setPeerReview] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const res = await getPortfolioDetail(portfolioId);
+      const data = res.data;
+      setPortfolioData(data);
+
+      const peerReview = data.RATE.map((item) => {
+        return {
+          RATE_TEXT: item,
+        };
+      });
+      setPeerReview(peerReview);
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await getPortfolioDetail(portfolioId);
-        const data = res.data;
-        setPortfolioData(data);
-      } catch (error) {
-        console.log('error', error);
-      }
-    };
     fetchData();
   }, []);
 
@@ -226,7 +235,7 @@ const PortfolioDetail = ({ open, setOpen, portfolioId }) => {
             />
           </Box>
           <Divider />
-          <MemberReview></MemberReview>
+          <MemberReview review={peerReview}></MemberReview>
         </Stack>
       </DialogContent>
     </Dialog>
