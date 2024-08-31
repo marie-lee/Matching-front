@@ -2,75 +2,44 @@ import {
   Avatar,
   Box,
   Button,
+  ButtonBase,
   Chip,
   Dialog,
+  Divider,
   Grid,
   Stack,
   Typography,
 } from '@mui/material';
-import { Icon } from '@iconify/react';
-import { useState } from 'react';
-import Required from '@/components/required';
 import { useForm } from 'react-hook-form';
 
 import {
   RhfAutocomplete,
   RhfDatePicker,
   RhfFormProvider,
-  RhfSelect,
-  RhfTextField,
 } from '@/components/hook-form';
-import { taskAddFormDefaultValues } from '@/pages/task/constants/index.js';
-import { CustomDialog } from '@/components/custom-dialog';
-import { MenuPriority, MenuLevel } from '@/pages/task/components';
+import { MenuPriority, MenuStatus } from '@/pages/task/components';
+import { ISSUE_LIST, taskEditFormDefaultValues } from '@/pages/task/constants';
+import { Icon } from '@iconify/react';
 
 // ----------------------------------------------------------------------
 
-const TaskAdd = () => {
-  const [open, setOpen] = useState(false);
-  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
-
-  const taskAddForm = useForm({
-    defaultValues: taskAddFormDefaultValues,
+const TaskDetail = ({ open, setOpen }) => {
+  const taskEditForm = useForm({
+    defaultValues: taskEditFormDefaultValues,
   });
 
   // ----------------------------------------------------------------------
 
   return (
-    <>
-      <Button variant={'outlined'} size={'large'} onClick={() => setOpen(true)}>
-        <Icon icon={'ic:outline-plus'} fontSize={'28'} />
-      </Button>
-
-      <CustomDialog
-        open={cancelDialogOpen}
-        onClose={() => {
-          setCancelDialogOpen(false);
-        }}
-        confirmButtonText={'확인'}
-        onConfirm={() => {
-          setCancelDialogOpen(false);
-          setOpen(false);
-          taskAddForm.reset();
-        }}
-      >
-        <Typography textAlign={'center'}>
-          업무 저장을 취소하시겠습니까?
-        </Typography>
-      </CustomDialog>
-
-      <Dialog open={open} maxWidth={'false'}>
-        <RhfFormProvider form={taskAddForm}>
-          <Stack width={'700px'} px={5.5} py={5} spacing={3} useFlexGap>
+    <Dialog open={open} maxWidth={'false'}>
+      <Stack width={'800px'} spacing={3} px={5.5} py={5}>
+        <RhfFormProvider form={taskEditForm}>
+          <Stack spacing={3} useFlexGap>
             <Stack direction={'row'} alignItems={'center'}>
               <Typography variant={'xl'}>Task</Typography>
               <Box flexGrow={1} />
-              <Stack direction={'row'} spacing={1.5}>
-                <Button>Save</Button>
-                <Button
-                  variant={'outlined'}
-                  onClick={() => setCancelDialogOpen(true)}
-                >
+              <Stack direction={'row'}>
+                <Button variant={'outlined'} onClick={() => setOpen(false)}>
                   Close
                 </Button>
               </Stack>
@@ -78,51 +47,38 @@ const TaskAdd = () => {
 
             <Grid container spacing={3} alignItems={'center'}>
               <Grid item xs={12} sm={3}>
-                <Typography textAlign={'right'}>
-                  Work package
-                  <Required />
-                </Typography>
+                <Typography textAlign={'right'}>No</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <RhfSelect name={'workPackage'} options={[]} size={'small'} />
+                <Typography>Front-3011</Typography>
               </Grid>
 
               <Grid item xs={12} sm={3}>
-                <Typography textAlign={'right'}>
-                  Depth
-                  <Required />
-                </Typography>
+                <Typography textAlign={'right'}>Work package</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <RhfSelect name={'dapth'} options={[]} size={'small'} />
+                <Typography>프론트</Typography>
               </Grid>
 
               <Grid item xs={12} sm={3}>
-                <Typography textAlign={'right'}>
-                  Title
-                  <Required />
-                </Typography>
+                <Typography textAlign={'right'}>Depth</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <RhfTextField
-                  name={'title'}
-                  variant={'outlined'}
-                  size={'small'}
-                />
+                <Typography>메인페이지</Typography>
+              </Grid>
+
+              <Grid item xs={12} sm={3}>
+                <Typography textAlign={'right'}>Title</Typography>
+              </Grid>
+              <Grid item xs={12} sm={9}>
+                <Typography>구글 로그인</Typography>
               </Grid>
 
               <Grid item xs={12} sm={3}>
                 <Typography textAlign={'right'}>Priority</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <MenuPriority />
-              </Grid>
-
-              <Grid item xs={12} sm={3}>
-                <Typography textAlign={'right'}>Level</Typography>
-              </Grid>
-              <Grid item xs={12} sm={9}>
-                <MenuLevel />
+                <MenuPriority editable={false} />
               </Grid>
 
               <Grid item xs={12} sm={3}>
@@ -172,12 +128,74 @@ const TaskAdd = () => {
               <Grid item xs={12} sm={4.5}>
                 <RhfDatePicker name={'endDt'} />
               </Grid>
+
+              <Grid item xs={12} sm={3}>
+                <Typography textAlign={'right'}>Status</Typography>
+              </Grid>
+              <Grid item xs={12} sm={9}>
+                <MenuStatus />
+              </Grid>
             </Grid>
           </Stack>
         </RhfFormProvider>
-      </Dialog>
-    </>
+
+        <Divider flexItem />
+
+        <Stack spacing={1.5}>
+          <Stack
+            direction={'row'}
+            alignItems={'center'}
+            justifyContent={'space-between'}
+          >
+            <Typography variant={'lg'}>Issue</Typography>
+            <ButtonBase>
+              <Icon icon={'ic:baseline-plus'} fontSize={24} />
+            </ButtonBase>
+          </Stack>
+
+          <Divider flexItem />
+
+          <Stack useFlexGap>
+            {ISSUE_LIST.map((issue) => (
+              <Grid
+                container
+                key={`issue_${issue.id}`}
+                p={1}
+                sx={{
+                  ':hover': {
+                    cursor: 'pointer',
+                    backgroundColor: (theme) => theme.palette.action.hover,
+                  },
+                }}
+              >
+                <Grid
+                  item
+                  xs
+                  sx={{
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {issue.title}
+                </Grid>
+                <Grid item xs={'auto'} mx={1}>
+                  <Chip
+                    size={'small'}
+                    label={issue.present}
+                    avatar={<Avatar alt={`${issue.id} 프로필 이미지`} />}
+                  />
+                </Grid>
+                <Grid item xs={'auto'}>
+                  <Typography color={'text.secondary'}>{issue.date}</Typography>
+                </Grid>
+              </Grid>
+            ))}
+          </Stack>
+        </Stack>
+      </Stack>
+    </Dialog>
   );
 };
 
-export default TaskAdd;
+export default TaskDetail;

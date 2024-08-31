@@ -10,6 +10,7 @@ import match from '@/routes/match';
 import Home from '@/pages/home';
 import wbs from '@/routes/wbs';
 import task from '@/routes/task.jsx';
+import review from '@/routes/review.jsx';
 
 import NotFoundPage from '@/pages/error/404';
 import GuestLayout from '@/layouts/guest/guest-layout';
@@ -60,6 +61,8 @@ const Router = () => {
     wbs,
     // 업무/이슈
     task,
+    // 상호평가
+    review,
 
     {
       path: '*',

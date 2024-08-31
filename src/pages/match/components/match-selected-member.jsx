@@ -14,6 +14,7 @@ import PortfolioDetail from '@/pages/profile/components/portfolio-detail';
 // ----------------------------------------------------------------------
 
 const PortfolioList = ({ portfolio }) => {
+  console.log('portfolio', portfolio);
   const [selectedPortfolio, setSelectedPortfolio] = useState(null);
 
   const handleClickPortfolio = (portfolio) => {

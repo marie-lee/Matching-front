@@ -1,9 +1,13 @@
 import { Box, Button, Stack, Typography } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { selectName } from '@/store/name-reducer';
 
 import { ProjectList } from '@/pages/project/components';
 import { PATHS } from '@/routes/paths';
 
 const ProjectListPage = () => {
+  const name = useSelector(selectName);
+
   return (
     <Stack spacing={3}>
       <Stack direction={'row'} alignItems={'center'} spacing={1}>
@@ -13,7 +17,7 @@ const ProjectListPage = () => {
           프로젝트 등록하기
         </Button>
       </Stack>
-      <ProjectList />
+      <ProjectList name={name} />
     </Stack>
   );
 };

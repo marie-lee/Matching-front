@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 
 // ----------------------------------------------------------------------
 
-const IssueItem = () => {
+const IssueItem = ({ onClick }) => {
   const theme = useTheme();
 
   const renderStatus = () => {
@@ -40,6 +40,7 @@ const IssueItem = () => {
           borderColor: theme.palette.primary.main,
         },
       }}
+      onClick={onClick}
     >
       <Stack spacing={0.5}>
         <Typography variant={'sm'} color={'text.secondary'}>

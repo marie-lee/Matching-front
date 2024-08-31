@@ -10,38 +10,35 @@ import {
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { useState } from 'react';
-import Required from '@/components/required';
 import { useForm } from 'react-hook-form';
 
+import { issueAddFormDefaultValues } from '@/pages/task/constants';
+import { CustomDialog } from '@/components/custom-dialog';
 import {
   RhfAutocomplete,
-  RhfDatePicker,
   RhfFormProvider,
   RhfSelect,
   RhfTextField,
 } from '@/components/hook-form';
-import { taskAddFormDefaultValues } from '@/pages/task/constants/index.js';
-import { CustomDialog } from '@/components/custom-dialog';
-import { MenuPriority, MenuLevel } from '@/pages/task/components';
+import Required from '@/components/required';
+import { MenuPriority } from '@/pages/task/components';
 
-// ----------------------------------------------------------------------
-
-const TaskAdd = () => {
+const IssueAdd = () => {
   const [open, setOpen] = useState(false);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
 
-  const taskAddForm = useForm({
-    defaultValues: taskAddFormDefaultValues,
+  const issueAddForm = useForm({
+    defaultValues: issueAddFormDefaultValues,
   });
-
-  // ----------------------------------------------------------------------
 
   return (
     <>
+      {/* 이슈 추가 버튼*/}
       <Button variant={'outlined'} size={'large'} onClick={() => setOpen(true)}>
         <Icon icon={'ic:outline-plus'} fontSize={'28'} />
       </Button>
 
+      {/* 이슈 저장 취소 Dialog */}
       <CustomDialog
         open={cancelDialogOpen}
         onClose={() => {
@@ -51,19 +48,20 @@ const TaskAdd = () => {
         onConfirm={() => {
           setCancelDialogOpen(false);
           setOpen(false);
-          taskAddForm.reset();
+          issueAddForm.reset();
         }}
       >
         <Typography textAlign={'center'}>
-          업무 저장을 취소하시겠습니까?
+          이슈 저장을 취소하시겠습니까?
         </Typography>
       </CustomDialog>
 
+      {/* 이슈 추가 Dialog */}
       <Dialog open={open} maxWidth={'false'}>
-        <RhfFormProvider form={taskAddForm}>
+        <RhfFormProvider form={issueAddForm}>
           <Stack width={'700px'} px={5.5} py={5} spacing={3} useFlexGap>
             <Stack direction={'row'} alignItems={'center'}>
-              <Typography variant={'xl'}>Task</Typography>
+              <Typography variant={'xl'}>Issue</Typography>
               <Box flexGrow={1} />
               <Stack direction={'row'} spacing={1.5}>
                 <Button>Save</Button>
@@ -79,22 +77,12 @@ const TaskAdd = () => {
             <Grid container spacing={3} alignItems={'center'}>
               <Grid item xs={12} sm={3}>
                 <Typography textAlign={'right'}>
-                  Work package
+                  Task
                   <Required />
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
                 <RhfSelect name={'workPackage'} options={[]} size={'small'} />
-              </Grid>
-
-              <Grid item xs={12} sm={3}>
-                <Typography textAlign={'right'}>
-                  Depth
-                  <Required />
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={9}>
-                <RhfSelect name={'dapth'} options={[]} size={'small'} />
               </Grid>
 
               <Grid item xs={12} sm={3}>
@@ -116,13 +104,6 @@ const TaskAdd = () => {
               </Grid>
               <Grid item xs={12} sm={9}>
                 <MenuPriority />
-              </Grid>
-
-              <Grid item xs={12} sm={3}>
-                <Typography textAlign={'right'}>Level</Typography>
-              </Grid>
-              <Grid item xs={12} sm={9}>
-                <MenuLevel />
               </Grid>
 
               <Grid item xs={12} sm={3}>
@@ -164,13 +145,62 @@ const TaskAdd = () => {
               </Grid>
 
               <Grid item xs={12} sm={3}>
-                <Typography textAlign={'right'}>Work Schedule</Typography>
+                <Typography textAlign={'right'}>Mention</Typography>
               </Grid>
-              <Grid item xs={12} sm={4.5}>
-                <RhfDatePicker name={'startDt'} />
+              <Grid item xs={12} sm={9}>
+                <RhfAutocomplete
+                  name={'mention'}
+                  options={[
+                    { name: '이영현', position: 'back' },
+                    { name: '이세진', position: 'front' },
+                  ]}
+                  multiple
+                  size={'small'}
+                  renderTags={(value, getTagProps) =>
+                    value.map((option, index) => {
+                      const { key, ...tagProps } = getTagProps({ index });
+                      return (
+                        <Chip
+                          {...tagProps}
+                          key={key}
+                          size={'small'}
+                          avatar={<Avatar alt={`${option.name} 프로필`} />}
+                          label={`${option.name} / ${option.position}`}
+                        />
+                      );
+                    })
+                  }
+                  renderOption={(props, option) => {
+                    const { key, ...optionProps } = props;
+                    return (
+                      <Box key={key} component={'li'} {...optionProps}>
+                        <Chip
+                          size={'small'}
+                          label={`${option.name} / ${option.position}`}
+                          avatar={
+                            <Avatar alt={`${option.name} 프로필 이미지`} />
+                          }
+                        />
+                      </Box>
+                    );
+                  }}
+                />
               </Grid>
-              <Grid item xs={12} sm={4.5}>
-                <RhfDatePicker name={'endDt'} />
+
+              <Grid item xs={12} sm={3} alignSelf={'flex-start'}>
+                <Typography textAlign={'right'} pt={0.5}>
+                  Contents
+                  <Required />
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={9}>
+                <RhfTextField
+                  name={'contents'}
+                  variant={'outlined'}
+                  size={'small'}
+                  multiline
+                  rows={5}
+                />
               </Grid>
             </Grid>
           </Stack>
@@ -180,4 +210,4 @@ const TaskAdd = () => {
   );
 };
 
-export default TaskAdd;
+export default IssueAdd;

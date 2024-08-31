@@ -21,6 +21,7 @@ export const PATHS = {
     root: '/project',
     details: '/project/details',
     add: '/project/add',
+    review: '/review',
   },
   recommend: {
     root: '/recommend',
@@ -34,5 +35,6 @@ export const PATHS = {
     createWbs: '/wbs/create-wbs',
     basicinfo: '/wbs/basic-info',
     wbsInput: '/wbs/wbs-input',
+    wbsView: '/wbs/wbs-view',
   },
 };

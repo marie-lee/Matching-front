@@ -28,8 +28,8 @@ const TemplateBox = ({ item, selectedBox, handleBoxClick }) => {
   return (
     <Box
       key={item.id}
-      height={200}
-      width={340}
+      height={230}
+      width={350}
       display="flex"
       flexDirection="column"
       p={2}

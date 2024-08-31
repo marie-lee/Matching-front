@@ -10,6 +10,8 @@ import {
 import { ResponsiveImg } from '@/components/img';
 import { Fragment, useState } from 'react';
 import PortfolioDetail from '@/pages/profile/components/portfolio-detail';
+import PetsOutlinedIcon from '@mui/icons-material/PetsOutlined';
+import RatingIcon from './profile-rating-icon';
 
 // ----------------------------------------------------------------------
 
@@ -97,7 +99,7 @@ const PortfolioList = (member) => {
         <PortfolioDetail
           open={!!selectedPortfolio}
           setOpen={() => setSelectedPortfolio(null)}
-          portfolio={selectedPortfolio}
+          portfolioId={selectedPortfolio.pfolSn}
         />
       )}
     </Grid>

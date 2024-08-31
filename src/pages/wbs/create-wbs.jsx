@@ -1,14 +1,16 @@
 import { Button, Stack, Typography, Box } from '@mui/material';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { PATHS } from '@/routes/paths';
 
 const CreateWbsPage = () => {
   const [projectName, setProjectName] = useState('참새 방앗간');
   const navigate = useNavigate();
+  const location = useLocation();
+  const { pjtSn } = location.state || {};
 
   const handleCreateWbs = () => {
-    navigate(PATHS.wbs.createWbs);
+    navigate(PATHS.wbs.createWbs, { state: { pjtSn } });
   };
 
   return (
