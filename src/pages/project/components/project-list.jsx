@@ -104,6 +104,7 @@ const ProjectList = ({ name }) => {
     try {
       const res = await getProject(pjtSn);
       const res1 = await getWbs(pjtSn);
+      console.log('res1', res1);
 
       if (res1.data.wbsData.length == 0) {
         if (res.data.teamLeader === name) {

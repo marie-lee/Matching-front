@@ -40,6 +40,9 @@ const wbsSlice = createSlice({
     setMemberData: (state, action) => {
       state.memberData = action.payload;
     },
+    resetState: (state) => {
+      return initialState;
+    },
   },
 });
 
@@ -49,6 +52,7 @@ export const {
   setParticipants,
   setPjtData,
   setMemberData,
+  resetState,
 } = wbsSlice.actions;
 
 export default wbsSlice.reducer;

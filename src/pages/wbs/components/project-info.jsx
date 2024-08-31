@@ -4,9 +4,11 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPjtData } from '@/store/wbsSlice';
+import { selectName } from '@/store/name-reducer';
 
 const ProjectInfo = () => {
   const dispatch = useDispatch();
+  const userName = useSelector(selectName);
   const pjtData = useSelector((state) => state.wbs.pjtData || {});
 
   const [startDate, setStartDate] = useState(
@@ -58,7 +60,7 @@ const ProjectInfo = () => {
             </Box>
             <Box sx={{ textAlign: 'right' }}>
               <Typography variant="body1" fontWeight={'fontWeightSemiBold'}>
-                이종은
+                {userName}
               </Typography>
               <Typography variant="body1" fontWeight={'fontWeightSemiBold'}>
                 2024-06-30

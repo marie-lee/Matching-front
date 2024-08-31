@@ -47,7 +47,7 @@ const BasicInfo = () => {
   }, [pjtSn]);
 
   const handleInputWbs = () => {
-    navigate(PATHS.wbs.wbsInput);
+    navigate(PATHS.wbs.wbsInput, { state: { pjtSn } });
   };
 
   const handleBack = () => {

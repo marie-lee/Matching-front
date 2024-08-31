@@ -18,3 +18,8 @@ export const URL_POST_PROJECT = '/project/add';
 export const postProject = (payload) => {
   return instance.post(URL_POST_PROJECT, payload);
 };
+
+export const URL_POST_WBS = '/project/wbs/create';
+export const postWbs = (pjtSn, payload) => {
+  return instance.post(`${URL_POST_WBS}/${pjtSn}`, payload);
+};
