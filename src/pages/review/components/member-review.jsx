@@ -1,6 +1,7 @@
 import { Grid, Stack, Typography } from '@mui/material';
 
 const MemberReview = ({ review }) => {
+  console.log('review', review);
   return (
     <Grid item xs={12}>
       <Stack spacing={1}>
