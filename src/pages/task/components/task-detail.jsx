@@ -25,7 +25,7 @@ import {
   taskEditFormDefaultValues,
 } from '@/pages/task/constants';
 import { Icon } from '@iconify/react';
-import { getWbsTask, postWbsTask } from '@/services/wbs';
+import { getWbsTask, postWbsTaskEdit } from '@/services/wbs';
 
 // ----------------------------------------------------------------------
 
@@ -67,7 +67,7 @@ const TaskDetail = ({
 
   const fetchEditTask = async (payload) => {
     try {
-      const res = await postWbsTask(selectedPjtSn, selectedTaskSn, payload);
+      const res = await postWbsTaskEdit(selectedPjtSn, selectedTaskSn, payload);
       if (res.status === 200) {
         fetchTask();
         fetchDashboard();

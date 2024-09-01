@@ -52,9 +52,9 @@ export const postWbsIssueTask = (pjtSn, issueSn, payload) => {
 };
 
 // WBS 업무 수정
-export const URL_POST_WBS_TASK = '/project/wbs/task';
-export const postWbsTask = (pjtSn, taskSn, payload) => {
-  return instance.post(`${URL_POST_WBS_TASK}/${pjtSn}/${taskSn}`, payload);
+export const URL_POST_WBS_TASK_EDIT = '/project/wbs/task';
+export const postWbsTaskEdit = (pjtSn, taskSn, payload) => {
+  return instance.post(`${URL_POST_WBS_TASK_EDIT}/${pjtSn}/${taskSn}`, payload);
 };
 
 // ----------------------------------------------------------------------
