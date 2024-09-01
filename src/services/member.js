@@ -8,6 +8,18 @@ export const postMemberLogin = (payload) => {
   return instance.post(URL_POST_MEMBER_LOGIN, payload);
 };
 
+// 구글 로그인 API
+export const URL_POST_MEMBER_LOGIN_GOOGLE = '/member/login/google';
+export const postMemberLoginGoogle = (payload) => {
+  return instance.post(URL_POST_MEMBER_LOGIN_GOOGLE, payload);
+};
+
+// 구글 로그인 시 회원가입 된 이메일인지 확인
+export const URL_POST_MEMBER_EMAIL_CHECK = '/member/emailCheck';
+export const postMemberEmailCheck = (payload) => {
+  return instance.post(URL_POST_MEMBER_EMAIL_CHECK, payload);
+};
+
 // 포트폴리오 상세 조회
 export const URL_GET_PORTFOLIO_DETAIL = '/member/profile';
 export const getPortfolioDetail = (pfolSn) => {
