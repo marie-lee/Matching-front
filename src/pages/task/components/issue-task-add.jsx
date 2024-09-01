@@ -1,52 +1,45 @@
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import _ from 'lodash';
 import { Box, Button, Dialog, Grid, Stack, Typography } from '@mui/material';
 import { Icon } from '@iconify/react';
-import { useState } from 'react';
-import Required from '@/components/required';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import _ from 'lodash';
-import dayjs from 'dayjs';
 
-import {
-  RhfDatePicker,
-  RhfFormProvider,
-  RhfDropdown,
-  RhfSelect,
-  RhfTextField,
-} from '@/components/hook-form';
 import {
   LEVEL_LIST,
   PRIORITY_LIST,
   taskAddFormDefaultValues,
   taskAddFormSchema,
 } from '@/pages/task/constants';
-import { CustomDialog } from '@/components/custom-dialog';
-import { postWbsTask } from '@/services/wbs';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { postWbsIssueTask } from '@/services/wbs';
+import {
+  RhfDatePicker,
+  RhfDropdown,
+  RhfFormProvider,
+  RhfSelect,
+  RhfTextField,
+} from '@/components/hook-form';
+import Required from '@/components/required';
 
-// ----------------------------------------------------------------------
-
-const TaskAdd = ({ selectedPjtSn, optionData, fetchDashboard }) => {
+const IssueTaskAdd = ({ selectedPjtSn, selectedIssueSn, optionData }) => {
   const [open, setOpen] = useState(false);
-  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
 
   const taskAddForm = useForm({
     defaultValues: taskAddFormDefaultValues,
     resolver: yupResolver(taskAddFormSchema),
   });
 
+  const taskAddFormValues = taskAddForm.watch();
   const { formState } = taskAddForm;
 
-  const taskAddFormValues = taskAddForm.watch();
-
-  // 업무 등록
+  // 이슈 파생 업무 등록
   const fetchAddTask = async (payload) => {
     try {
-      const res = await postWbsTask(selectedPjtSn, payload);
-      if (res.status === 200) {
-        setOpen(false);
-        taskAddForm.reset();
-        fetchDashboard();
-      }
+      const { data } = await postWbsIssueTask(
+        selectedPjtSn,
+        selectedIssueSn,
+        payload,
+      );
     } catch (error) {
       console.log(error);
     }
@@ -60,15 +53,9 @@ const TaskAdd = ({ selectedPjtSn, optionData, fetchDashboard }) => {
 
     delete result['workPackageSn'];
 
-    if (result['startDt']) {
-      result['startDt'] = dayjs(result['startDt']).format('YYYY-MM-DD');
-    }
-
-    if (result['endDt']) {
-      result['endDt'] = dayjs(result['endDt']).format('YYYY-MM-DD');
-    }
-
-    await fetchAddTask(result);
+    console.log(payload);
+    console.log(dirtyFields);
+    console.log('result: ', result);
   });
 
   const getWorkPkgOptions = optionData?.workPackage?.map((value) => {
@@ -82,30 +69,11 @@ const TaskAdd = ({ selectedPjtSn, optionData, fetchDashboard }) => {
       value: item.depthSn,
     }));
 
-  // ----------------------------------------------------------------------
-
   return (
     <>
       <Button variant={'outlined'} size={'large'} onClick={() => setOpen(true)}>
-        <Icon icon={'ic:outline-plus'} fontSize={'28'} />
+        <Icon icon={'ic:outline-plus'} fontSize={'24'} />
       </Button>
-
-      <CustomDialog
-        open={cancelDialogOpen}
-        onClose={() => {
-          setCancelDialogOpen(false);
-        }}
-        confirmButtonText={'확인'}
-        onConfirm={() => {
-          setCancelDialogOpen(false);
-          setOpen(false);
-          taskAddForm.reset();
-        }}
-      >
-        <Typography textAlign={'center'}>
-          업무 저장을 취소하시겠습니까?
-        </Typography>
-      </CustomDialog>
 
       <Dialog open={open} maxWidth={'false'}>
         <RhfFormProvider form={taskAddForm}>
@@ -115,10 +83,7 @@ const TaskAdd = ({ selectedPjtSn, optionData, fetchDashboard }) => {
               <Box flexGrow={1} />
               <Stack direction={'row'} spacing={1.5}>
                 <Button onClick={onSubmit}>Save</Button>
-                <Button
-                  variant={'outlined'}
-                  onClick={() => setCancelDialogOpen(true)}
-                >
+                <Button variant={'outlined'} onClick={() => setOpen(false)}>
                   Close
                 </Button>
               </Stack>
@@ -202,4 +167,4 @@ const TaskAdd = ({ selectedPjtSn, optionData, fetchDashboard }) => {
   );
 };
 
-export default TaskAdd;
+export default IssueTaskAdd;

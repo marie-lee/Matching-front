@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Button,
   ButtonBase,
@@ -11,22 +10,103 @@ import {
   Typography,
 } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
+import _ from 'lodash';
 
 import {
-  RhfAutocomplete,
   RhfDatePicker,
+  RhfDropdown,
   RhfFormProvider,
 } from '@/components/hook-form';
-import { MenuPriority, MenuStatus } from '@/pages/task/components';
-import { ISSUE_LIST, taskEditFormDefaultValues } from '@/pages/task/constants';
+import {
+  PRIORITY_LIST,
+  STATUS_LIST,
+  taskEditFormDefaultValues,
+} from '@/pages/task/constants';
 import { Icon } from '@iconify/react';
+import { getWbsTask, postWbsTask } from '@/services/wbs';
 
 // ----------------------------------------------------------------------
 
-const TaskDetail = ({ open, setOpen }) => {
+const TaskDetail = ({
+  open,
+  setOpen,
+  selectedPjtSn,
+  selectedTaskSn,
+  optionData,
+  fetchDashboard,
+}) => {
+  // 업무 상세 정보
+  const [data, setData] = useState();
+
+  // wbs 업무 상세 조회
+  const fetchTask = async () => {
+    try {
+      const { data } = await getWbsTask(selectedPjtSn, selectedTaskSn);
+      setData(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // wbs 업무 수정
   const taskEditForm = useForm({
     defaultValues: taskEditFormDefaultValues,
+    values: {
+      priority: data?.priority || '',
+      level: data?.level || '',
+      present: '',
+      startDt: data?.startDt ? dayjs(data?.startDt) : null,
+      endDt: data?.endDt ? dayjs(data?.endDt) : null,
+      status: data?.status || '',
+    },
   });
+
+  const { formState } = taskEditForm;
+
+  const fetchEditTask = async (payload) => {
+    try {
+      const res = await postWbsTask(selectedPjtSn, selectedTaskSn, payload);
+      if (res.status === 200) {
+        fetchTask();
+        fetchDashboard();
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      taskEditForm.reset();
+    }
+  };
+
+  const onSubmit = taskEditForm.handleSubmit(async (_payload) => {
+    let payload = _.cloneDeep(_payload);
+    const dirtyFields = formState.dirtyFields;
+
+    let result = _.pickBy(payload, (value, key) => dirtyFields[key]);
+
+    if (result['startDt']) {
+      result['startDt'] = dayjs(result['startDt']).format('YYYY-MM-DD');
+    }
+
+    if (result['endDt']) {
+      result['endDt'] = dayjs(result['endDt']).format('YYYY-MM-DD');
+    }
+
+    await fetchEditTask(result);
+  });
+
+  useEffect(() => {
+    if (!_.isEmpty(formState?.dirtyFields)) {
+      onSubmit();
+    }
+  }, [formState]);
+
+  useEffect(() => {
+    if (selectedTaskSn && selectedPjtSn) {
+      fetchTask();
+    }
+  }, [selectedTaskSn, selectedPjtSn]);
 
   // ----------------------------------------------------------------------
 
@@ -50,73 +130,46 @@ const TaskDetail = ({ open, setOpen }) => {
                 <Typography textAlign={'right'}>No</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <Typography>Front-3011</Typography>
+                <Typography>{data?.ticketNum}</Typography>
               </Grid>
 
               <Grid item xs={12} sm={3}>
                 <Typography textAlign={'right'}>Work package</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <Typography>프론트</Typography>
+                <Typography>{data?.workPackage}</Typography>
               </Grid>
 
               <Grid item xs={12} sm={3}>
                 <Typography textAlign={'right'}>Depth</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <Typography>메인페이지</Typography>
+                <Typography>{data?.depth}</Typography>
               </Grid>
 
               <Grid item xs={12} sm={3}>
                 <Typography textAlign={'right'}>Title</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <Typography>구글 로그인</Typography>
+                <Typography>{data?.title}</Typography>
               </Grid>
 
               <Grid item xs={12} sm={3}>
                 <Typography textAlign={'right'}>Priority</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <MenuPriority editable={false} />
+                <RhfDropdown
+                  name={'priority'}
+                  options={PRIORITY_LIST}
+                  canEmpty={false}
+                />
               </Grid>
 
               <Grid item xs={12} sm={3}>
                 <Typography textAlign={'right'}>Present</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <RhfAutocomplete
-                  name={'present'}
-                  options={['임동현', '홍길동']}
-                  multiple
-                  size={'small'}
-                  renderTags={(value, getTagProps) =>
-                    value.map((option, index) => {
-                      const { key, ...tagProps } = getTagProps({ index });
-                      return (
-                        <Chip
-                          {...tagProps}
-                          key={key}
-                          size={'small'}
-                          avatar={<Avatar alt={`${option} 프로필 이미지`} />}
-                          label={option}
-                        />
-                      );
-                    })
-                  }
-                  renderOption={(props, option) => {
-                    const { key, ...optionProps } = props;
-                    return (
-                      <Box key={key} component={'li'} {...optionProps}>
-                        <Chip
-                          size={'small'}
-                          label={option}
-                          avatar={<Avatar alt={`${option} 프로필`} />}
-                        />
-                      </Box>
-                    );
-                  }}
-                />
+                {data?.present}
               </Grid>
 
               <Grid item xs={12} sm={3}>
@@ -133,7 +186,11 @@ const TaskDetail = ({ open, setOpen }) => {
                 <Typography textAlign={'right'}>Status</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <MenuStatus />
+                <RhfDropdown
+                  name={'status'}
+                  options={STATUS_LIST}
+                  canEmpty={false}
+                />
               </Grid>
             </Grid>
           </Stack>
@@ -156,10 +213,10 @@ const TaskDetail = ({ open, setOpen }) => {
           <Divider flexItem />
 
           <Stack useFlexGap>
-            {ISSUE_LIST.map((issue) => (
+            {data?.issues.map((issue) => (
               <Grid
                 container
-                key={`issue_${issue.id}`}
+                key={`issue_${issue.issueSn}`}
                 p={1}
                 sx={{
                   ':hover': {
@@ -177,17 +234,15 @@ const TaskDetail = ({ open, setOpen }) => {
                     textOverflow: 'ellipsis',
                   }}
                 >
-                  {issue.title}
+                  {issue.issueTitle}
                 </Grid>
                 <Grid item xs={'auto'} mx={1}>
-                  <Chip
-                    size={'small'}
-                    label={issue.present}
-                    avatar={<Avatar alt={`${issue.id} 프로필 이미지`} />}
-                  />
+                  <Chip size={'small'} label={issue.creater} />
                 </Grid>
                 <Grid item xs={'auto'}>
-                  <Typography color={'text.secondary'}>{issue.date}</Typography>
+                  <Typography color={'text.secondary'}>
+                    {dayjs(issue?.createDate).format('YYYY-MM-DD HH:mm')}
+                  </Typography>
                 </Grid>
               </Grid>
             ))}

@@ -107,44 +107,6 @@ const IssueAdd = () => {
               </Grid>
 
               <Grid item xs={12} sm={3}>
-                <Typography textAlign={'right'}>Present</Typography>
-              </Grid>
-              <Grid item xs={12} sm={9}>
-                <RhfAutocomplete
-                  name={'present'}
-                  options={['임동현', '홍길동']}
-                  multiple
-                  size={'small'}
-                  renderTags={(value, getTagProps) =>
-                    value.map((option, index) => {
-                      const { key, ...tagProps } = getTagProps({ index });
-                      return (
-                        <Chip
-                          {...tagProps}
-                          key={key}
-                          size={'small'}
-                          avatar={<Avatar alt={`${option} 프로필 이미지`} />}
-                          label={option}
-                        />
-                      );
-                    })
-                  }
-                  renderOption={(props, option) => {
-                    const { key, ...optionProps } = props;
-                    return (
-                      <Box key={key} component={'li'} {...optionProps}>
-                        <Chip
-                          size={'small'}
-                          label={option}
-                          avatar={<Avatar alt={`${option} 프로필`} />}
-                        />
-                      </Box>
-                    );
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={3}>
                 <Typography textAlign={'right'}>Mention</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
