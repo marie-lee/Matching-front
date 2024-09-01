@@ -28,11 +28,23 @@ export const taskEditFormDefaultValues = {
   status: '',
 };
 
+// 업무 이슈 추가
+export const taskIssueAddFormDefaultValues = {
+  ISSUE_NM: '',
+  PRIORITY: '',
+  MENTIONS: [],
+  CONTENT: '',
+};
+
+export const taskIssueAddFormSchema = yup.object().shape({
+  ISSUE_NM: yup.string().required('Title을 입력해주세요'),
+  CONTENT: yup.string().required('Contents를 입력해주세요'),
+});
+
 export const issueAddFormDefaultValues = {
   task: '',
   title: '',
   priority: '',
-  present: [],
   mention: [],
   contents: '',
 };
@@ -154,7 +166,7 @@ export const STATUS_LIST = [
   },
   {
     label: 'In progress',
-    value: 'IN PROGERSS',
+    value: 'IN PROGRESS',
     style: {
       backgroundColor: '#E3EAFC',
       color: '#000000',

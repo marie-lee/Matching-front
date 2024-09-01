@@ -77,7 +77,7 @@ const TaskDashboardPage = () => {
   // ----------------------------------------------------------------------
 
   return (
-    <Container maxWidth={'xl'}>
+    <Container maxWidth={'xl'} sx={{ pb: 5 }}>
       {/* 상단 영역 */}
       <TaskDashBoardTop />
 
@@ -140,8 +140,15 @@ const TaskDashboardPage = () => {
               <Typography>1</Typography>
             </Stack>
             <IssueAdd />
+            {data?.issue.map((item) => (
+              <IssueItem
+                key={`dashboard_issue_${item.issueSn}`}
+                data={item}
+                onClick={handleOpenIssue}
+              />
+            ))}
+
             <IssueDetail open={issueDialogOpen} setOpen={setIssueDialogOpen} />
-            <IssueItem onClick={handleOpenIssue} />
           </Stack>
         </Grid>
       </Grid>

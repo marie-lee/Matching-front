@@ -9,6 +9,7 @@ import MenuLevel from '@/pages/task/components/menu-level';
 import TaskDetail from '@/pages/task/components/task-detail';
 import MenuStatus from '@/pages/task/components/menu-status';
 import IssueDetail from '@/pages/task/components/issue-detail';
+import TaskIssueAdd from '@/pages/task/components/task-issue-add';
 
 export {
   TaskDashBoardTop,
@@ -22,4 +23,5 @@ export {
   TaskDetail,
   MenuStatus,
   IssueDetail,
+  TaskIssueAdd,
 };

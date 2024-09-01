@@ -34,7 +34,9 @@ const TaskAdd = ({ selectedPjtSn, optionData, fetchDashboard }) => {
     resolver: yupResolver(taskAddFormSchema),
   });
 
-  const { formState } = taskAddForm;
+  const {
+    formState: { dirtyFields },
+  } = taskAddForm;
 
   const taskAddFormValues = taskAddForm.watch();
 
@@ -54,8 +56,6 @@ const TaskAdd = ({ selectedPjtSn, optionData, fetchDashboard }) => {
 
   const onSubmit = taskAddForm.handleSubmit(async (_payload) => {
     let payload = _.cloneDeep(_payload);
-    const dirtyFields = formState.dirtyFields;
-
     let result = _.pickBy(payload, (value, key) => dirtyFields[key]);
 
     delete result['workPackageSn'];

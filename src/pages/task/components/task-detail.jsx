@@ -20,12 +20,14 @@ import {
   RhfFormProvider,
 } from '@/components/hook-form';
 import {
+  LEVEL_LIST,
   PRIORITY_LIST,
   STATUS_LIST,
   taskEditFormDefaultValues,
 } from '@/pages/task/constants';
 import { Icon } from '@iconify/react';
 import { getWbsTask, postWbsTaskEdit } from '@/services/wbs';
+import TaskIssueAdd from '@/pages/task/components/task-issue-add.jsx';
 
 // ----------------------------------------------------------------------
 
@@ -155,6 +157,24 @@ const TaskDetail = ({
               </Grid>
 
               <Grid item xs={12} sm={3}>
+                <Typography textAlign={'right'}>Present</Typography>
+              </Grid>
+              <Grid item xs={12} sm={9}>
+                {data?.present}
+              </Grid>
+
+              <Grid item xs={12} sm={3}>
+                <Typography textAlign={'right'}>Level</Typography>
+              </Grid>
+              <Grid item xs={12} sm={9}>
+                <RhfDropdown
+                  name={'level'}
+                  options={LEVEL_LIST}
+                  canEmpty={false}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={3}>
                 <Typography textAlign={'right'}>Priority</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
@@ -163,13 +183,6 @@ const TaskDetail = ({
                   options={PRIORITY_LIST}
                   canEmpty={false}
                 />
-              </Grid>
-
-              <Grid item xs={12} sm={3}>
-                <Typography textAlign={'right'}>Present</Typography>
-              </Grid>
-              <Grid item xs={12} sm={9}>
-                {data?.present}
               </Grid>
 
               <Grid item xs={12} sm={3}>
@@ -205,9 +218,13 @@ const TaskDetail = ({
             justifyContent={'space-between'}
           >
             <Typography variant={'lg'}>Issue</Typography>
-            <ButtonBase>
-              <Icon icon={'ic:baseline-plus'} fontSize={24} />
-            </ButtonBase>
+            <TaskIssueAdd
+              selectedPjtSn={selectedPjtSn}
+              selectedTaskSn={selectedTaskSn}
+              optionData={optionData}
+              fetchTask={fetchTask}
+              fetchDashboard={fetchDashboard}
+            />
           </Stack>
 
           <Divider flexItem />

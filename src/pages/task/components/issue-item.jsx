@@ -1,25 +1,27 @@
 import { Stack, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import dayjs from 'dayjs';
+import _ from 'lodash';
+
+import { PRIORITY_LIST } from '@/pages/task/constants';
 
 // ----------------------------------------------------------------------
 
-const IssueItem = ({ onClick }) => {
+const IssueItem = ({ data, onClick }) => {
   const theme = useTheme();
 
-  const renderStatus = () => {
-    return (
-      <Stack bgcolor={'#E9E9E9'} borderRadius={1} px={1} py={0.5}>
-        <Typography variant={'sm'}>Wait </Typography>
-      </Stack>
-    );
-  };
-
   const renderPriority = () => {
+    const priorityObj = _.find(PRIORITY_LIST, { value: data?.priority });
+
     return (
-      <Stack bgcolor={'#000000'} borderRadius={1} px={1} py={0.5}>
-        <Typography variant={'sm'} color={'white'}>
-          L0
+      <Stack
+        borderRadius={1}
+        px={1}
+        py={0.5}
+        bgcolor={priorityObj.style.backgroundColor}
+      >
+        <Typography variant={'sm'} color={priorityObj.style.color}>
+          {data?.priority}
         </Typography>
       </Stack>
     );
@@ -44,15 +46,16 @@ const IssueItem = ({ onClick }) => {
     >
       <Stack spacing={0.5}>
         <Typography variant={'sm'} color={'text.secondary'}>
-          Front-3011
+          {data?.issueNum}
         </Typography>
-        <Typography>아이디 찾기 버튼 누락</Typography>
+        <Typography>{data?.title}</Typography>
       </Stack>
 
-      <Stack direction={'row'} spacing={1}>
-        {renderStatus()}
-        {renderPriority()}
-      </Stack>
+      {data?.priority && (
+        <Stack direction={'row'} spacing={1}>
+          {renderPriority()}
+        </Stack>
+      )}
 
       <Stack
         direction={'row'}
@@ -60,10 +63,15 @@ const IssueItem = ({ onClick }) => {
         alignItems={'center'}
         justifyContent={'space-between'}
       >
-        <Typography variant={'sm'}>홍길동</Typography>
-        <Typography variant={'sm'}>
-          {dayjs().add(2, 'day').format('YYYY.MM.DD')}
-        </Typography>
+        {data?.present !== null && (
+          <Typography variant={'sm'}>{data?.present}</Typography>
+        )}
+
+        {data?.dueDate !== null && (
+          <Typography variant={'sm'}>
+            {dayjs(data?.dueDate).format('YYYY.MM.DD')}
+          </Typography>
+        )}
       </Stack>
     </Stack>
   );
