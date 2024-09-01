@@ -12,30 +12,144 @@ import {
   Typography,
 } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import { Icon } from '@iconify/react';
+import { useEffect, useState } from 'react';
+import _ from 'lodash';
+import dayjs from 'dayjs';
+
 import {
-  COMMENT_LIST,
   commentAddFormDefaultValues,
+  ISSUE_LIST,
   issueEditFormDefaultValues,
-  taskEditFormDefaultValues,
+  PRIORITY_LIST,
+  STATUS_LIST,
 } from '@/pages/task/constants';
 import {
   RhfAutocomplete,
-  RhfDatePicker,
+  RhfDropdown,
   RhfFormProvider,
   RhfTextField,
 } from '@/components/hook-form';
-import { MenuPriority, MenuStatus } from '@/pages/task/components';
-import { Icon } from '@iconify/react';
+
+import { getWbsIssue, postWbsIssueComment, putWbsIssue } from '@/services/wbs';
 
 // ----------------------------------------------------------------------
 
-const IssueDetail = ({ open, setOpen }) => {
+const IssueDetail = ({
+  open,
+  setOpen,
+  selectedPjtSn,
+  selectedIssueSn,
+  optionData,
+  fetchDashboard,
+}) => {
+  const [data, setData] = useState();
+
+  const getMentionsValue = data?.MENTIONS.map((member) =>
+    _.mapKeys(member, (value, key) => _.camelCase(key)),
+  );
+
   const issueEditForm = useForm({
     defaultValues: issueEditFormDefaultValues,
+    values: {
+      PRIORITY: data?.PRIORITY || '',
+      STATUS: data?.STATUS || '',
+      MENTIONS: data?.MENTIONS ? getMentionsValue : [],
+    },
   });
+
+  const { formState } = issueEditForm;
+
+  const fetchEditIssue = async (payload) => {
+    try {
+      const res = await putWbsIssue(selectedPjtSn, selectedIssueSn, payload);
+      if (res.status === 200) {
+        fetchIssue();
+        fetchDashboard();
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      issueEditForm.reset();
+    }
+  };
+
+  const onSubmit = issueEditForm.handleSubmit((_payload) => {
+    let payload = _.cloneDeep(_payload);
+    const dirtyFields = formState.dirtyFields;
+
+    let result = _.pickBy(payload, (value, key) => dirtyFields[key]);
+
+    if (dirtyFields.MENTIONS) {
+      const oldUserList = data?.MENTIONS.map((mention) => mention.USER_SN);
+      const newUserList = payload['MENTIONS'].map((mention) => mention.userSn);
+
+      const deleteMention = _.difference(oldUserList, newUserList);
+      const addMention = _.difference(newUserList, oldUserList);
+
+      if (deleteMention.length > 0) {
+        result['MENTIONS'] = {
+          deleteMention,
+        };
+      }
+
+      if (addMention.length > 0) {
+        result['MENTIONS'] = { addMention };
+      }
+    }
+
+    console.log(result);
+
+    fetchEditIssue(result);
+  });
+
+  useEffect(() => {
+    if (!_.isEmpty(formState.dirtyFields)) {
+      onSubmit();
+    }
+  }, [formState]);
+
+  // ----------------------------------------------------------------------
+
+  const fetchIssue = async () => {
+    try {
+      const res = await getWbsIssue(selectedPjtSn, selectedIssueSn);
+      setData(res?.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedIssueSn) {
+      fetchIssue();
+    }
+  }, [selectedIssueSn]);
+
+  // ----------------------------------------------------------------------
 
   const commentAddForm = useForm({
     defaultValues: commentAddFormDefaultValues,
+  });
+
+  const fetchAddComment = async (payload) => {
+    try {
+      const res = await postWbsIssueComment(
+        selectedPjtSn,
+        selectedIssueSn,
+        payload,
+      );
+      if (res?.status === 200) {
+        fetchIssue();
+        commentAddForm.reset();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onSubmitComment = commentAddForm.handleSubmit(async (_payload) => {
+    await fetchAddComment(_payload);
   });
 
   // ----------------------------------------------------------------------
@@ -60,65 +174,38 @@ const IssueDetail = ({ open, setOpen }) => {
                 <Typography textAlign={'right'}>No</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <Typography>Front-3011</Typography>
+                <Typography></Typography>
               </Grid>
 
               <Grid item xs={12} sm={3}>
                 <Typography textAlign={'right'}>Task</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <Typography>프론트 / 메인페이지 / 구글로그인</Typography>
+                <Typography>{data?.TICKET}</Typography>
               </Grid>
 
               <Grid item xs={12} sm={3}>
                 <Typography textAlign={'right'}>Title</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <Typography>구글 로그인</Typography>
-              </Grid>
-
-              <Grid item xs={12} sm={3}>
-                <Typography textAlign={'right'}>Priority</Typography>
-              </Grid>
-              <Grid item xs={12} sm={9}>
-                <MenuPriority editable={false} />
+                <Typography>{data?.ISSUE_NM}</Typography>
               </Grid>
 
               <Grid item xs={12} sm={3}>
                 <Typography textAlign={'right'}>Present</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <RhfAutocomplete
-                  name={'present'}
-                  options={['임동현', '홍길동']}
-                  multiple
-                  size={'small'}
-                  renderTags={(value, getTagProps) =>
-                    value.map((option, index) => {
-                      const { key, ...tagProps } = getTagProps({ index });
-                      return (
-                        <Chip
-                          {...tagProps}
-                          key={key}
-                          size={'small'}
-                          avatar={<Avatar alt={`${option} 프로필 이미지`} />}
-                          label={option}
-                        />
-                      );
-                    })
-                  }
-                  renderOption={(props, option) => {
-                    const { key, ...optionProps } = props;
-                    return (
-                      <Box key={key} component={'li'} {...optionProps}>
-                        <Chip
-                          size={'small'}
-                          label={option}
-                          avatar={<Avatar alt={`${option} 프로필`} />}
-                        />
-                      </Box>
-                    );
-                  }}
+                <Typography>{data?.PRESENT_NM}</Typography>
+              </Grid>
+
+              <Grid item xs={12} sm={3}>
+                <Typography textAlign={'right'}>Priority</Typography>
+              </Grid>
+              <Grid item xs={12} sm={9}>
+                <RhfDropdown
+                  name={'PRIORITY'}
+                  options={PRIORITY_LIST}
+                  canEmpty={false}
                 />
               </Grid>
 
@@ -127,11 +214,8 @@ const IssueDetail = ({ open, setOpen }) => {
               </Grid>
               <Grid item xs={12} sm={9}>
                 <RhfAutocomplete
-                  name={'mention'}
-                  options={[
-                    { name: '이영현', position: 'back' },
-                    { name: '이세진', position: 'front' },
-                  ]}
+                  name={'MENTIONS'}
+                  options={optionData?.memberList}
                   multiple
                   size={'small'}
                   renderTags={(value, getTagProps) =>
@@ -142,8 +226,8 @@ const IssueDetail = ({ open, setOpen }) => {
                           {...tagProps}
                           key={key}
                           size={'small'}
-                          avatar={<Avatar alt={`${option.name} 프로필`} />}
-                          label={`${option.name} / ${option.position}`}
+                          avatar={<Avatar alt={`${option.userNm} 프로필`} />}
+                          label={`${option.userNm}${option.part === null ? '' : ` / ${option.part}`}`}
                         />
                       );
                     })
@@ -154,9 +238,9 @@ const IssueDetail = ({ open, setOpen }) => {
                       <Box key={key} component={'li'} {...optionProps}>
                         <Chip
                           size={'small'}
-                          label={`${option.name} / ${option.position}`}
+                          label={`${option.userNm}${option.part === null ? '' : ` / ${option.part}`}`}
                           avatar={
-                            <Avatar alt={`${option.name} 프로필 이미지`} />
+                            <Avatar alt={`${option.userNm} 프로필 이미지`} />
                           }
                         />
                       </Box>
@@ -166,17 +250,14 @@ const IssueDetail = ({ open, setOpen }) => {
               </Grid>
 
               <Grid item xs={12} sm={3}>
-                <Typography textAlign={'right'}>Due Date</Typography>
-              </Grid>
-              <Grid item xs={12} sm={9}>
-                <RhfDatePicker name={'dueDate'} />
-              </Grid>
-
-              <Grid item xs={12} sm={3}>
                 <Typography textAlign={'right'}>Status</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <MenuStatus />
+                <RhfDropdown
+                  name={'STATUS'}
+                  options={ISSUE_LIST}
+                  canEmpty={false}
+                />
               </Grid>
 
               <Grid item xs={12} sm={3} alignSelf={'flex-start'}>
@@ -185,9 +266,7 @@ const IssueDetail = ({ open, setOpen }) => {
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                이슈 추가할 때 썼던 상세 내용 자세히 나오는거라요 이슈 추가할 때
-                썼던 상세 내용 자세 히 나오는거라요 이슈 추가할 때 썼던 상세
-                내용 자세히 나오는 거
+                {data?.CONTENT}
               </Grid>
             </Grid>
           </Stack>
@@ -201,37 +280,41 @@ const IssueDetail = ({ open, setOpen }) => {
           <Divider flexItem />
 
           <Stack spacing={2}>
-            {COMMENT_LIST.map((comment) => (
+            {data?.COMMENTS?.map((comment) => (
               <Stack
                 direction={'row'}
-                key={`comment-${comment.id}`}
+                key={`comment-${comment.COMMENT_SN}`}
                 spacing={1.5}
                 alignItems={'center'}
               >
                 <Avatar />
                 <Stack spacing={0.5}>
                   <Stack direction={'row'} spacing={1}>
-                    <Typography variant={'sm'}>{comment.writer}</Typography>
+                    <Typography variant={'sm'}>{comment.CREATER_NM}</Typography>
                     <Typography variant={'xs'} color={'text.secondary'}>
-                      {comment.date}
+                      {dayjs(comment?.CREATED_DT).format('YYYY-MM-DD HH:mm')}
                     </Typography>
                   </Stack>
-                  <Typography>{comment.content}</Typography>
+                  <Typography>{comment.TEXT}</Typography>
                 </Stack>
               </Stack>
             ))}
 
-            <RhfFormProvider form={commentAddForm}>
-              <Stack direction={'row'} spacing={1.5}>
+            <RhfFormProvider
+              form={commentAddForm}
+              onSubmit={onSubmitComment}
+              disabledEnterKeyDown={false}
+            >
+              <Stack direction={'row'} spacing={1.5} pt={1}>
                 <Avatar />
                 <RhfTextField
-                  name={'content'}
+                  name={'TEXT'}
                   placeholder={'덧글 추가'}
                   sx={{ pt: 1 }}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end" sx={{ mb: 1 }}>
-                        <IconButton disableRipple>
+                        <IconButton disableRipple onClick={onSubmitComment}>
                           <Icon
                             icon={'clarity:circle-arrow-solid'}
                             color={'#000'}

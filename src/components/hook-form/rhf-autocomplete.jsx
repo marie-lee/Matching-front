@@ -20,7 +20,10 @@ const RhfAutocomplete = ({
             {...field}
             id={`autocomplete-${name}`}
             onChange={(event, newValue) =>
-              setValue(name, newValue, { shouldValidate: true })
+              setValue(name, newValue, {
+                shouldValidate: true,
+                shouldDirty: true,
+              })
             }
             getOptionLabel={(option) => option}
             renderOption={(props, option) => (
