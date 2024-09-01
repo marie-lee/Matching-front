@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useRef } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -11,14 +11,29 @@ import {
   Select,
   MenuItem,
   FormControl,
+  IconButton,
 } from '@mui/material';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
-  {
-    /* 테이블 스타일 */
-  }
+  const [expandedCells, setExpandedCells] = useState(new Map());
+
+  const toggleRowExpand = (rowIndex, cellIndex) => {
+    setExpandedCells((prevExpandedCells) => {
+      const newExpandedCells = new Map(prevExpandedCells);
+      const key = `${rowIndex}-${cellIndex}`;
+      if (newExpandedCells.has(key)) {
+        newExpandedCells.delete(key);
+      } else {
+        newExpandedCells.set(key, true);
+      }
+      return newExpandedCells;
+    });
+  };
+
   const cellStyle = {
     border: '1px solid #000',
     padding: '2px 4px',
@@ -41,9 +56,6 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
     },
   };
 
-  {
-    /* 달력 */
-  }
   const renderDatePicker = (value, onChange) => (
     <DatePicker
       selected={value ? new Date(value) : null}
@@ -59,9 +71,6 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
     />
   );
 
-  {
-    /* 드롭다운 */
-  }
   const renderSelectField = (value, onChange, options) => (
     <FormControl fullWidth variant="outlined">
       <Select
@@ -100,9 +109,6 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
     </FormControl>
   );
 
-  {
-    /* WBS 데이터 입력 */
-  }
   const renderTextField = (value, onChange) => (
     <TextField
       value={value}
@@ -112,26 +118,44 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
     />
   );
 
-  {
-    /* WBS Cell */
-  }
   const Cell = memo(
     ({ cell, rowIndex, cellIndex, handleCellChange, members, editable }) => {
       const handleChange = useCallback(
         (e) => handleCellChange(rowIndex, cellIndex, e.target.value),
         [rowIndex, cellIndex, handleCellChange],
       );
+
       const cellStyleWithEditable = {
         ...cellStyle,
         pointerEvents: editable ? 'none' : 'auto',
       };
 
-      if (cellIndex === 4 || cellIndex === 5) {
-        // 날짜
+      const isExpanded = expandedCells.has(`${rowIndex}-${cellIndex}`);
+
+      if (cellIndex === 0 || cellIndex === 1) {
         return (
           <TableCell
             key={cellIndex}
-            rowSpan={cell.rowSpan}
+            rowSpan={isExpanded ? 1 : cell.rowSpan}
+            sx={cellStyleWithEditable}
+          >
+            <IconButton
+              onClick={() => toggleRowExpand(rowIndex, cellIndex)}
+              size="small"
+              sx={{ padding: '0' }}
+            >
+              {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </IconButton>
+            {cell.value}
+          </TableCell>
+        );
+      }
+
+      if (cellIndex === 4 || cellIndex === 5) {
+        return (
+          <TableCell
+            key={cellIndex}
+            rowSpan={isExpanded ? 1 : cell.rowSpan}
             sx={cellStyleWithEditable}
           >
             {renderDatePicker(cell.value, (date) =>
@@ -142,11 +166,10 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
       }
 
       if (cellIndex === 3) {
-        // 엔지니어
         return (
           <TableCell
             key={cellIndex}
-            rowSpan={cell.rowSpan}
+            rowSpan={isExpanded ? 1 : cell.rowSpan}
             sx={cellStyleWithEditable}
           >
             {renderSelectField(
@@ -159,11 +182,10 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
       }
 
       if (cellIndex === 6) {
-        // 상태
         return (
           <TableCell
             key={cellIndex}
-            rowSpan={cell.rowSpan}
+            rowSpan={isExpanded ? 1 : cell.rowSpan}
             sx={cellStyleWithEditable}
           >
             {renderSelectField(
@@ -178,7 +200,7 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
       return (
         <TableCell
           key={cellIndex}
-          rowSpan={cell.rowSpan}
+          rowSpan={isExpanded ? 1 : cell.rowSpan}
           sx={cellStyleWithEditable}
         >
           {renderTextField(cell.value, !editable ? handleChange : () => {})}
@@ -197,7 +219,6 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
 
   return (
     <>
-      {/* WBS 헤더 */}
       <TableContainer
         component={Paper}
         sx={{
@@ -245,7 +266,6 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
           </TableHead>
         </Table>
       </TableContainer>
-      {/* WBS 내용 */}
       <TableContainer
         component={Paper}
         sx={{ width: '100%', overflowX: 'hidden', borderRadius: '0' }}
@@ -266,7 +286,8 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
               <TableRow key={rowIndex}>
                 {row.map(
                   (cell, cellIndex) =>
-                    cell && (
+                    cell &&
+                    (!expandedCells.has(`${rowIndex}-${cellIndex}`) || cellIndex < 2) && (
                       <Cell
                         key={cellIndex}
                         cell={cell}
