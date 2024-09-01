@@ -27,6 +27,12 @@ export const getWbsTaskAdditionalInfo = (pjtSn) => {
   return instance.get(`${URL_GET_WBS_TASK_ADDITIONAL_INFO}/${pjtSn}`);
 };
 
+// WBS 이슈 상세 조회
+export const URL_GET_WBS_ISSUE = '/project/wbs/issue';
+export const getWbsIssue = (pjtSn, issueSn) => {
+  return instance.get(`${URL_GET_WBS_ISSUE}/${pjtSn}/${issueSn}`);
+};
+
 // ----------------------------------------------------------------------
 // POST
 // ----------------------------------------------------------------------
@@ -63,6 +69,11 @@ export const postWbsIssue = (pjtSn, taskSn, payload) => {
   return instance.post(`${URL_POST_WBS_ISSUE}/${pjtSn}/${taskSn}`, payload);
 };
 
-// ----------------------------------------------------------------------
-// PUT
-// ----------------------------------------------------------------------
+// WBS 이슈 덧글 생성
+export const URL_POST_WBS_ISSUE_COMMENT = '/project/wbs/issue/comment';
+export const postWbsIssueComment = (pjtSn, issueSn, payload) => {
+  return instance.post(
+    `${URL_POST_WBS_ISSUE_COMMENT}/${pjtSn}/${issueSn}`,
+    payload,
+  );
+};

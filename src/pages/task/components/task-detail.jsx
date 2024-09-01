@@ -38,6 +38,7 @@ const TaskDetail = ({
   selectedTaskSn,
   optionData,
   fetchDashboard,
+  handleOpenIssue,
 }) => {
   // 업무 상세 정보
   const [data, setData] = useState();
@@ -241,6 +242,7 @@ const TaskDetail = ({
                     backgroundColor: (theme) => theme.palette.action.hover,
                   },
                 }}
+                onClick={() => handleOpenIssue(issue)}
               >
                 <Grid
                   item

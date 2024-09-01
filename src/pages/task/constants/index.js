@@ -50,14 +50,13 @@ export const issueAddFormDefaultValues = {
 };
 
 export const issueEditFormDefaultValues = {
-  present: [],
-  mention: [],
-  dueDate: null,
-  status: '',
+  MENTIONS: [],
+  PRIORITY: '',
+  STATUS: '',
 };
 
 export const commentAddFormDefaultValues = {
-  content: '',
+  TEXT: '',
 };
 
 export const ISSUE_LIST = [

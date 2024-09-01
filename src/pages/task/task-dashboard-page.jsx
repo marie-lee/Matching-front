@@ -26,6 +26,7 @@ const TaskDashboardPage = () => {
   });
 
   const [selectedTaskSn, setSelectedTaskSn] = useState();
+  const [selectedIssueSn, setSelectedIssueSn] = useState();
 
   const [taskDialogOpen, setTaskDialogOpen] = useState(false);
   const [issueDialogOpen, setIssueDialogOpen] = useState(false);
@@ -36,6 +37,7 @@ const TaskDashboardPage = () => {
   };
 
   const handleOpenIssue = (value) => {
+    setSelectedIssueSn(value?.issueSn);
     setIssueDialogOpen(true);
   };
 
@@ -120,6 +122,7 @@ const TaskDashboardPage = () => {
                 selectedTaskSn={selectedTaskSn}
                 optionData={optionData}
                 fetchDashboard={fetchDashboard}
+                handleOpenIssue={handleOpenIssue}
               />
             )}
 
@@ -148,7 +151,15 @@ const TaskDashboardPage = () => {
               />
             ))}
 
-            <IssueDetail open={issueDialogOpen} setOpen={setIssueDialogOpen} />
+            {issueDialogOpen && (
+              <IssueDetail
+                open={issueDialogOpen}
+                setOpen={setIssueDialogOpen}
+                selectedPjtSn={selectedPjtSn}
+                selectedIssueSn={selectedIssueSn}
+                optionData={optionData}
+              />
+            )}
           </Stack>
         </Grid>
       </Grid>
