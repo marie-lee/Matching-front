@@ -1,6 +1,6 @@
 import { Chip, Stack, Typography, useTheme } from '@mui/material';
 import { Icon } from '@iconify/react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 import { BasicDataGrid } from '@/components/data-grid';
@@ -104,10 +104,17 @@ const ProjectList = ({ name }) => {
     try {
       const res = await getProject(pjtSn);
       const res1 = await getWbs(pjtSn);
+      console.log('res1', res1);
 
-      res1.data.wbsData === null ? navigate(PATHS.task)
-      : res.data.teamLeader === name ? navigate(PATHS.wbs.root)
-      : alert('프로젝트 리더가 wbs를 만들때까지 기다려 주세요.');
+      if (res1.data.wbsData.length == 0) {
+        if (res.data.teamLeader === name) {
+          navigate(PATHS.wbs.root, { state: { pjtSn } });
+        } else {
+          alert('프로젝트 리더가 wbs를 만들때까지 기다려 주세요.');
+        }
+      } else {
+        navigate(PATHS.task);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -173,6 +180,10 @@ const ProjectList = ({ name }) => {
 
         if (projectStatus === 'PROGRESS') {
           await fetchProject(params.row.PJT_SN);
+        } else if (projectStatus === 'FINISH') {
+          navigate(`${PATHS.project.review}/${params.row.PJT_SN}`, {
+            state: { projectData: params.row },
+          });
         } else {
           navigate(`${PATHS.project.details}/${params.row.PJT_SN}`, {
             state: { projectData: params.row },

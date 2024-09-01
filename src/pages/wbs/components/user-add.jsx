@@ -17,59 +17,47 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useDispatch, useSelector } from 'react-redux';
+import { setMemberData } from '@/store/wbsSlice';
 
-const initialParticipants = [];
-const members = [
-  '김영호',
-  '박미영',
-  '한민규',
-  '이세진',
-  '임동현',
-  '백예나',
-  '박지민',
-  '이영현',
-];
-const roles = ['F.E.', 'B.E.', 'Design', 'Manager', '직접 입력'];
 const permissions = ['member', 'owner'];
 
-const UserAdd = () => {
-  const [participants, setParticipants] = useState(initialParticipants);
-  const [isCustomRole, setIsCustomRole] = useState([]);
-  const [isInitialRender, setIsInitialRender] = useState(true);
+const UserAdd = ({ userNames, roles }) => {
+  const dispatch = useDispatch();
+  const memberData = useSelector((state) => state.wbs.memberData || []);
+  const [participants, setParticipants] = useState(memberData);
+  const [isCustomRole, setIsCustomRole] = useState(memberData.map(() => false));
   const tableEndRef = useRef(null);
 
-  const handleAddRow = () => {
-    const newParticipant = { name: '', role: '', permission: 'member' };
-    setParticipants((prev) => [...prev, newParticipant]);
-    setIsCustomRole((prev) => [...prev, false]);
-  };
-
-  // 화면 스크롤
   useEffect(() => {
-    if (!isInitialRender) {
-      if (tableEndRef.current) {
-        tableEndRef.current.scrollIntoView({ behavior: 'smooth' });
-      }
-    } else {
-      setIsInitialRender(false);
+    dispatch(setMemberData(participants));
+  }, [participants, dispatch]);
+
+  useEffect(() => {
+    if (tableEndRef.current) {
+      tableEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [participants]);
 
-  //업데이트
+  const handleAddRow = () => {
+    setParticipants((prev) => [
+      ...prev,
+      { name: '', role: '', permission: 'member' },
+    ]);
+    setIsCustomRole((prev) => [...prev, false]);
+  };
+
   const handleChange = (index, field, value) => {
-    setParticipants((prev) => {
-      const updatedParticipants = [...prev];
-      updatedParticipants[index] = {
-        ...updatedParticipants[index],
-        [field]: value,
-      };
-      return updatedParticipants;
-    });
+    setParticipants((prev) =>
+      prev.map((p, i) => (i === index ? { ...p, [field]: value } : p)),
+    );
   };
 
   const handleRoleChange = (index, value) => {
     setIsCustomRole((prev) =>
-      prev.map((item, i) => (i === index ? value === '직접 입력' : item)),
+      prev.map((isCustom, i) =>
+        i === index ? value === '직접 입력' : isCustom,
+      ),
     );
     handleChange(index, 'role', value === '직접 입력' ? '' : value);
   };
@@ -102,12 +90,11 @@ const UserAdd = () => {
                   align="center"
                   sx={{ padding: '4px', border: '4px solid #f4f6f8' }}
                 >
-                  {head ?
-                    head
-                  : <IconButton onClick={handleAddRow}>
+                  {head || (
+                    <IconButton onClick={handleAddRow}>
                       <AddIcon />
                     </IconButton>
-                  }
+                  )}
                 </TableCell>
               ))}
             </TableRow>
@@ -128,13 +115,13 @@ const UserAdd = () => {
                           handleChange(index, field, e.target.value)
                         }
                         sx={{
-                          '& .MuiOutlinedInput-root': {
-                            '& fieldset': { border: 'none' },
-                          },
                           input: {
                             padding: 0,
                             textAlign: 'center',
                             fontSize: '16px',
+                          },
+                          '& .MuiOutlinedInput-root': {
+                            '& fieldset': { border: 'none' },
                           },
                         }}
                       />
@@ -149,7 +136,7 @@ const UserAdd = () => {
                         >
                           {(field === 'role' ? roles
                           : field === 'permission' ? permissions
-                          : members
+                          : userNames
                           ).map((option) => (
                             <MenuItem key={option} value={option}>
                               {option}

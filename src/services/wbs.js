@@ -78,6 +78,11 @@ export const postWbsIssueComment = (pjtSn, issueSn, payload) => {
   );
 };
 
+export const URL_POST_WBS = '/project/wbs/create';
+export const postWbs = (pjtSn, payload) => {
+  return instance.post(`${URL_POST_WBS}/${pjtSn}`, payload);
+};
+
 // ----------------------------------------------------------------------
 // PUT
 // ----------------------------------------------------------------------

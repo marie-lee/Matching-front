@@ -8,20 +8,46 @@ import {
   Container,
 } from '@mui/material';
 import StepperComponent from '@/pages/wbs/components/stepper-component';
-
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { PATHS } from '@/routes/paths';
 import ProjectInfo from '@/pages/wbs/components/project-info';
 import UserAdd from '@/pages/wbs/components/user-add';
 import WbsTable, { createMergedTable } from '@/pages/wbs/components/wbs-table';
 import { wbsData } from '@/pages/wbs/components/constants';
+import { getProjectMember } from '@/services/project';
 
 const BasicInfo = () => {
   const navigate = useNavigate();
   const tableData = createMergedTable(wbsData);
+  const location = useLocation();
+  const { pjtSn } = location.state || {};
+
+  const [userNames, setUserNames] = useState([]);
+  const [roles, setRoles] = useState([]);
+
+  useEffect(() => {
+    const fetchProjectMembers = async () => {
+      try {
+        const res = await getProjectMember(pjtSn);
+
+        const namesArray = res.data.map((member) => member.userNm);
+        setUserNames(namesArray);
+
+        const rolesArray = [...new Set(res.data.map((member) => member.part))];
+        setRoles(rolesArray);
+      } catch (error) {
+        console.error('Failed to fetch project members:', error);
+      }
+    };
+
+    if (pjtSn) {
+      fetchProjectMembers();
+    }
+  }, [pjtSn]);
 
   const handleInputWbs = () => {
-    navigate(PATHS.wbs.wbsInput);
+    navigate(PATHS.wbs.wbsInput, { state: { pjtSn } });
   };
 
   const handleBack = () => {
@@ -30,7 +56,7 @@ const BasicInfo = () => {
 
   return (
     <Container maxWidth="lg" sx={{ p: 3, pb: 10 }}>
-      <Stack spacing={1}>
+      <Stack spacing={3}>
         <Stack
           direction="row"
           justifyContent="space-between"
@@ -91,7 +117,7 @@ const BasicInfo = () => {
           />
         </Stack>
 
-        <UserAdd />
+        <UserAdd userNames={userNames} roles={roles} />
       </Stack>
     </Container>
   );

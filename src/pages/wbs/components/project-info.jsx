@@ -1,24 +1,49 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Grid, Typography, TextField, Box } from '@mui/material';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPjtData } from '@/store/wbsSlice';
+import { selectName } from '@/store/name-reducer';
 
 const ProjectInfo = () => {
-  const [startDate, setStartDate] = useState(new Date('2024-06-30'));
-  const [endDate, setEndDate] = useState(new Date());
+  const dispatch = useDispatch();
+  const userName = useSelector(selectName);
+  const pjtData = useSelector((state) => state.wbs.pjtData || {});
+
+  const [startDate, setStartDate] = useState(
+    new Date(pjtData.startDt || '2024-06-30'),
+  );
+  const [endDate, setEndDate] = useState(new Date(pjtData.endDt || new Date()));
 
   const handleStartDateChange = (date) => {
     setStartDate(date);
+    updatePjtData(date, endDate);
   };
 
   const handleEndDateChange = (date) => {
     setEndDate(date);
+    updatePjtData(startDate, date);
   };
 
+  const updatePjtData = (start, end) => {
+    dispatch(
+      setPjtData({
+        startDt: start.toISOString().split('T')[0],
+        endDt: end.toISOString().split('T')[0],
+      }),
+    );
+  };
+
+  useEffect(() => {
+    setStartDate(new Date(pjtData.startDt || '2024-06-30'));
+    setEndDate(new Date(pjtData.endDt || new Date()));
+  }, [pjtData]);
+
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ pl: 3 }}>
       <Grid container spacing={3}>
-        <Grid container xs={12} justifyContent="flex-end" mb={5}>
+        <Grid container xs={12} justifyContent="flex-end" mb={5} mt={10}>
           <Box
             sx={{
               display: 'flex',
@@ -35,7 +60,7 @@ const ProjectInfo = () => {
             </Box>
             <Box sx={{ textAlign: 'right' }}>
               <Typography variant="body1" fontWeight={'fontWeightSemiBold'}>
-                이종은
+                {userName}
               </Typography>
               <Typography variant="body1" fontWeight={'fontWeightSemiBold'}>
                 2024-06-30
