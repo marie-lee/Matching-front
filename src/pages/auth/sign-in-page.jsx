@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
   Box,
   Stack,
@@ -7,7 +8,6 @@ import {
   useTheme,
   Link,
 } from '@mui/material';
-
 import { LoadingButton } from '@mui/lab';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -22,8 +22,12 @@ import {
   sigInInFormDefaultValues,
   signInFormSchema,
 } from '@/pages/auth/constants';
-import { useState } from 'react';
-import { postMemberLogin } from '@/services/member';
+import {
+  postMemberLogin,
+  postMemberLoginGoogle,
+  postMemberEmailCheck,
+} from '@/services/member';
+import { auth, googleProvider, signInWithPopup } from '@/firebase';
 
 const SignInPage = () => {
   const theme = useTheme();
@@ -48,36 +52,85 @@ const SignInPage = () => {
     setIsPending(true);
     setErrorMessage('');
 
-    try {
-      const res = await postMemberLogin(data);
-      setIsPending(false);
+    const res = await postMemberLogin(data).catch((error) => error);
 
-      if (res.status === 200) {
-        dispatch(setName(res.data.USER_NM));
-        dispatch(signIn({ token: res.data.accessToken }));
-        navigate(PATHS.root);
+    setIsPending(false);
+
+    if (res.status === 200) {
+      dispatch(setName(res.data.USER_NM));
+      dispatch(signIn({ token: res.data.accessToken }));
+      navigate(PATHS.root);
+    } else if (res.status === 400 || res.status === 401) {
+      if (res.data.trim() === '로그인 실패 : 유저 정보를 찾지 못했습니다.') {
+        setErrorMessage('회원가입되지 않은 이메일입니다.');
+      } else if (res.data === '로그인 실패 : 잘못된 비밀번호입니다.') {
+        setErrorMessage('비밀번호가 틀렸습니다. 다시 시도해주세요.');
       } else {
-        setErrorMessage('알 수 없는 오류가 발생했습니다.');
+        setErrorMessage(res.data || '인증에 실패했습니다.');
       }
-    } catch (error) {
-      setIsPending(false);
-
-      if (error.status == 400 || error.status == 401) {
-        if (error.data.trim() === '로그인 실패 : 유저 정보를 찾지 못했습니다.') {
-          setErrorMessage('회원가입되지 않은 이메일입니다.');
-        } else if (error.data == '로그인 실패 : 잘못된 비밀번호입니다.') {
-          setErrorMessage('비밀번호가 틀렸습니다. 다시 시도해주세요.');
-        } else {
-          setErrorMessage(error.data || '인증에 실패했습니다.');
-        }
-
-      } else {
-        setErrorMessage('알 수 없는 오류가 발생했습니다.');
-      }
+    } else {
+      setErrorMessage('알 수 없는 오류가 발생했습니다.');
     }
   };
 
+  const handleGoogleLogin = async () => {
+    setIsPending(true);
+    setErrorMessage('');
 
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      console.log('Google 로그인 성공:', result);
+
+      if (result && result.user) {
+        const userEmail = result.user.email;
+        const userName = result.user.displayName || 'Google User';
+        const userAccessToken = result.user.accessToken;
+
+        if (!userEmail) {
+          console.error('No user email found after Google sign-in.');
+          setErrorMessage('사용자 이메일을 가져올 수 없습니다.');
+          setIsPending(false);
+          return;
+        }
+
+        try {
+          // 회원가입 여부 확인
+          const emailCheckResponse = await postMemberEmailCheck({
+            email: userEmail,
+          });
+          if (emailCheckResponse.status === 200) {
+            // 회원가입되지 않은 경우, 회원가입 페이지로 이동
+            navigate(PATHS.auth.signUp);
+          } else {
+            setErrorMessage('이메일 확인 중 오류가 발생했습니다.');
+          }
+        } catch (error) {
+          try {
+            const googleLoginResponse = await postMemberLoginGoogle({
+              userName: userName,
+              accessToken: userAccessToken,
+            });
+
+            if (googleLoginResponse.status === 200) {
+              dispatch(setName(googleLoginResponse.data.USER_NM));
+              dispatch(signIn({ token: googleLoginResponse.data.accessToken }));
+              navigate(PATHS.root);
+            } else {
+              setErrorMessage('로그인 처리 중 오류가 발생했습니다.');
+            }
+          } catch (loginError) {
+            setErrorMessage('로그인 처리 중 오류가 발생했습니다.');
+          }
+        }
+      } else {
+        setErrorMessage('사용자 정보를 확인할 수 없습니다.');
+      }
+    } catch (error) {
+      setErrorMessage('Google 로그인 시도 실패했습니다.');
+    } finally {
+      setIsPending(false);
+    }
+  };
 
   return (
     <Box
@@ -176,6 +229,7 @@ const SignInPage = () => {
         or
       </Typography>
       <Box
+        onClick={handleGoogleLogin}
         sx={{
           border: '0 solid #D1D1D1',
           borderRadius: 10,
@@ -184,6 +238,7 @@ const SignInPage = () => {
           boxShadow: '0px 1px 5px rgba(0, 0, 0, 0.1)',
           display: 'flex',
           alignItems: 'center',
+          cursor: 'pointer',
         }}
       >
         <Box
