@@ -158,6 +158,7 @@ const TaskDashboardPage = () => {
                 selectedPjtSn={selectedPjtSn}
                 selectedIssueSn={selectedIssueSn}
                 optionData={optionData}
+                fetchDashboard={fetchDashboard}
               />
             )}
           </Stack>

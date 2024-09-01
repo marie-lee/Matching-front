@@ -42,7 +42,7 @@ const IssueItem = ({ data, onClick }) => {
           borderColor: theme.palette.primary.main,
         },
       }}
-      onClick={onClick}
+      onClick={() => onClick(data)}
     >
       <Stack spacing={0.5}>
         <Typography variant={'sm'} color={'text.secondary'}>

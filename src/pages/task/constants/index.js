@@ -59,23 +59,6 @@ export const commentAddFormDefaultValues = {
   TEXT: '',
 };
 
-export const ISSUE_LIST = [
-  {
-    id: 1,
-    title: '이슈명 이슈명 이슈명 이슈명 이슈명',
-    present: '임동현',
-    date: '2024.07.22',
-  },
-  { id: 2, title: '이슈명 이슈명 ', present: '임동현', date: '2024.07.22' },
-  {
-    id: 3,
-    title:
-      '이슈명을 적어보아요 이슈명을 적어보아요 이슈명을 적어보아요 이슈명을 적어보아요 이슈명을 적어보아요',
-    present: '임동현',
-    date: '2024.07.22',
-  },
-];
-
 export const COMMENT_LIST = [
   {
     id: 1,
@@ -149,6 +132,41 @@ export const PRIORITY_LIST = [
     value: 'L3',
     style: {
       backgroundColor: '#B4F1A5',
+      color: '#000000',
+    },
+  },
+];
+
+export const ISSUE_LIST = [
+  {
+    label: 'open',
+    value: 'OPEN',
+    style: {
+      backgroundColor: '#E9E9E9',
+      color: '#000000',
+    },
+  },
+  {
+    label: 'In progress',
+    value: 'IN PROGRESS',
+    style: {
+      backgroundColor: '#E3EAFC',
+      color: '#000000',
+    },
+  },
+  {
+    label: 'Complete',
+    value: 'COMPLETE',
+    style: {
+      backgroundColor: '#E4F4EA',
+      color: '#000000',
+    },
+  },
+  {
+    label: 'Close',
+    value: 'CLOSE',
+    style: {
+      backgroundColor: '#9A9A9A',
       color: '#000000',
     },
   },

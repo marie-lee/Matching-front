@@ -21,7 +21,6 @@ import {
   RhfTextField,
 } from '@/components/hook-form';
 import Required from '@/components/required';
-import { MenuPriority } from '@/pages/task/components';
 
 const IssueAdd = () => {
   const [open, setOpen] = useState(false);
@@ -102,9 +101,7 @@ const IssueAdd = () => {
               <Grid item xs={12} sm={3}>
                 <Typography textAlign={'right'}>Priority</Typography>
               </Grid>
-              <Grid item xs={12} sm={9}>
-                <MenuPriority />
-              </Grid>
+              <Grid item xs={12} sm={9}></Grid>
 
               <Grid item xs={12} sm={3}>
                 <Typography textAlign={'right'}>Mention</Typography>

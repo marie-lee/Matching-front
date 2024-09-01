@@ -15,9 +15,11 @@ import { useForm } from 'react-hook-form';
 import { Icon } from '@iconify/react';
 import { useEffect, useState } from 'react';
 import _ from 'lodash';
+import dayjs from 'dayjs';
 
 import {
   commentAddFormDefaultValues,
+  ISSUE_LIST,
   issueEditFormDefaultValues,
   PRIORITY_LIST,
   STATUS_LIST,
@@ -29,9 +31,7 @@ import {
   RhfTextField,
 } from '@/components/hook-form';
 
-import { getWbsIssue, postWbsIssueComment } from '@/services/wbs';
-import { convertToUpperSnakeCase } from '@/utils';
-import dayjs from 'dayjs';
+import { getWbsIssue, postWbsIssueComment, putWbsIssue } from '@/services/wbs';
 
 // ----------------------------------------------------------------------
 
@@ -41,6 +41,7 @@ const IssueDetail = ({
   selectedPjtSn,
   selectedIssueSn,
   optionData,
+  fetchDashboard,
 }) => {
   const [data, setData] = useState();
 
@@ -57,9 +58,58 @@ const IssueDetail = ({
     },
   });
 
-  const commentAddForm = useForm({
-    defaultValues: commentAddFormDefaultValues,
+  const { formState } = issueEditForm;
+
+  const fetchEditIssue = async (payload) => {
+    try {
+      const res = await putWbsIssue(selectedPjtSn, selectedIssueSn, payload);
+      if (res.status === 200) {
+        fetchIssue();
+        fetchDashboard();
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      issueEditForm.reset();
+    }
+  };
+
+  const onSubmit = issueEditForm.handleSubmit((_payload) => {
+    let payload = _.cloneDeep(_payload);
+    const dirtyFields = formState.dirtyFields;
+
+    let result = _.pickBy(payload, (value, key) => dirtyFields[key]);
+
+    if (dirtyFields.MENTIONS) {
+      const oldUserList = data?.MENTIONS.map((mention) => mention.USER_SN);
+      const newUserList = payload['MENTIONS'].map((mention) => mention.userSn);
+
+      const deleteMention = _.difference(oldUserList, newUserList);
+      const addMention = _.difference(newUserList, oldUserList);
+
+      if (deleteMention.length > 0) {
+        result['MENTIONS'] = {
+          deleteMention,
+        };
+      }
+
+      if (addMention.length > 0) {
+        result['MENTIONS'] = { addMention };
+      }
+    }
+
+    console.log(result);
+
+    fetchEditIssue(result);
   });
+
+  useEffect(() => {
+    if (!_.isEmpty(formState.dirtyFields)) {
+      onSubmit();
+    }
+  }, [formState]);
+
+  // ----------------------------------------------------------------------
 
   const fetchIssue = async () => {
     try {
@@ -78,6 +128,10 @@ const IssueDetail = ({
 
   // ----------------------------------------------------------------------
 
+  const commentAddForm = useForm({
+    defaultValues: commentAddFormDefaultValues,
+  });
+
   const fetchAddComment = async (payload) => {
     try {
       const res = await postWbsIssueComment(
@@ -85,7 +139,6 @@ const IssueDetail = ({
         selectedIssueSn,
         payload,
       );
-      console.log(res);
       if (res?.status === 200) {
         fetchIssue();
         commentAddForm.reset();
@@ -96,8 +149,6 @@ const IssueDetail = ({
   };
 
   const onSubmitComment = commentAddForm.handleSubmit(async (_payload) => {
-    console.log(_payload);
-
     await fetchAddComment(_payload);
   });
 
@@ -204,7 +255,7 @@ const IssueDetail = ({
               <Grid item xs={12} sm={9}>
                 <RhfDropdown
                   name={'STATUS'}
-                  options={STATUS_LIST}
+                  options={ISSUE_LIST}
                   canEmpty={false}
                 />
               </Grid>

@@ -77,3 +77,12 @@ export const postWbsIssueComment = (pjtSn, issueSn, payload) => {
     payload,
   );
 };
+
+// ----------------------------------------------------------------------
+// PUT
+// ----------------------------------------------------------------------
+// WBS 이슈 수정
+export const URL_PUT_WBS_ISSUE = '/project/wbs/issue';
+export const putWbsIssue = (pjtSn, issueSn, payload) => {
+  return instance.put(`${URL_PUT_WBS_ISSUE}/${pjtSn}/${issueSn}`, payload);
+};
