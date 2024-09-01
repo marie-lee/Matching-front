@@ -1,4 +1,7 @@
+//React Import
 import { useState, useRef, useEffect } from 'react';
+
+//Mui Import
 import {
   Grid,
   Typography,
@@ -9,7 +12,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  TextField,
   IconButton,
   Select,
   MenuItem,
@@ -17,22 +19,26 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useDispatch, useSelector } from 'react-redux';
-import { setMemberData } from '@/store/wbsSlice';
+
+//Data Import
+import { useDispatch } from 'react-redux';
+import { setData } from '@/store/wbsSlice';
 
 const permissions = ['member', 'owner'];
 
-const UserAdd = ({ userNames, roles }) => {
+const UserAdd = ({ roles, resData }) => {
   const dispatch = useDispatch();
-  const memberData = useSelector((state) => state.wbs.memberData || []);
-  const [participants, setParticipants] = useState(memberData);
-  const [isCustomRole, setIsCustomRole] = useState(memberData.map(() => false));
   const tableEndRef = useRef(null);
 
+  const [participants, setParticipants] = useState([]);
+
+  const member = resData.map((member) => member.userNm);
+
   useEffect(() => {
-    dispatch(setMemberData(participants));
+    dispatch(setData(participants));
   }, [participants, dispatch]);
 
+  //화면 자동이동 이팩트
   useEffect(() => {
     if (tableEndRef.current) {
       tableEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -42,29 +48,30 @@ const UserAdd = ({ userNames, roles }) => {
   const handleAddRow = () => {
     setParticipants((prev) => [
       ...prev,
-      { name: '', role: '', permission: 'member' },
+      { name: '', role: '', permission: 'owner', userSn: null },
     ]);
-    setIsCustomRole((prev) => [...prev, false]);
   };
 
   const handleChange = (index, field, value) => {
     setParticipants((prev) =>
-      prev.map((p, i) => (i === index ? { ...p, [field]: value } : p)),
-    );
-  };
+      prev.map((p, i) => {
+        if (i === index) {
+          const updatedParticipant = { ...p, [field]: value };
 
-  const handleRoleChange = (index, value) => {
-    setIsCustomRole((prev) =>
-      prev.map((isCustom, i) =>
-        i === index ? value === '직접 입력' : isCustom,
-      ),
+          if (field === 'name') {
+            const user = resData.find((user) => user.userNm === value);
+            updatedParticipant.userSn = user ? user.userSn : null;
+          }
+
+          return updatedParticipant;
+        }
+        return p;
+      }),
     );
-    handleChange(index, 'role', value === '직접 입력' ? '' : value);
   };
 
   const handleDeleteRow = (index) => {
     setParticipants((prev) => prev.filter((_, i) => i !== index));
-    setIsCustomRole((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -108,54 +115,32 @@ const UserAdd = ({ userNames, roles }) => {
                     align="center"
                     sx={{ padding: '4px', border: '4px solid #f4f6f8' }}
                   >
-                    {field === 'role' && isCustomRole[index] ?
-                      <TextField
+                    <FormControl fullWidth variant="standard">
+                      <Select
                         value={participant[field]}
                         onChange={(e) =>
                           handleChange(index, field, e.target.value)
                         }
-                        sx={{
-                          input: {
-                            padding: 0,
-                            textAlign: 'center',
-                            fontSize: '16px',
-                          },
-                          '& .MuiOutlinedInput-root': {
-                            '& fieldset': { border: 'none' },
-                          },
-                        }}
-                      />
-                    : <FormControl fullWidth variant="standard">
-                        <Select
-                          value={participant[field]}
-                          onChange={(e) =>
-                            field === 'role' ?
-                              handleRoleChange(index, e.target.value)
-                            : handleChange(index, field, e.target.value)
-                          }
-                        >
-                          {(field === 'role' ? roles
-                          : field === 'permission' ? permissions
-                          : userNames
-                          ).map((option) => (
-                            <MenuItem key={option} value={option}>
-                              {option}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    }
+                      >
+                        {(field === 'role' ? roles
+                        : field === 'permission' ? permissions
+                        : member
+                        ).map((option) => (
+                          <MenuItem key={option} value={option}>
+                            {option}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </TableCell>
                 ))}
                 <TableCell
                   align="center"
                   sx={{ padding: '4px', backgroundColor: '#f5f5f5' }}
                 >
-                  {index === participants.length - 1 && (
-                    <IconButton onClick={() => handleDeleteRow(index)}>
-                      <DeleteIcon />
-                    </IconButton>
-                  )}
+                  <IconButton onClick={() => handleDeleteRow(index)}>
+                    <DeleteIcon />
+                  </IconButton>
                 </TableCell>
               </TableRow>
             ))}

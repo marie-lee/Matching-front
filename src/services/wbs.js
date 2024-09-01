@@ -9,6 +9,9 @@ export const URL_GET_PROJECT_WBS = '/project/wbs';
 export const getWbs = (pjtSn) => {
   return instance.get(`${URL_GET_PROJECT_WBS}/${pjtSn}`);
 };
+export const getWbsInfo = (pjtSn) => {
+  return instance.get(`${URL_GET_PROJECT_WBS}/create/${pjtSn}`);
+};
 
 // ----------------------------------------------------------------------
 // POST
@@ -22,4 +25,9 @@ export const postProject = (payload) => {
 export const URL_POST_WBS = '/project/wbs/create';
 export const postWbs = (pjtSn, payload) => {
   return instance.post(`${URL_POST_WBS}/${pjtSn}`, payload);
+};
+
+export const URL_POST_PROJECT_WBS = '/project/wbs';
+export const postEditWbs = (pjtSn, payload) => {
+  return instance.post(`${URL_POST_PROJECT_WBS}/edit/${pjtSn}`, payload);
 };

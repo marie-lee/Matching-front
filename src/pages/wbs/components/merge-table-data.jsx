@@ -26,10 +26,9 @@ export function mergeTableDataByRowSpan(tableData, memberData) {
         const innerRow = tableData[i + j + k];
         const thirdValue = innerRow[2]?.value || '';
 
-        // worker 이름을 userSn으로 매핑
         const workerName = innerRow[3]?.value || '';
         const workerData = memberData.find(
-          (member) => member.userNm === workerName,
+          (member) => member.name === workerName,
         );
         const workerSn = workerData ? workerData.userSn : null;
 

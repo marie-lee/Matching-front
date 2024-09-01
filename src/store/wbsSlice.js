@@ -8,6 +8,7 @@ const initialState = {
     endDt: '',
   },
   memberData: [],
+  data: [],
   tableData: createMergedTable(wbsData).map((row) => [
     ...row,
     { value: '', rowSpan: 1 },
@@ -40,7 +41,10 @@ const wbsSlice = createSlice({
     setMemberData: (state, action) => {
       state.memberData = action.payload;
     },
-    resetState: () => {
+    setData: (state, action) => {
+      state.data = action.payload;
+    },
+    resetState: (state) => {
       return initialState;
     },
   },
@@ -53,6 +57,7 @@ export const {
   setPjtData,
   setMemberData,
   resetState,
+  setData,
 } = wbsSlice.actions;
 
 export default wbsSlice.reducer;

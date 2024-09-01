@@ -1,49 +1,43 @@
+//React Import
 import { useState, useEffect } from 'react';
-import { Button, Stack, Container, Grid, Box } from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { setTableData, resetState } from '@/store/wbsSlice';
-import StepperComponent from '@/pages/wbs/components/stepper-component';
+
+//Mui Import
+import { Button, Stack, Container, Grid, Box } from '@mui/material';
+
+//Data Import
+import { setTableData } from '@/store/wbsSlice';
 import { PATHS } from '@/routes/paths';
+import { selectPjtSn } from '@/store/pjtsn-reducer';
+
+//Components Import
+import StepperComponent from '@/pages/wbs/components/stepper-component';
 import { mergeTableDataByRowSpan } from '@/pages/wbs/components/merge-table-data';
-import { postWbs } from '@/services/wbs';
 import WbsFull from '@/pages/wbs/components/wbs-full';
 import GanttFull from '@/pages/wbs/components/gantt-full';
+
+//Api Import
+import { postWbs } from '@/services/wbs';
 
 const WbsInput = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const location = useLocation();
 
   const tableData = useSelector((state) => state.wbs.tableData);
   const pjtData = useSelector((state) => state.wbs.pjtData);
-  const memberDatas = useSelector((state) => state.wbs.memberData);
+  const datas = useSelector((state) => state.wbs.data);
+  const pjtSn = useSelector(selectPjtSn);
 
-  const [localTableData, setLocalTableData] = useState([]);
-
-  const { pjtSn } = location.state || {};
-  const memberData = memberDatas.map((member, index) => ({
-    userSn: index + 1,
-    userNm: member.name || '',
-    part: member.role || '',
-    role: member.permission || '',
-  }));
-  const memberNames = memberDatas.map((member) => member.name);
+  const memberNames = datas.map((member) => member.name);
   const ProjectStartDate = new Date(pjtData.startDt);
   const ProjectEndDate = new Date(pjtData.endDt);
 
-  const wbsData = mergeTableDataByRowSpan(tableData, memberData);
-
-  const finalData = {
-    pjtData,
-    memberData,
-    wbsData,
-  };
+  const [localTableData, setLocalTableData] = useState([]);
 
   useEffect(() => {
     if (tableData && tableData.length > 0) {
-      const modifiedData = tableData.map((row) => [...row]);
-      setLocalTableData(modifiedData);
+      setLocalTableData(tableData);
     }
   }, [tableData]);
 
@@ -71,12 +65,19 @@ const WbsInput = () => {
 
   const handleNext = async () => {
     handleSave();
+
+    const wbsData = mergeTableDataByRowSpan(localTableData, datas);
+
+    const finalData = {
+      pjtData,
+      memberData: datas,
+      wbsData,
+    };
+
     console.log('Final Data:', JSON.stringify(finalData, null, 2));
     try {
-      const res = await postWbs(pjtSn, finalData);
-      console.log('res : ', res);
-      dispatch(resetState());
-      window.location.href = '/task';
+      const postCreateWbs = await postWbs(pjtSn, finalData);
+      navigate(PATHS.task.root);
     } catch (error) {
       console.error('Error posting WBS Data:', error);
     }

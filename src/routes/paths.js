@@ -37,4 +37,5 @@ export const PATHS = {
     wbsInput: '/wbs/wbs-input',
     wbsView: '/wbs/wbs-view',
   },
+  task: { root: '/task' },
 };

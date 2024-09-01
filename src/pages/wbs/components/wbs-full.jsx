@@ -1,4 +1,7 @@
-import React, { memo, useCallback, useEffect, useRef } from 'react';
+//React Import
+import { memo, useCallback } from 'react';
+
+//Mui Import
 import {
   Table,
   TableBody,
@@ -12,13 +15,12 @@ import {
   MenuItem,
   FormControl,
 } from '@mui/material';
+
+//Data Import
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
-  {
-    /* 테이블 스타일 */
-  }
   const cellStyle = {
     border: '1px solid #000',
     padding: '2px 4px',
@@ -121,26 +123,11 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
         (e) => handleCellChange(rowIndex, cellIndex, e.target.value),
         [rowIndex, cellIndex, handleCellChange],
       );
+
       const cellStyleWithEditable = {
         ...cellStyle,
         pointerEvents: editable ? 'none' : 'auto',
       };
-
-      if (cellIndex === 4 || cellIndex === 5) {
-        // 날짜
-        return (
-          <TableCell
-            key={cellIndex}
-            rowSpan={cell.rowSpan}
-            sx={cellStyleWithEditable}
-          >
-            {renderDatePicker(cell.value, (date) =>
-              !editable ? handleCellChange(rowIndex, cellIndex, date) : null,
-            )}
-          </TableCell>
-        );
-      }
-
       if (cellIndex === 3) {
         // 엔지니어
         return (
@@ -158,6 +145,21 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
         );
       }
 
+      if (cellIndex === 4 || cellIndex === 5) {
+        // 날짜
+        return (
+          <TableCell
+            key={cellIndex}
+            rowSpan={cell.rowSpan}
+            sx={cellStyleWithEditable}
+          >
+            {renderDatePicker(cell.value, (date) =>
+              !editable ? handleCellChange(rowIndex, cellIndex, date) : null,
+            )}
+          </TableCell>
+        );
+      }
+
       if (cellIndex === 6) {
         // 상태
         return (
@@ -169,7 +171,7 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
             {renderSelectField(
               cell.value,
               !editable ? handleChange : () => {},
-              ['대기', '진행중', '완료'],
+              ['WAIT', 'IN PROGRESS', 'CLOSE'],
             )}
           </TableCell>
         );
@@ -264,9 +266,9 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
           <TableBody>
             {tableData.map((row, rowIndex) => (
               <TableRow key={rowIndex}>
-                {row.map(
-                  (cell, cellIndex) =>
-                    cell && (
+                {row.map((cell, cellIndex) => {
+                  if (cell && cellIndex < 7) {
+                    return (
                       <Cell
                         key={cellIndex}
                         cell={cell}
@@ -276,8 +278,10 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
                         members={members}
                         editable={editable}
                       />
-                    ),
-                )}
+                    );
+                  }
+                  return null;
+                })}
               </TableRow>
             ))}
           </TableBody>

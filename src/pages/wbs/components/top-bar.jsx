@@ -40,7 +40,7 @@ const TrackingBox = ({ tracking, handleTracking, theme }) =>
       />
     </Box>;
 
-const ActionButtons = ({ save, handleClick, handleSave }) =>
+const ActionButtons = ({ save, handleClick, handleSave, handleCancel }) =>
   save ?
     <Button onClick={handleClick} color="basicButton" sx={{ width: '80px' }}>
       Edit
@@ -50,7 +50,7 @@ const ActionButtons = ({ save, handleClick, handleSave }) =>
         Save
       </Button>
       <Button
-        onClick={handleClick}
+        onClick={handleCancel}
         color="greyButton"
         sx={{ width: '80px', marginLeft: 2 }}
       >
@@ -67,6 +67,7 @@ const TopBar = ({
   save,
   handleClick,
   handleSave,
+  handleCancel,
   view,
   handleView,
   tracking,
@@ -82,6 +83,7 @@ const TopBar = ({
             save={save}
             handleClick={handleClick}
             handleSave={handleSave}
+            handleCancel={handleCancel}
           />
         </Grid>
         <Grid item xs={2} container alignItems="center" justifyContent="right">

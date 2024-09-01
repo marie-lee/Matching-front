@@ -1,27 +1,31 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-import { Button, Stack, Container } from '@mui/material';
-import { template1, template2, template3 } from './components/constants';
+// React Import
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+// Mui Import
+import { Button, Stack, Container } from '@mui/material';
+
+//Data import
+import { PATHS } from '@/routes/paths';
+
+//component Import
+import { template1, template2, template3 } from './components/constants';
 import TemplateBox from '@/pages/wbs/components/template-box';
 import StepperComponent from '@/pages/wbs/components/stepper-component';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { PATHS } from '@/routes/paths';
 
 // ----------------------------------------------------------------------
 
 const CreateWbsTemplatePage = () => {
+  const navigate = useNavigate();
+
   const [selectedBox, setSelectedBox] = useState(null);
-  const location = useLocation();
-  const { pjtSn } = location.state || {};
 
   const handleBoxClick = (id) => {
     setSelectedBox(id === selectedBox ? null : id);
   };
 
-  const navigate = useNavigate();
-
   const handleCreateWbs = () => {
-    navigate(PATHS.wbs.basicinfo, { state: { pjtSn } });
+    navigate(PATHS.wbs.basicinfo);
   };
   const handleBack = () => {
     navigate(PATHS.wbs.root);

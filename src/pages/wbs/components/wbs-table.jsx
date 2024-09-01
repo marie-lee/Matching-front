@@ -1,3 +1,8 @@
+/* eslint-disable react-refresh/only-export-components */
+//React Import
+import { memo } from 'react';
+
+//Mui Import
 import {
   Table,
   TableBody,
@@ -5,14 +10,12 @@ import {
   TableContainer,
   TableRow,
 } from '@mui/material';
-import { memo } from 'react';
 
 export function createMergedTable(data) {
   const table = [];
 
   function merged(node, parentNames = []) {
     const currentNames = [...parentNames, node.name];
-
     if (!node.child || node.child.length === 0) {
       table.push(currentNames);
     } else {
