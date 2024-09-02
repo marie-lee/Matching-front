@@ -3,10 +3,7 @@ import { AppBar, Grid } from '@mui/material';
 import { ProfileEditForm } from '@/pages/profile/components';
 import RemoteControlBox from './components/profile-edit-remote';
 import { HEADER } from '@/layouts/config-layout';
-import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { profileEditFormDefaultValues } from './constants';
 import { useLocation } from 'react-router-dom';
 import { RhfFormProvider } from '@/components/hook-form';
 
@@ -26,7 +23,7 @@ const ProfileEditPage = () => {
     <RhfFormProvider form={profileEditForm}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={9}>
-          <ProfileEditForm profileData={profileData} />
+          <ProfileEditForm />
         </Grid>
         <Grid item xs={12} md={3}>
           <AppBar

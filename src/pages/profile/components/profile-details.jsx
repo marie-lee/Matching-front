@@ -42,14 +42,21 @@ const MajorStack = ({ data }) => {
         </Typography>
       </Stack>
       <Stack flexWrap={'wrap'} direction={'row'} useFlexGap spacing={0.5}>
-        {data.map((stack, index) => (
-          <Chip
-            key={`stack_${index}`}
-            label={stack.stNm}
-            size={'small'}
-            color={`${stack.level}`}
-          />
-        ))}
+        {data.length === 0 ?
+          <Typography variant={'sm'} color={'text.secondary'}>
+            등록된 스킬이 없습니다.
+          </Typography>
+        : data.map((stack, index) =>
+            stack.ST_LEVEL === null ?
+              <Chip
+                key={`stack_${index}`}
+                label={stack.ST_NM}
+                size={'small'}
+                color={stack.ST_LEVEL}
+              />
+            : null,
+          )
+        }
       </Stack>
     </Stack>
   );

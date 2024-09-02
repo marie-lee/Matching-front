@@ -15,7 +15,7 @@ export const getPortfolioDetail = (pfolSn) => {
 };
 
 // 프로필, 포트폴리오 입력
-export const URL_POST_PROFILE = '/member/profile';
+export const URL_POST_PROFILE = '/member/profile/test';
 export const postProfile = (payload) => {
   return instance.post(URL_POST_PROFILE, payload);
 };

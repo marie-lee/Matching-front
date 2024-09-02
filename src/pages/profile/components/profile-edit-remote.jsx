@@ -7,6 +7,7 @@ import _ from 'lodash';
 const RemoteControlBox = ({ profileEditForm, onOpen }) => {
   const getPayload = (_payload) => {
     let payload = _.cloneDeep(_payload);
+    console.log('payload', payload);
     const profile = {
       PF_INTRO: payload.profile[0].PF_INTRO,
       USER_IMG: payload.profile[0].USER_IMG,
@@ -55,7 +56,7 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
             };
           }),
           MEDIA: portfolio.IMG_SUB.map((img, index) => ({
-            URL: img,
+            URL: img.URL,
             MAIN_YN: index === 0 ? '1' : '0',
           })),
         }
@@ -66,15 +67,43 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
     return {
       profile: profile,
       portfolios,
+      portfolios_file: payload.portfolioInfo.map((portfolio) => {
+        return portfolio.IMG_SUB.map((img) => img.FILE);
+      }, null),
     };
   };
 
   const onSubmit = profileEditForm.handleSubmit(async (_payload) => {
     console.log('onSubmit');
     const payload = getPayload(_payload);
+    console.log('payload', payload.portfolios);
+
+    const formData = new FormData();
+    formData.append('profile', JSON.stringify(payload.profile));
+    // 프로필 사진이 존재하면 추가
+    if (payload.portfolios_file === null) {
+      formData.append('profile[USER_IMG]', payload.portfolios_file[0][0]);
+    }
+    // 포트폴리오가 존재하면 추가
+    if (payload.portfolios.length > 0) {
+      payload.portfolios_file.forEach((portfolio, pIndex) => {
+        portfolio.forEach((file, fIndex) => {
+          formData.append(
+            `portfolios[${pIndex}][MEDIA][${fIndex}][file]`,
+            file,
+          );
+        });
+      });
+    }
+    formData.append('portfolios', JSON.stringify(payload.portfolios));
+
+    // 폼 데이터에 들어가는 값 확인
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
 
     try {
-      const res = await postProfile(payload);
+      const res = await postProfile(formData);
       if (res?.status === 200) {
         setPreviewOpen(false);
         navigate(-1);
