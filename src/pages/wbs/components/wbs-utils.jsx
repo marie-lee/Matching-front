@@ -2,8 +2,14 @@ export function transformWbsDataToTableFormat(wbsData) {
   const table = [];
 
   function merged(node, parentNames = [], rowSpanInfo = {}) {
-    const currentNames = [...parentNames, node.name];
+    const currentNames = [...parentNames];
     const currentRowSpanInfo = { ...rowSpanInfo };
+
+    // 현재 노드의 이름을 추가하고, ticketSn을 메타데이터로 추가
+    currentNames.push({
+      value: node.name,
+      ticketSn: node.ticketSn || null,
+    });
 
     currentNames.slice(0, 3).forEach((name, index) => {
       if (currentRowSpanInfo[index]) {
@@ -13,20 +19,29 @@ export function transformWbsDataToTableFormat(wbsData) {
       }
     });
 
+    // 노드에 데이터가 있을 경우
     if (node.data) {
-      currentNames[3] = node.data.workerNm || '';
-      currentNames[4] = node.data.startDt || '';
-      currentNames[5] = node.data.endDt || '';
-      currentNames[6] = node.data.status || '';
-      currentNames[7] = node.ticketSn || '';
+      currentNames.push({
+        value: node.data.workerNm || '',
+        ticketSn: null,
+      });
+      currentNames.push({
+        value: node.data.startDt || '',
+        ticketSn: null,
+      });
+      currentNames.push({
+        value: node.data.endDt || '',
+        ticketSn: null,
+      });
+      currentNames.push({
+        value: node.data.status || '',
+        ticketSn: null,
+      });
     } else if (currentNames.length === 4) {
-      currentNames[3] = '';
-      currentNames[4] = '';
-      currentNames[5] = '';
-      currentNames[6] = '';
-      currentNames[7] = '';
+      currentNames.push(...Array(4).fill({ value: '', ticketSn: null }));
     }
 
+    // 자식 노드가 있는 경우
     if (node.child && node.child.length > 0) {
       node.child.forEach((childNode) => {
         merged(childNode, currentNames, currentRowSpanInfo);
@@ -49,7 +64,7 @@ function mergeTableRows(table) {
   const colCount = Math.max(...table.map((row) => row.length));
 
   for (let i = 0; i < rowCount; i++) {
-    mergedTable.push(new Array(colCount).fill(''));
+    mergedTable.push(new Array(colCount).fill(null));
   }
 
   for (let col = 0; col < colCount; col++) {
@@ -57,14 +72,16 @@ function mergeTableRows(table) {
     let spanStart = -1;
 
     for (let row = 0; row < rowCount; row++) {
-      const cellValue = table[row][col] || '';
+      const cell = table[row][col] || { value: '', ticketSn: null };
+      const cellValue = cell.value || '';
 
-      if (cellValue && cellValue === lastValue && col < 3) {
+      if (cellValue && lastValue && cellValue === lastValue.value && col < 3) {
+        // 동일한 값을 가진 셀들을 병합합니다
         mergedTable[spanStart][col].rowSpan += 1;
         mergedTable[row][col] = null;
       } else {
-        mergedTable[row][col] = { value: cellValue, rowSpan: 1 };
-        lastValue = cellValue;
+        mergedTable[row][col] = { ...cell, rowSpan: 1 };
+        lastValue = cell;
         spanStart = row;
       }
     }

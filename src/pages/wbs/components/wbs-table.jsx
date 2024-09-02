@@ -16,6 +16,7 @@ export function createMergedTable(data) {
 
   function merged(node, parentNames = []) {
     const currentNames = [...parentNames, node.name];
+
     if (!node.child || node.child.length === 0) {
       table.push(currentNames);
     } else {

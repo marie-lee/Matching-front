@@ -1,22 +1,33 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+//React Import
 import { useState, useEffect } from 'react';
-import { Stack, Container } from '@mui/material';
-import { useSelector, useDispatch } from 'react-redux';
-import { setMemberData, setTableData } from '@/store/wbsSlice';
-import WbsInputTable from '@/pages/wbs/components/wbs-input-table';
-import TopBar from '@/pages/wbs/components/top-bar';
+import { useDispatch, useSelector } from 'react-redux';
+
+//Mui Import
+import { Stack, Container, Box } from '@mui/material';
+
+//Data Import
 import { selectPjtSn } from '@/store/pjtsn-reducer';
-import { getWbs, getWbsInfo } from '@/services/wbs';
+import { setMemberData } from '@/store/wbsSlice';
+//Component Import
+import TopBar from '@/pages/wbs/components/top-bar';
+import WbsFull from '@/pages/wbs/components/wbs-full';
+import GanttFull from '@/pages/wbs/components/gantt-full';
 import { transformWbsDataToTableFormat } from './components/wbs-utils';
 import { mergeTableDataByRowSpan } from '@/pages/wbs/components/merge-table-data';
-import { postEditWbs } from '@/services/wbs';
-import { transformWbsDataWithTicketSn } from './components/ticket-sn';
+
+//Api Import
+import { getWbs } from '@/services/wbs';
+import { postEditWbs, getWbsInfo } from '@/services/wbs';
+
 const WbsView = () => {
   const dispatch = useDispatch();
-  const tableData = useSelector((state) => state.wbs.tableData);
   const pjtData = useSelector((state) => state.wbs.pjtData);
   const memberDatas = useSelector((state) => state.wbs.memberData);
   const pjtSn = useSelector(selectPjtSn);
+
+  const memberNames = memberDatas.map((member) => member.userNm);
+  const ProjectStartDate = new Date(pjtData.startDt);
+  const ProjectEndDate = new Date(pjtData.endDt);
 
   const [localTableData, setLocalTableData] = useState([]);
   const [save, setSave] = useState(true);
@@ -24,30 +35,19 @@ const WbsView = () => {
   const [tracking, setTracking] = useState(true);
   const [editable, setEditable] = useState(true);
 
+  const [reload, setReload] = useState(false);
+
   useEffect(() => {
     const fetchWbsData = async () => {
       try {
-        const res = await getWbsInfo(pjtSn);
-        const res1 = await getWbs(pjtSn);
-        console.log('res1', res1.data);
-        const ticketSnBasedData = transformWbsDataWithTicketSn(
-          res1.data.wbsData,
-        );
-        //console.log('ticketSnBasedData', ticketSnBasedData);
+        const wbsData = await getWbs(pjtSn);
+        const ProjectData = await getWbsInfo(pjtSn);
+        dispatch(setMemberData(ProjectData.data.members));
+
         const transformedData = transformWbsDataToTableFormat(
-          res1.data.wbsData,
+          wbsData.data.wbsData,
         );
-        console.log('transformedData', transformedData);
 
-        const memberData = res.data.members.map((member, index) => ({
-          userSn: member.userSn,
-          userNm: member.userNm || '',
-          part: member.part || '',
-          role: member.role || '',
-        }));
-
-        dispatch(setTableData(transformedData));
-        dispatch(setMemberData(memberData));
         setLocalTableData(transformedData);
       } catch (error) {
         console.error('Error fetching WBS data:', error);
@@ -55,39 +55,44 @@ const WbsView = () => {
     };
 
     fetchWbsData();
-  }, [pjtSn, dispatch]);
+  }, [pjtSn, reload, dispatch]);
+
+  const updatedTableData = localTableData.map((row) => [...row]);
+
+  const wbsDatas = mergeTableDataByRowSpan(updatedTableData, memberDatas);
 
   const handleCellChange = (rowIndex, cellIndex, newValue) => {
     if (editable) return;
-    setLocalTableData((prevData) => {
-      const updatedTable = [...prevData];
-      updatedTable[rowIndex] = [...updatedTable[rowIndex]];
-      updatedTable[rowIndex][cellIndex] = {
-        ...updatedTable[rowIndex][cellIndex],
-        value: newValue,
-      };
+    else {
+      setLocalTableData((prevData) => {
+        const updatedTable = [...prevData];
+        updatedTable[rowIndex] = [...updatedTable[rowIndex]];
 
-      return updatedTable;
-    });
+        updatedTable[rowIndex][cellIndex] = {
+          ...updatedTable[rowIndex][cellIndex],
+          value: newValue,
+        };
+
+        return updatedTable;
+      });
+    }
   };
 
   const handleSave = async () => {
     setSave((prev) => !prev);
+    setEditable((prev) => !prev);
 
     try {
-      const updatedTableData = tableData.map((row) => [...row]);
-
-      const wbsData = mergeTableDataByRowSpan(updatedTableData, memberDatas);
-
       const finalData = {
         pjtData,
         memberData: memberDatas,
-        wbsData,
+        wbsData: wbsDatas,
       };
 
       console.log('Final Data:', JSON.stringify(finalData, null, 2));
-      // const res2 = await postEditWbs(pjtSn, finalData);
-      // console.log('res', res2);
+      const editData = await postEditWbs(pjtSn, finalData);
+
+      setReload((prev) => !prev);
     } catch (error) {
       console.error('Error posting:', error.message || error);
 
@@ -100,11 +105,7 @@ const WbsView = () => {
     setEditable((prev) => !prev);
   };
 
-  const handleCancel = () => {
-    setSave((prev) => !prev);
-    setEditable((prev) => !prev);
-  };
-
+  //이슈트레킹 로직 추가 해야함
   const handleView = () => {
     setView((prev) => !prev);
   };
@@ -120,22 +121,42 @@ const WbsView = () => {
           save={save}
           handleClick={handleClick}
           handleSave={handleSave}
-          handleCancel={handleCancel}
           view={view}
           handleView={handleView}
           handleTracking={handleTracking}
           tracking={tracking}
         />
-        <Stack mt={5}>
-          <WbsInputTable
-            tableData={localTableData}
-            handleCellChange={handleCellChange}
-            isFullWidth={tracking ? 60 : 100}
-            editable={editable}
-            members={memberDatas}
-            projectStartDate={pjtData.startDt}
-            projectEndDate={pjtData.endDt}
-          />
+        <Stack mt={5} direction="row">
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              flex: tracking ? 10 : 6,
+            }}
+          >
+            <WbsFull
+              tableData={localTableData}
+              handleCellChange={handleCellChange}
+              members={memberNames}
+              editable={editable}
+            />
+          </Box>
+          {tracking && (
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                overflowX: 'auto',
+                flex: 3,
+              }}
+            >
+              <GanttFull
+                tableData={localTableData}
+                projectStartDate={ProjectStartDate}
+                projectEndDate={ProjectEndDate}
+              />
+            </Box>
+          )}
         </Stack>
       </Container>
     </>

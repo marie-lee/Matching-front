@@ -8,9 +8,8 @@ export function transformWbsDataWithTicketSn(wbsData) {
     const endDt = data?.endDt || '';
     const status = data?.status || '';
 
-    // 현재 노드 정보를 객체로 생성
     const nodeInfo = {
-      ticketSn: ticketSn || parentTicketSn, // 현재 ticketSn이 없으면 부모의 ticketSn 사용
+      ticketSn: ticketSn || parentTicketSn,
       name,
       workerNm,
       startDt,

@@ -1,7 +1,9 @@
+//MUI Import
 import { Grid, Button, Box, useTheme } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
+//간트차트 확인 버튼
 const TrackingBox = ({ tracking, handleTracking, theme }) =>
   tracking ?
     <Box
@@ -40,6 +42,7 @@ const TrackingBox = ({ tracking, handleTracking, theme }) =>
       />
     </Box>;
 
+//수정 저장 버튼
 const ActionButtons = ({ save, handleClick, handleSave, handleCancel }) =>
   save ?
     <Button onClick={handleClick} color="basicButton" sx={{ width: '80px' }}>
@@ -50,7 +53,7 @@ const ActionButtons = ({ save, handleClick, handleSave, handleCancel }) =>
         Save
       </Button>
       <Button
-        onClick={handleCancel}
+        onClick={handleClick}
         color="greyButton"
         sx={{ width: '80px', marginLeft: 2 }}
       >
@@ -58,6 +61,7 @@ const ActionButtons = ({ save, handleClick, handleSave, handleCancel }) =>
       </Button>
     </>;
 
+// 이슈 트레킹 버튼
 const ViewIcon = ({ view, handleView }) =>
   view ?
     <VisibilityOffIcon onClick={handleView} />
@@ -65,9 +69,8 @@ const ViewIcon = ({ view, handleView }) =>
 
 const TopBar = ({
   save,
-  handleClick,
   handleSave,
-  handleCancel,
+  handleClick,
   view,
   handleView,
   tracking,
@@ -83,7 +86,6 @@ const TopBar = ({
             save={save}
             handleClick={handleClick}
             handleSave={handleSave}
-            handleCancel={handleCancel}
           />
         </Grid>
         <Grid item xs={2} container alignItems="center" justifyContent="right">

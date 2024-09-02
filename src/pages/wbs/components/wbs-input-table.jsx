@@ -7,39 +7,23 @@ import { setTableData } from '@/store/wbsSlice';
 
 import { selectPjtSn } from '@/store/pjtsn-reducer';
 
-const WbsInputTable = ({ isFullWidth, editable }) => {
-  const dispatch = useDispatch();
-  const tableData = useSelector((state) => state.wbs.tableData);
-  const pjtData = useSelector((state) => state.wbs.pjtData);
-  const memberDatas = useSelector((state) => state.wbs.memberData);
-
-  const [localTableData, setLocalTableData] = useState([]);
-
-  const memberNames = memberDatas.map((member) => member.userNm);
-  const ProjectStartDate = new Date(pjtData.startDt);
-  const ProjectEndDate = new Date(pjtData.endDt);
-
+const WbsInputTable = ({
+  localTableData,
+  setLocalTableData,
+  handleCellChange,
+  isFullWidth,
+  editable,
+  members,
+  projectStartDate,
+  projectEndDate,
+}) => {
+  console.log('localTableData', localTableData);
   useEffect(() => {
-    if (tableData && tableData.length > 0) {
-      const modifiedData = tableData.map((row) => [...row]);
+    if (localTableData && localTableData.length > 0) {
+      const modifiedData = projectEndDate.map((row) => [...row]);
       setLocalTableData(modifiedData);
     }
-  }, [tableData]);
-
-  const handleCellChange = (rowIndex, cellIndex, newValue) => {
-    if (editable) return;
-
-    const updatedTable = [...localTableData];
-    updatedTable[rowIndex] = [...updatedTable[rowIndex]];
-    updatedTable[rowIndex][cellIndex] = {
-      ...updatedTable[rowIndex][cellIndex],
-      value: newValue,
-    };
-
-    setLocalTableData(updatedTable);
-
-    dispatch(setTableData(updatedTable));
-  };
+  }, [localTableData]);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'row' }}>
@@ -53,7 +37,7 @@ const WbsInputTable = ({ isFullWidth, editable }) => {
         <WbsFull
           tableData={localTableData}
           handleCellChange={handleCellChange}
-          members={memberNames}
+          members={members}
           editable={editable}
         />
       </Box>
@@ -68,8 +52,8 @@ const WbsInputTable = ({ isFullWidth, editable }) => {
         >
           <GanttFull
             tableData={localTableData}
-            projectStartDate={ProjectStartDate}
-            projectEndDate={ProjectEndDate}
+            projectStartDate={projectStartDate}
+            projectEndDate={projectEndDate}
           />
         </Box>
       )}

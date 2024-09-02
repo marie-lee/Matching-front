@@ -247,10 +247,11 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
           </TableHead>
         </Table>
       </TableContainer>
+
       {/* WBS 내용 */}
       <TableContainer
         component={Paper}
-        sx={{ width: '100%', overflowX: 'hidden', borderRadius: '0' }}
+        sx={{ width: '100%', overflowX: 'hidden', borderRadius: '0', mb: 5 }}
         elevation={0}
       >
         <Table sx={{ height: '100vh' }}>

@@ -48,7 +48,7 @@ const UserAdd = ({ roles, resData }) => {
   const handleAddRow = () => {
     setParticipants((prev) => [
       ...prev,
-      { name: '', role: '', permission: 'owner', userSn: null },
+      { userNm: '', part: '', role: 'owner', userSn: null },
     ]);
   };
 
@@ -58,7 +58,7 @@ const UserAdd = ({ roles, resData }) => {
         if (i === index) {
           const updatedParticipant = { ...p, [field]: value };
 
-          if (field === 'name') {
+          if (field === 'userNm') {
             const user = resData.find((user) => user.userNm === value);
             updatedParticipant.userSn = user ? user.userSn : null;
           }
@@ -109,7 +109,7 @@ const UserAdd = ({ roles, resData }) => {
           <TableBody>
             {participants.map((participant, index) => (
               <TableRow key={index} sx={{ border: '4px solid #f4f6f8' }}>
-                {['name', 'role', 'permission'].map((field) => (
+                {['userNm', 'part', 'role'].map((field) => (
                   <TableCell
                     key={field}
                     align="center"
@@ -122,8 +122,8 @@ const UserAdd = ({ roles, resData }) => {
                           handleChange(index, field, e.target.value)
                         }
                       >
-                        {(field === 'role' ? roles
-                        : field === 'permission' ? permissions
+                        {(field === 'role' ? permissions
+                        : field === 'part' ? roles
                         : member
                         ).map((option) => (
                           <MenuItem key={option} value={option}>

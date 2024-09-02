@@ -8,6 +8,7 @@ export function mergeTableDataByRowSpan(tableData, memberData) {
 
     const primaryGroup = {
       name: firstValue,
+      ticketSn: currentRow[0]?.ticketSn || null,
       child: [],
     };
 
@@ -18,6 +19,7 @@ export function mergeTableDataByRowSpan(tableData, memberData) {
 
       const secondaryGroup = {
         name: secondValue,
+        ticketSn: subRow[1]?.ticketSn || null,
         child: [],
       };
 
@@ -28,7 +30,7 @@ export function mergeTableDataByRowSpan(tableData, memberData) {
 
         const workerName = innerRow[3]?.value || '';
         const workerData = memberData.find(
-          (member) => member.name === workerName,
+          (member) => member.userNm === workerName,
         );
         const workerSn = workerData ? workerData.userSn : null;
 
@@ -43,6 +45,7 @@ export function mergeTableDataByRowSpan(tableData, memberData) {
 
         const tertiaryGroup = {
           name: thirdValue,
+          ticketSn: innerRow[2]?.ticketSn || null,
           data: {
             worker: workerSn !== null ? workerSn : null,
             startDt: startDt || null,

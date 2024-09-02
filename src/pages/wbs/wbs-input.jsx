@@ -29,7 +29,8 @@ const WbsInput = () => {
   const datas = useSelector((state) => state.wbs.data);
   const pjtSn = useSelector(selectPjtSn);
 
-  const memberNames = datas.map((member) => member.name);
+  const memberNames = datas.map((member) => member.userNm);
+
   const ProjectStartDate = new Date(pjtData.startDt);
   const ProjectEndDate = new Date(pjtData.endDt);
 
@@ -73,6 +74,7 @@ const WbsInput = () => {
       memberData: datas,
       wbsData,
     };
+    console.log('memberData', datas);
 
     console.log('Final Data:', JSON.stringify(finalData, null, 2));
     try {
