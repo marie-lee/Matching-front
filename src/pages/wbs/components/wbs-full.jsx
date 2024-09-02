@@ -19,18 +19,17 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
-  const [expandedCells, setExpandedCells] = useState(new Map());
+  const [expandedRows, setExpandedRows] = useState(new Set());
 
-  const toggleRowExpand = (rowIndex, cellIndex) => {
-    setExpandedCells((prevExpandedCells) => {
-      const newExpandedCells = new Map(prevExpandedCells);
-      const key = `${rowIndex}-${cellIndex}`;
-      if (newExpandedCells.has(key)) {
-        newExpandedCells.delete(key);
+  const toggleRowExpand = (rowIndex) => {
+    setExpandedRows((prevExpandedRows) => {
+      const newExpandedRows = new Set(prevExpandedRows);
+      if (newExpandedRows.has(rowIndex)) {
+        newExpandedRows.delete(rowIndex);
       } else {
-        newExpandedCells.set(key, true);
+        newExpandedRows.add(rowIndex);
       }
-      return newExpandedCells;
+      return newExpandedRows;
     });
   };
 
@@ -130,21 +129,20 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
         pointerEvents: editable ? 'none' : 'auto',
       };
 
-      const isExpanded = expandedCells.has(`${rowIndex}-${cellIndex}`);
-
       if (cellIndex === 0 || cellIndex === 1) {
+        // Part 및 Division 열에 버튼 추가
         return (
           <TableCell
             key={cellIndex}
-            rowSpan={isExpanded ? 1 : cell.rowSpan}
+            rowSpan={cell.rowSpan}
             sx={cellStyleWithEditable}
           >
             <IconButton
-              onClick={() => toggleRowExpand(rowIndex, cellIndex)}
+              onClick={() => toggleRowExpand(rowIndex)}
               size="small"
               sx={{ padding: '0' }}
             >
-              {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              {expandedRows.has(rowIndex) ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </IconButton>
             {cell.value}
           </TableCell>
@@ -155,7 +153,7 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
         return (
           <TableCell
             key={cellIndex}
-            rowSpan={isExpanded ? 1 : cell.rowSpan}
+            rowSpan={cell.rowSpan}
             sx={cellStyleWithEditable}
           >
             {renderDatePicker(cell.value, (date) =>
@@ -169,7 +167,7 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
         return (
           <TableCell
             key={cellIndex}
-            rowSpan={isExpanded ? 1 : cell.rowSpan}
+            rowSpan={cell.rowSpan}
             sx={cellStyleWithEditable}
           >
             {renderSelectField(
@@ -185,7 +183,7 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
         return (
           <TableCell
             key={cellIndex}
-            rowSpan={isExpanded ? 1 : cell.rowSpan}
+            rowSpan={cell.rowSpan}
             sx={cellStyleWithEditable}
           >
             {renderSelectField(
@@ -200,7 +198,7 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
       return (
         <TableCell
           key={cellIndex}
-          rowSpan={isExpanded ? 1 : cell.rowSpan}
+          rowSpan={cell.rowSpan}
           sx={cellStyleWithEditable}
         >
           {renderTextField(cell.value, !editable ? handleChange : () => {})}
@@ -283,23 +281,25 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
           </colgroup>
           <TableBody>
             {tableData.map((row, rowIndex) => (
-              <TableRow key={rowIndex}>
-                {row.map(
-                  (cell, cellIndex) =>
-                    cell &&
-                    (!expandedCells.has(`${rowIndex}-${cellIndex}`) || cellIndex < 2) && (
-                      <Cell
-                        key={cellIndex}
-                        cell={cell}
-                        rowIndex={rowIndex}
-                        cellIndex={cellIndex}
-                        handleCellChange={handleCellChange}
-                        members={members}
-                        editable={editable}
-                      />
-                    ),
-                )}
-              </TableRow>
+              <>
+                <TableRow key={rowIndex}>
+                  {row.map(
+                    (cell, cellIndex) =>
+                      cell &&
+                      (cellIndex < 2 || !expandedRows.has(rowIndex)) && ( // Toggle row display 반대로 변경
+                        <Cell
+                          key={cellIndex}
+                          cell={cell}
+                          rowIndex={rowIndex}
+                          cellIndex={cellIndex}
+                          handleCellChange={handleCellChange}
+                          members={members}
+                          editable={editable}
+                        />
+                      ),
+                  )}
+                </TableRow>
+              </>
             ))}
           </TableBody>
         </Table>
