@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -20,15 +20,31 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
   const [expandedRows, setExpandedRows] = useState(new Set());
+  const [colSpanInfo, setColSpanInfo] = useState({});
 
-  const toggleRowExpand = (rowIndex) => {
+  const toggleRowExpand = (rowIndex, cellIndex, rowSpan) => {
     setExpandedRows((prevExpandedRows) => {
       const newExpandedRows = new Set(prevExpandedRows);
+      const newColSpanInfo = { ...colSpanInfo };
+
       if (newExpandedRows.has(rowIndex)) {
         newExpandedRows.delete(rowIndex);
+        delete newColSpanInfo[rowIndex];
       } else {
         newExpandedRows.add(rowIndex);
+        if (cellIndex === 0) {
+          console.log('0이지롱');
+        } else if (cellIndex === 1) {
+          console.log('1이지롱');
+          console.log(rowIndex);
+          console.log(rowSpan);
+
+
+          newColSpanInfo[rowIndex] = 6;
+        }
       }
+
+      setColSpanInfo(newColSpanInfo);
       return newExpandedRows;
     });
   };
@@ -129,16 +145,19 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
         pointerEvents: editable ? 'none' : 'auto',
       };
 
+      const colSpan = colSpanInfo[rowIndex] && cellIndex === 1 ? colSpanInfo[rowIndex] : 1;  // colSpan이 있으면 적용
+
       if (cellIndex === 0 || cellIndex === 1) {
         // Part 및 Division 열에 버튼 추가
         return (
           <TableCell
             key={cellIndex}
             rowSpan={cell.rowSpan}
+            colSpan={colSpan}  // colSpan 속성 추가
             sx={cellStyleWithEditable}
           >
             <IconButton
-              onClick={() => toggleRowExpand(rowIndex)}
+              onClick={() => toggleRowExpand(rowIndex, cellIndex, cell.rowSpan)}
               size="small"
               sx={{ padding: '0' }}
             >
@@ -172,7 +191,7 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
           >
             {renderSelectField(
               cell.value,
-              !editable ? handleChange : () => {},
+              !editable ? handleChange : () => { },
               members,
             )}
           </TableCell>
@@ -188,7 +207,7 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
           >
             {renderSelectField(
               cell.value,
-              !editable ? handleChange : () => {},
+              !editable ? handleChange : () => { },
               ['대기', '진행중', '완료'],
             )}
           </TableCell>
@@ -201,7 +220,7 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
           rowSpan={cell.rowSpan}
           sx={cellStyleWithEditable}
         >
-          {renderTextField(cell.value, !editable ? handleChange : () => {})}
+          {renderTextField(cell.value, !editable ? handleChange : () => { })}
         </TableCell>
       );
     },
@@ -281,25 +300,23 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
           </colgroup>
           <TableBody>
             {tableData.map((row, rowIndex) => (
-              <>
-                <TableRow key={rowIndex}>
-                  {row.map(
-                    (cell, cellIndex) =>
-                      cell &&
-                      (cellIndex < 2 || !expandedRows.has(rowIndex)) && ( // Toggle row display 반대로 변경
-                        <Cell
-                          key={cellIndex}
-                          cell={cell}
-                          rowIndex={rowIndex}
-                          cellIndex={cellIndex}
-                          handleCellChange={handleCellChange}
-                          members={members}
-                          editable={editable}
-                        />
-                      ),
-                  )}
-                </TableRow>
-              </>
+              <TableRow key={rowIndex}>
+                {row.map(
+                  (cell, cellIndex) =>
+                    cell &&
+                    (cellIndex < 2 || !expandedRows.has(rowIndex)) && (
+                      <Cell
+                        key={cellIndex}
+                        cell={cell}
+                        rowIndex={rowIndex}
+                        cellIndex={cellIndex}
+                        handleCellChange={handleCellChange}
+                        members={members}
+                        editable={editable}
+                      />
+                    ),
+                )}
+              </TableRow>
             ))}
           </TableBody>
         </Table>
