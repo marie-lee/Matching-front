@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { Icon } from '@iconify/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
 import dayjs from 'dayjs';
 
@@ -22,13 +22,12 @@ import {
   ISSUE_LIST,
   issueEditFormDefaultValues,
   PRIORITY_LIST,
-  STATUS_LIST,
 } from '@/pages/task/constants';
 import {
   RhfAutocomplete,
   RhfDropdown,
   RhfFormProvider,
-  RhfTextField,
+  RhfMentions,
 } from '@/components/hook-form';
 
 import { getWbsIssue, postWbsIssueComment, putWbsIssue } from '@/services/wbs';
@@ -43,11 +42,19 @@ const IssueDetail = ({
   optionData,
   fetchDashboard,
 }) => {
+  const dialogRef = useRef(null);
   const [data, setData] = useState();
 
-  const getMentionsValue = data?.MENTIONS.map((member) =>
-    _.mapKeys(member, (value, key) => _.camelCase(key)),
-  );
+  const getMentionsValue =
+    data?.MENTIONS?.map((member) =>
+      _.mapKeys(member, (value, key) => _.camelCase(key)),
+    ) || [];
+
+  const getCommentMentionList =
+    optionData?.memberList?.map(({ userSn, userNm }) => ({
+      id: userSn,
+      display: userNm,
+    })) || [];
 
   const issueEditForm = useForm({
     defaultValues: issueEditFormDefaultValues,
@@ -98,8 +105,6 @@ const IssueDetail = ({
       }
     }
 
-    console.log(result);
-
     fetchEditIssue(result);
   });
 
@@ -149,13 +154,34 @@ const IssueDetail = ({
   };
 
   const onSubmitComment = commentAddForm.handleSubmit(async (_payload) => {
-    await fetchAddComment(_payload);
+    let payload = {};
+
+    const regExp = /\@\[(.+?)\]\(\d+\)/g;
+
+    payload['TEXT'] = _payload['TEXT'].replace(regExp, '@$1');
+
+    payload['MENTIONS'] = [
+      ..._payload['TEXT'].matchAll(/\@\[(.+?)\]\((\d+)\)/g),
+    ].map((match) => Number(match[2]));
+
+    await fetchAddComment(payload);
   });
 
   // ----------------------------------------------------------------------
 
+  const renderCommentText = (text, mentions) => {
+    _.forEach(mentions, (value) => {
+      const regExp = new RegExp(`@${value.USER_NM}`, 'g');
+      text = text.replace(regExp, `<b>@${value.USER_NM}</b>`);
+    });
+
+    return <Typography dangerouslySetInnerHTML={{ __html: text }} />;
+  };
+
+  // ----------------------------------------------------------------------
+
   return (
-    <Dialog open={open} maxWidth={'false'}>
+    <Dialog open={open} maxWidth={'false'} ref={dialogRef}>
       <Stack width={'800px'} spacing={3} px={5.5} py={5}>
         <RhfFormProvider form={issueEditForm}>
           <Stack spacing={3} useFlexGap>
@@ -295,36 +321,41 @@ const IssueDetail = ({
                       {dayjs(comment?.CREATED_DT).format('YYYY-MM-DD HH:mm')}
                     </Typography>
                   </Stack>
-                  <Typography>{comment.TEXT}</Typography>
+                  <Typography>
+                    {/*{comment.TEXT}*/}
+
+                    {renderCommentText(comment.TEXT, comment.mentions)}
+                  </Typography>
                 </Stack>
               </Stack>
             ))}
 
-            <RhfFormProvider
-              form={commentAddForm}
-              onSubmit={onSubmitComment}
-              disabledEnterKeyDown={false}
-            >
+            <RhfFormProvider form={commentAddForm}>
               <Stack direction={'row'} spacing={1.5} pt={1}>
                 <Avatar />
-                <RhfTextField
-                  name={'TEXT'}
-                  placeholder={'덧글 추가'}
-                  sx={{ pt: 1 }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end" sx={{ mb: 1 }}>
-                        <IconButton disableRipple onClick={onSubmitComment}>
-                          <Icon
-                            icon={'clarity:circle-arrow-solid'}
-                            color={'#000'}
-                            fontSize={24}
-                          />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
+                <Stack width={1}>
+                  <RhfMentions
+                    name={'TEXT'}
+                    placeholder={'덧글 추가'}
+                    sx={{ pt: 1 }}
+                    containerRef={dialogRef}
+                    data={getCommentMentionList}
+                    handleKeyDown={onSubmitComment}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end" sx={{ mb: 1 }}>
+                          <IconButton disableRipple onClick={onSubmitComment}>
+                            <Icon
+                              icon={'clarity:circle-arrow-solid'}
+                              color={'#000'}
+                              fontSize={24}
+                            />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Stack>
               </Stack>
             </RhfFormProvider>
           </Stack>
