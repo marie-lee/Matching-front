@@ -17,7 +17,7 @@ const Career = ({ data }) => {
         </Typography>
       : data.map((career, index) => (
           <Stack key={`career_${index}`} spacing={0.5}>
-            <Typography>{career.CARRER_NM}</Typography>
+            <Typography>{career.CAREER_NM}</Typography>
             <Stack direction={'row'} alignItems={'center'}>
               <Typography variant={'xs'} color={'text.secondary'}>
                 {`${formatDate(career.ENTERING_DT)} ~ ${career.QUIT_DT != true ? formatDate(career.QUIT_DT) : '재직 중'}`}
