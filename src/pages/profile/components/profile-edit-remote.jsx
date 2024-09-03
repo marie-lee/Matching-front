@@ -97,6 +97,7 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
         }
         return portfolio.IMG_SUB.map((img) => img.FILE);
       }, null),
+      USER_IMG: payload.USER_IMG,
     };
   };
 
@@ -106,8 +107,9 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
     const formData = new FormData();
     formData.append('profile', JSON.stringify(payload.profile));
     // 프로필 사진이 존재하면 추가
-    if (payload.portfolios_file === null) {
-      formData.append('profile[USER_IMG]', payload.portfolios_file[0][0]);
+    if (payload.USER_IMG !== null) {
+      console.log('payload.USER_IMG', payload.USER_IMG);
+      formData.append('profile[USER_IMG]', payload.USER_IMG);
     }
     // 포트폴리오가 존재하면 추가
     if (payload.portfolios.length > 0) {

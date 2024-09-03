@@ -16,14 +16,13 @@ const ProfileEditPage = () => {
   });
   const handlePreviewOpen = () => {
     console.log('Preview Open');
-    // console.log('profileEditForm', profileEditForm.getValues());
   };
 
   return (
     <RhfFormProvider form={profileEditForm}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={9}>
-          <ProfileEditForm />
+          <ProfileEditForm profileEditForm={profileEditForm} />
         </Grid>
         <Grid item xs={12} md={3}>
           <AppBar

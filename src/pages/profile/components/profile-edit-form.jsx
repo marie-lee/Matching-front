@@ -111,9 +111,7 @@ const PortfolioForm = () => {
   };
 
   const handleAppendStack = (pindex) => {
-    console.log('스택추가', stackName);
     setStacks([...stacks, stacks[pindex].push({ ST_NM: stackName })]);
-    console.log('stacks', stacks[pindex]);
     portfolioFieldArray.fields[pindex].stack.push({ ST_NM: stackName });
   };
 
@@ -186,7 +184,6 @@ const PortfolioForm = () => {
   };
 
   const handleDeleteStack = (portfolioIndex, stackIndex) => {
-    console.log('스택삭제', portfolioIndex, stackIndex);
     const updatedStacks = stacks.filter((_, idx) => idx !== stackIndex);
     setValue(`portfolioInfo[${portfolioIndex}].stack`, updatedStacks);
     setStacks(updatedStacks);
@@ -365,41 +362,36 @@ const PortfolioForm = () => {
             }}
           >
             <Stack spacing={1}>
-              {links[index].map(
-                (link, linkindex) => (
-                  console.log('link', link),
-                  (
-                    <Stack
-                      key={`link_${linkindex}`}
-                      direction={'row'}
-                      spacing={1}
-                      alignItems={'center'}
-                    >
-                      <Box>
-                        <RhfTextField
-                          name={`portfolioInfo[${index}].url[${linkindex}].URL`}
-                          label={'URL'}
-                          size={'medium'}
-                          variant={'outlined'}
-                        />
-                      </Box>
-                      <Box sx={{ flexGrow: 1 }}>
-                        <RhfTextField
-                          name={`portfolioInfo[${index}].url[${linkindex}].URL_INTRO`}
-                          label={'URL'}
-                          size={'medium'}
-                          variant={'outlined'}
-                        />
-                      </Box>
-                      <Box>
-                        <IconButton>
-                          <AddIcon />
-                        </IconButton>
-                      </Box>
-                    </Stack>
-                  )
-                ),
-              )}
+              {links[index].map((link, linkindex) => (
+                <Stack
+                  key={`link_${linkindex}`}
+                  direction={'row'}
+                  spacing={1}
+                  alignItems={'center'}
+                >
+                  <Box>
+                    <RhfTextField
+                      name={`portfolioInfo[${index}].url[${linkindex}].URL`}
+                      label={'URL'}
+                      size={'medium'}
+                      variant={'outlined'}
+                    />
+                  </Box>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <RhfTextField
+                      name={`portfolioInfo[${index}].url[${linkindex}].URL_INTRO`}
+                      label={'URL'}
+                      size={'medium'}
+                      variant={'outlined'}
+                    />
+                  </Box>
+                  <Box>
+                    <IconButton>
+                      <AddIcon />
+                    </IconButton>
+                  </Box>
+                </Stack>
+              ))}
             </Stack>
             <Button
               color="primary"
@@ -421,7 +413,6 @@ const PortfolioForm = () => {
               render={({ field: { onChange, value } }) => {
                 return (
                   <>
-                    {console.log('Current value:', value)}
                     <Select
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
@@ -558,11 +549,11 @@ const MemoizedInterestForm = React.memo(InterestForm);
 const MemoizedLinkForm = React.memo(LinkForm);
 const MemoizedPortfolioForm = React.memo(PortfolioForm);
 
-const ProfileEditForm = () => {
+const ProfileEditForm = ({ profileEditForm }) => {
   return (
     <Stack spacing={4}>
       <FormGroup title={'프로필'}>
-        <MemoizedProfileForm />
+        <MemoizedProfileForm profileEditForm={profileEditForm} />
       </FormGroup>
       <FormGroup title={'경력'}>
         <MemoizedCareerForm />
