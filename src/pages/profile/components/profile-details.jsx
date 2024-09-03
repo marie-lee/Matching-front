@@ -114,6 +114,7 @@ const ProfileDetails = () => {
   const [url, setUrl] = useState([]);
   const [intro, setIntro] = useState([]);
   const [name, setName] = useState([]);
+  const [avatar, setAvatar] = useState(null);
   const [profileData, setProfileData] = useState([]);
 
   useEffect(() => {
@@ -133,6 +134,7 @@ const ProfileDetails = () => {
         }));
         setCareers(careersData);
         setName(data.profile.USER_NM);
+        setAvatar(data.profile.USER_IMG);
         setIntro(data.profile.PF_INTRO);
 
         if (data.profile.stack === null) {
@@ -179,7 +181,11 @@ const ProfileDetails = () => {
     <Stack spacing={3} p={3} bgcolor={'background.default'}>
       <Typography variant={'xl'}>프로필</Typography>
       <Stack alignItems={'center'}>
-        <Avatar alt={'프로필 이미지'} sx={{ width: 100, height: 100 }} />
+        <Avatar
+          alt={'프로필 이미지'}
+          sx={{ width: 100, height: 100 }}
+          src={avatar}
+        />
       </Stack>
       <Stack
         direction={'row'}

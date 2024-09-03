@@ -110,7 +110,11 @@ const ProfilePreviewDetail = ({ profileEditForm }) => {
     <Stack spacing={3} p={3} bgcolor={'background.default'}>
       <Typography variant={'xl'}>프로필</Typography>
       <Stack alignItems={'center'}>
-        <Avatar alt={'프로필 이미지'} sx={{ width: 100, height: 100 }} />
+        <Avatar
+          alt={'프로필 이미지'}
+          sx={{ width: 100, height: 100 }}
+          src={profile.USER_IMG}
+        />
       </Stack>
       <Stack
         direction={'row'}
