@@ -13,8 +13,6 @@ import { template1, template2, template3 } from './components/constants';
 import TemplateBox from '@/pages/wbs/components/template-box';
 import StepperComponent from '@/pages/wbs/components/stepper-component';
 
-// ----------------------------------------------------------------------
-
 const CreateWbsTemplatePage = () => {
   const navigate = useNavigate();
 

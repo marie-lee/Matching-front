@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 //React Import
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -74,7 +75,6 @@ const WbsInput = () => {
       memberData: datas,
       wbsData,
     };
-    console.log('memberData', datas);
 
     console.log('Final Data:', JSON.stringify(finalData, null, 2));
     try {

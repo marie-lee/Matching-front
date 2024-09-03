@@ -44,7 +44,7 @@ const wbsSlice = createSlice({
     setData: (state, action) => {
       state.data = action.payload;
     },
-    resetState: (state) => {
+    resetState: () => {
       return initialState;
     },
   },

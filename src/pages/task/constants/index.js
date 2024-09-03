@@ -1,7 +1,10 @@
+import * as yup from 'yup';
+
+// wbs 업무 추가
 export const taskAddFormDefaultValues = {
-  workPackage: '',
+  workPackageSn: '',
   depth: '',
-  title: '',
+  ticketName: '',
   priority: '',
   level: '',
   present: [],
@@ -9,49 +12,52 @@ export const taskAddFormDefaultValues = {
   endDt: null,
 };
 
-export const issueAddFormDefaultValues = {
-  task: '',
-  title: '',
-  priority: '',
-  present: [],
-  mention: [],
-  contents: '',
-};
+export const taskAddFormSchema = yup.object().shape({
+  workPackageSn: yup.string().required('Work Package를 선택해주세요'),
+  depth: yup.string().required('Depth를 선택해주세요'),
+  ticketName: yup.string().required('Title을 입력해주세요'),
+});
 
+// wbs 업무 수정
 export const taskEditFormDefaultValues = {
+  priority: '',
+  level: '',
   present: [],
   startDt: null,
   endDt: null,
   status: '',
 };
 
-export const issueEditFormDefaultValues = {
-  present: [],
+// 업무 이슈 추가
+export const taskIssueAddFormDefaultValues = {
+  ISSUE_NM: '',
+  PRIORITY: '',
+  MENTIONS: [],
+  CONTENT: '',
+};
+
+export const taskIssueAddFormSchema = yup.object().shape({
+  ISSUE_NM: yup.string().required('Title을 입력해주세요'),
+  CONTENT: yup.string().required('Contents를 입력해주세요'),
+});
+
+export const issueAddFormDefaultValues = {
+  task: '',
+  title: '',
+  priority: '',
   mention: [],
-  dueDate: null,
-  status: '',
+  contents: '',
+};
+
+export const issueEditFormDefaultValues = {
+  MENTIONS: [],
+  PRIORITY: '',
+  STATUS: '',
 };
 
 export const commentAddFormDefaultValues = {
-  content: '',
+  TEXT: '',
 };
-
-export const ISSUE_LIST = [
-  {
-    id: 1,
-    title: '이슈명 이슈명 이슈명 이슈명 이슈명',
-    present: '임동현',
-    date: '2024.07.22',
-  },
-  { id: 2, title: '이슈명 이슈명 ', present: '임동현', date: '2024.07.22' },
-  {
-    id: 3,
-    title:
-      '이슈명을 적어보아요 이슈명을 적어보아요 이슈명을 적어보아요 이슈명을 적어보아요 이슈명을 적어보아요',
-    present: '임동현',
-    date: '2024.07.22',
-  },
-];
 
 export const COMMENT_LIST = [
   {
@@ -72,7 +78,7 @@ export const COMMENT_LIST = [
 export const LEVEL_LIST = [
   {
     label: 'High',
-    value: 'High',
+    value: 'HIGH',
     style: {
       backgroundColor: '#FFAA37',
       color: '#000000',
@@ -80,7 +86,7 @@ export const LEVEL_LIST = [
   },
   {
     label: 'Medium',
-    value: 'Medium',
+    value: 'MEDIUM',
     style: {
       backgroundColor: '#FFD088',
       color: '#000000',
@@ -88,7 +94,7 @@ export const LEVEL_LIST = [
   },
   {
     label: 'Low',
-    value: 'Low',
+    value: 'LOW',
     style: {
       backgroundColor: '#FFE9C6',
       color: '#000000',
@@ -131,10 +137,10 @@ export const PRIORITY_LIST = [
   },
 ];
 
-export const STATUS_LIST = [
+export const ISSUE_LIST = [
   {
-    label: 'Wait',
-    value: 'Wait',
+    label: 'open',
+    value: 'OPEN',
     style: {
       backgroundColor: '#E9E9E9',
       color: '#000000',
@@ -142,7 +148,7 @@ export const STATUS_LIST = [
   },
   {
     label: 'In progress',
-    value: 'In progress',
+    value: 'IN PROGRESS',
     style: {
       backgroundColor: '#E3EAFC',
       color: '#000000',
@@ -150,7 +156,42 @@ export const STATUS_LIST = [
   },
   {
     label: 'Complete',
-    value: 'Complete',
+    value: 'COMPLETE',
+    style: {
+      backgroundColor: '#E4F4EA',
+      color: '#000000',
+    },
+  },
+  {
+    label: 'Close',
+    value: 'CLOSE',
+    style: {
+      backgroundColor: '#9A9A9A',
+      color: '#000000',
+    },
+  },
+];
+
+export const STATUS_LIST = [
+  {
+    label: 'Wait',
+    value: 'WAIT',
+    style: {
+      backgroundColor: '#E9E9E9',
+      color: '#000000',
+    },
+  },
+  {
+    label: 'In progress',
+    value: 'IN PROGRESS',
+    style: {
+      backgroundColor: '#E3EAFC',
+      color: '#000000',
+    },
+  },
+  {
+    label: 'Complete',
+    value: 'COMPLETE',
     style: {
       backgroundColor: '#E4F4EA',
       color: '#000000',
@@ -158,7 +199,7 @@ export const STATUS_LIST = [
   },
   {
     label: 'Hold',
-    value: 'Hold',
+    value: 'HOLD',
     style: {
       backgroundColor: '#FFE8E5',
       color: '#000000',
@@ -166,7 +207,7 @@ export const STATUS_LIST = [
   },
   {
     label: 'Reopen',
-    value: 'Reopen',
+    value: 'REOPEN',
     style: {
       backgroundColor: '#FDE6D3',
       color: '#000000',
@@ -174,7 +215,7 @@ export const STATUS_LIST = [
   },
   {
     label: 'Close',
-    value: 'Close',
+    value: 'CLOSE',
     style: {
       backgroundColor: '#9A9A9A',
       color: '#000000',
