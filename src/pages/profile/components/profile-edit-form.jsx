@@ -61,7 +61,7 @@ const names = ['백엔드', '프론트엔드', '기획', '디자인'];
 const PortfolioForm = () => {
   console.log('render PortfolioForm');
   const theme = useTheme();
-  const { control } = useFormContext();
+  const { control, setValue } = useFormContext();
   const [stackName, setStackName] = useState('');
   const imagefileInputRefs = useRef([]);
   const videofileInputRef = useRef(null);
@@ -71,6 +71,17 @@ const PortfolioForm = () => {
     control,
     name: 'portfolioInfo',
   });
+  // 링크 초기값 설정
+  const initialLinks = portfolioFieldArray.fields.map(
+    (field) => field.url || [],
+  );
+  // 스택 초기값 설정
+  const initialStacks = portfolioFieldArray.fields.map(
+    (field) => field.stack || [],
+  );
+
+  const [links, setLinks] = useState(initialLinks);
+  const [stacks, setStacks] = useState(initialStacks);
 
   if (imagefileInputRefs.current.length !== portfolioFieldArray.fields.length) {
     imagefileInputRefs.current = portfolioFieldArray.fields.map(
@@ -81,8 +92,8 @@ const PortfolioForm = () => {
   const handleAppendPortfolio = () => {
     portfolioFieldArray.append({
       PFOL_NM: '',
-      START_DT: null,
-      END_DT: null,
+      START_DT: '',
+      END_DT: '',
       INTRO: '',
       ROLE: [],
       CONTRIBUTION: '',
@@ -90,29 +101,25 @@ const PortfolioForm = () => {
       stack: [],
       SERVICE_STTS: '',
       RESULT: '',
-      URL: [],
+      url: [],
       MEDIA: [],
+      IMG_SUB: [],
     });
+
+    setLinks([...links, []]);
+    setStacks([...stacks, []]);
   };
 
-  const handleAppendStack = () => {
-    if (stackName) {
-      portfolioFieldArray.fields.forEach((entry, index) => {
-        const stack = entry.TECH_STACK;
-        stack.push(stackName);
-      });
-      setStackName('');
-    }
+  const handleAppendStack = (pindex) => {
+    console.log('스택추가', stackName);
+    setStacks([...stacks, stacks[pindex].push({ ST_NM: stackName })]);
+    console.log('stacks', stacks[pindex]);
+    portfolioFieldArray.fields[pindex].stack.push({ ST_NM: stackName });
   };
 
   const handleAppendLink = (index) => {
-    portfolioFieldArray.fields[index].URL.push({
-      URL: '',
-      DESCRIPTION: '',
-    });
-    portfolioFieldArray.update(index, {
-      ...portfolioFieldArray.fields[index],
-    });
+    setLinks([...links, { URL: '', DESCRIPTION: '' }]);
+    portfolioFieldArray.fields[index].URL.push({ URL: '', DESCRIPTION: '' });
   };
 
   const handleAddImageClick = (index) => {
@@ -176,6 +183,13 @@ const PortfolioForm = () => {
 
   const handleRemovePortfolio = (index) => {
     portfolioFieldArray.remove(index);
+  };
+
+  const handleDeleteStack = (portfolioIndex, stackIndex) => {
+    console.log('스택삭제', portfolioIndex, stackIndex);
+    const updatedStacks = stacks.filter((_, idx) => idx !== stackIndex);
+    setValue(`portfolioInfo[${portfolioIndex}].stack`, updatedStacks);
+    setStacks(updatedStacks);
   };
 
   return (
@@ -253,20 +267,36 @@ const PortfolioForm = () => {
                   <Select
                     multiple
                     variant="outlined"
-                    value={value}
-                    onChange={onChange}
+                    value={
+                      Array.isArray(value) ?
+                        value.map((item) => item.ROLE_NM)
+                      : []
+                    }
+                    onChange={(event) => {
+                      const selectedValues = event.target.value;
+                      const selectedObjects = selectedValues.map((name) => {
+                        const role = names.find(
+                          (role) => role.ROLE_NM === name,
+                        );
+                        return role ? role : { ROLE_NM: name };
+                      });
+                      onChange(selectedObjects);
+                    }}
                     input={
                       <OutlinedInput id="select-multiple-chip" label="chip" />
                     }
                     renderValue={(selected) => (
                       <Box sx={{ display: 'flex', gap: 0.5 }}>
-                        {selected.map((value) => (
-                          <Chip
-                            key={value.ROLE_SN}
-                            label={value.ROLE_NM}
-                            sx={{ p: `0 !important` }}
-                          />
-                        ))}
+                        {Array.isArray(selected) &&
+                          selected.map((item, idx) => (
+                            <Chip
+                              key={`${item.ROLE_SN}-${idx}`} // 고유한 key 생성
+                              label={
+                                typeof item === 'string' ? item : item.ROLE_NM
+                              }
+                              sx={{ p: `0 !important` }}
+                            />
+                          ))}
                       </Box>
                     )}
                     MenuProps={MenuProps}
@@ -291,7 +321,7 @@ const PortfolioForm = () => {
             <Autocomplete
               disablePortal
               id="combo-box-demo"
-              options={['js', 'node.js']}
+              options={['JS', 'Node.js']}
               sx={{ flexGrow: 1 }}
               renderInput={(params) => (
                 <TextField {...params} label="기술스택" />
@@ -302,7 +332,7 @@ const PortfolioForm = () => {
               }}
               isOptionEqualToValue={(option, value) => option === value}
             />
-            <IconButton onClick={handleAppendStack}>
+            <IconButton onClick={() => handleAppendStack(index)}>
               <AddIcon />
             </IconButton>
           </Stack>
@@ -311,16 +341,16 @@ const PortfolioForm = () => {
               현재 선택한 스택
             </Typography>
             <Stack flexWrap={'wrap'} direction={'row'} useFlexGap spacing={0.5}>
-              {portfolioFieldArray.fields[index].stack.map((stack, index) => {
+              {stacks[index].map((stack, sindex) => {
                 if (stack.length === 0) {
                   return null;
                 }
                 return (
                   <Chip
-                    key={`stack_${index}`}
+                    key={`stack_${sindex}`}
                     label={stack.ST_NM}
                     size={'small'}
-                    onDelete={() => {}}
+                    onDelete={() => handleDeleteStack(index, sindex)}
                   />
                 );
               })}
@@ -335,36 +365,41 @@ const PortfolioForm = () => {
             }}
           >
             <Stack spacing={1}>
-              {portfolioFieldArray.fields[index].url.map((link, linkindex) => (
-                <Stack
-                  key={`link_${linkindex}`}
-                  direction={'row'}
-                  spacing={1}
-                  alignItems={'center'}
-                >
-                  <Box>
-                    <RhfTextField
-                      name={`portfolioInfo[${index}].url[${linkindex}].URL`}
-                      label={'URL'}
-                      size={'medium'}
-                      variant={'outlined'}
-                    />
-                  </Box>
-                  <Box sx={{ flexGrow: 1 }}>
-                    <RhfTextField
-                      name={`portfolioInfo[${index}].url[${linkindex}].OS`}
-                      label={'URL'}
-                      size={'medium'}
-                      variant={'outlined'}
-                    />
-                  </Box>
-                  <Box>
-                    <IconButton>
-                      <AddIcon />
-                    </IconButton>
-                  </Box>
-                </Stack>
-              ))}
+              {links[index].map(
+                (link, linkindex) => (
+                  console.log('link', link),
+                  (
+                    <Stack
+                      key={`link_${linkindex}`}
+                      direction={'row'}
+                      spacing={1}
+                      alignItems={'center'}
+                    >
+                      <Box>
+                        <RhfTextField
+                          name={`portfolioInfo[${index}].url[${linkindex}].URL`}
+                          label={'URL'}
+                          size={'medium'}
+                          variant={'outlined'}
+                        />
+                      </Box>
+                      <Box sx={{ flexGrow: 1 }}>
+                        <RhfTextField
+                          name={`portfolioInfo[${index}].url[${linkindex}].URL_INTRO`}
+                          label={'URL'}
+                          size={'medium'}
+                          variant={'outlined'}
+                        />
+                      </Box>
+                      <Box>
+                        <IconButton>
+                          <AddIcon />
+                        </IconButton>
+                      </Box>
+                    </Stack>
+                  )
+                ),
+              )}
             </Stack>
             <Button
               color="primary"
@@ -383,18 +418,24 @@ const PortfolioForm = () => {
             <Controller
               name={`portfolioInfo[${index}].SERVICE_STTS`}
               control={control}
-              render={({ field: { onChange, value } }) => (
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={value}
-                  onChange={onChange}
-                >
-                  <MenuItem value={'ACTIVE'}>배포 중</MenuItem>
-                  <MenuItem value={'STOP'}>중단</MenuItem>
-                  <MenuItem value={'COMPLETE'}>완료</MenuItem>
-                </Select>
-              )}
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <>
+                    {console.log('Current value:', value)}
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={value}
+                      onChange={onChange}
+                      label="서비스 상태"
+                    >
+                      <MenuItem value={'ACTIVE'}>배포 중</MenuItem>
+                      <MenuItem value={'STOP'}>중단</MenuItem>
+                      <MenuItem value={'COMPLETE'}>완료</MenuItem>
+                    </Select>
+                  </>
+                );
+              }}
             ></Controller>
           </FormControl>
           <RhfTextField
@@ -410,7 +451,7 @@ const PortfolioForm = () => {
             onClick={() => handleAddImageClick(index)}
           >
             <ImageIcon sx={{ mr: 1 }}></ImageIcon>
-            이미지 추가 ({entry.IMG_SUB.length}/4)
+            이미지 추가 ({entry.IMG_SUB ? entry.IMG_SUB.length : 0}/4)
           </Button>
           <input
             key={`image_${index}`}
@@ -425,46 +466,49 @@ const PortfolioForm = () => {
             cols={4}
             rowHeight={'auto'}
           >
-            {portfolioFieldArray.fields[index].IMG_SUB.map(
-              (item, imageIndex) => (
-                console.log('item', item),
-                (
-                  <ImageListItem key={`image_${index}_${imageIndex}`}>
-                    <img
-                      src={typeof item === 'string' ? item : item.URL}
-                      alt={item.NAME}
-                      loading="lazy"
-                    />
-                    <IconButton
-                      sx={{
-                        position: 'absolute',
-                        top: 0,
-                        right: 0,
-                        color: 'white',
-                      }}
-                      onClick={() => handleRemoveImage(index, imageIndex)}
-                    >
-                      <CloseIcon sx={{ stroke: '#111111', strokeWidth: 1 }} />
-                    </IconButton>
-                    {imageIndex === 0 && (
-                      <Box
+            {portfolioFieldArray.fields[index].IMG_SUB == null ?
+              <Typography>이미지가 없습니다.</Typography>
+            : portfolioFieldArray.fields[index].IMG_SUB.map(
+                (item, imageIndex) => (
+                  console.log('item', item),
+                  (
+                    <ImageListItem key={`image_${index}_${imageIndex}`}>
+                      <img
+                        src={typeof item === 'string' ? item : item.URL}
+                        alt={item.NAME}
+                        loading="lazy"
+                      />
+                      <IconButton
                         sx={{
                           position: 'absolute',
-                          bottom: 0,
-                          left: 0,
-                          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                          top: 0,
+                          right: 0,
                           color: 'white',
-                          padding: '2px 8px',
-                          fontSize: '0.875rem',
                         }}
+                        onClick={() => handleRemoveImage(index, imageIndex)}
                       >
-                        대표 이미지
-                      </Box>
-                    )}
-                  </ImageListItem>
-                )
-              ),
-            )}
+                        <CloseIcon sx={{ stroke: '#111111', strokeWidth: 1 }} />
+                      </IconButton>
+                      {imageIndex === 0 && (
+                        <Box
+                          sx={{
+                            position: 'absolute',
+                            bottom: 0,
+                            left: 0,
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            color: 'white',
+                            padding: '2px 8px',
+                            fontSize: '0.875rem',
+                          }}
+                        >
+                          대표 이미지
+                        </Box>
+                      )}
+                    </ImageListItem>
+                  )
+                ),
+              )
+            }
           </ImageList>
           <input
             key={`video_${index}`}

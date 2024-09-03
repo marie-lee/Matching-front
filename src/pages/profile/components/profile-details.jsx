@@ -165,6 +165,7 @@ const ProfileDetails = () => {
           ...career,
           QUIT_DT: career.QUIT_DT === null ? true : career.QUIT_DT,
         }));
+        console.log('인풋값에 넣을거', data);
         setProfileData(data);
       } catch (error) {
         console.log('error: ', error);
