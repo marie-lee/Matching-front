@@ -117,7 +117,7 @@ const ProjectList = ({ name }) => {
           alert('프로젝트 리더가 wbs를 만들때까지 기다려 주세요.');
         }
       } else {
-        navigate(PATHS.task.root);
+        navigate(PATHS.task.root, { state: { pjtSn } });
       }
     } catch (error) {
       console.error(error);
