@@ -21,30 +21,39 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
   const [expandedRows, setExpandedRows] = useState(new Set());
   const [colSpanInfo, setColSpanInfo] = useState({});
+  const [rowSpanInfo, setRowSpanInfo] = useState({});
 
   const toggleRowExpand = (rowIndex, cellIndex, rowSpan) => {
     setExpandedRows((prevExpandedRows) => {
       const newExpandedRows = new Set(prevExpandedRows);
-      const newColSpanInfo = { ...colSpanInfo };
+      const newColSpanInfo = { ...colSpanInfo };  // 현재 colSpan 상태
+      const newRowSpanInfo = { ...rowSpanInfo };  // 현재 rowSpan 상태 
 
       if (newExpandedRows.has(rowIndex)) {
+        console.log('펼침!')
         newExpandedRows.delete(rowIndex);
-        delete newColSpanInfo[rowIndex];
+
+        if (cellIndex === 1) {  // Division 열을 클릭
+          console.log('division펼침!')
+          delete newColSpanInfo[rowIndex];  // colSpan 데이터 삭제
+          // 현재 rowSpan 값을 rowSpanInfo에 저장
+          tableData[rowIndex][0].rowSpan = rowSpan*2-1
+          console.log(rowSpan)
+
+        }
       } else {
+        console.log('접힘!')
         newExpandedRows.add(rowIndex);
-        if (cellIndex === 0) {
-          console.log('0이지롱');
-        } else if (cellIndex === 1) {
-          console.log('1이지롱');
-          console.log(rowIndex);
-          console.log(rowSpan);
-
-
-          newColSpanInfo[rowIndex] = 6;
+        if (cellIndex === 1) {  // Division 열을 클릭
+          newColSpanInfo[rowIndex] = 6;  // colSpan을 6
+          // rowSpan을 저장된 값으로 복구하거나 기본 rowSpan 사용
+          tableData[rowIndex][cellIndex].rowSpan = newRowSpanInfo[rowIndex] || rowSpan;
+          delete newRowSpanInfo[rowIndex];  // 복구 후 rowSpanInfo에서 제거
         }
       }
 
-      setColSpanInfo(newColSpanInfo);
+      setColSpanInfo(newColSpanInfo); 
+      setRowSpanInfo(newRowSpanInfo);
       return newExpandedRows;
     });
   };
@@ -145,14 +154,14 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
         pointerEvents: editable ? 'none' : 'auto',
       };
 
-      const colSpan = colSpanInfo[rowIndex] && cellIndex === 1 ? colSpanInfo[rowIndex] : 1;  // colSpan이 있으면 적용
+      const colSpan = colSpanInfo[rowIndex] && cellIndex === 1 ? colSpanInfo[rowIndex] : 1; // colSpan이 있으면 적용
 
       if (cellIndex === 0 || cellIndex === 1) {
         // Part 및 Division 열에 버튼 추가
         return (
           <TableCell
             key={cellIndex}
-            rowSpan={cell.rowSpan}
+            rowSpan={rowSpanInfo[rowIndex] ? rowSpanInfo[rowIndex] : cell.rowSpan} // rowSpan을 저장된 값으로 설정
             colSpan={colSpan}  // colSpan 속성 추가
             sx={cellStyleWithEditable}
           >
@@ -169,6 +178,7 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
       }
 
       if (cellIndex === 4 || cellIndex === 5) {
+        // DatePicker를 사용하는 셀
         return (
           <TableCell
             key={cellIndex}
@@ -183,6 +193,7 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
       }
 
       if (cellIndex === 3) {
+        // SelectField를 사용하는 셀 (Engineer)
         return (
           <TableCell
             key={cellIndex}
@@ -191,7 +202,7 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
           >
             {renderSelectField(
               cell.value,
-              !editable ? handleChange : () => { },
+              !editable ? handleChange : () => {},
               members,
             )}
           </TableCell>
@@ -199,6 +210,7 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
       }
 
       if (cellIndex === 6) {
+        // SelectField를 사용하는 셀 (Status)
         return (
           <TableCell
             key={cellIndex}
@@ -207,20 +219,21 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
           >
             {renderSelectField(
               cell.value,
-              !editable ? handleChange : () => { },
+              !editable ? handleChange : () => {},
               ['대기', '진행중', '완료'],
             )}
           </TableCell>
         );
       }
 
+      // 기본 TextField를 사용하는 셀
       return (
         <TableCell
           key={cellIndex}
           rowSpan={cell.rowSpan}
           sx={cellStyleWithEditable}
         >
-          {renderTextField(cell.value, !editable ? handleChange : () => { })}
+          {renderTextField(cell.value, !editable ? handleChange : () => {})}
         </TableCell>
       );
     },
