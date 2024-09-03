@@ -21,39 +21,46 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
   const [expandedRows, setExpandedRows] = useState(new Set());
   const [colSpanInfo, setColSpanInfo] = useState({});
-  const [rowSpanInfo, setRowSpanInfo] = useState({});
+  const [rowSpanInfo, setRowSpanInfo] = useState({}); // 모든 rowSpan 정보를 저장
 
-  const toggleRowExpand = (rowIndex, cellIndex, rowSpan) => {
+  const toggleRowExpand = (rowIndex, cellIndex, rowSpan, partRowSpan) => {
     setExpandedRows((prevExpandedRows) => {
       const newExpandedRows = new Set(prevExpandedRows);
-      const newColSpanInfo = { ...colSpanInfo };  // 현재 colSpan 상태
-      const newRowSpanInfo = { ...rowSpanInfo };  // 현재 rowSpan 상태 
+      const newColSpanInfo = { ...colSpanInfo }; // 현재 colSpan 상태 복사
+      const newRowSpanInfo = { ...rowSpanInfo }; // 현재 rowSpan 상태 복사
 
       if (newExpandedRows.has(rowIndex)) {
-        console.log('펼침!')
+        console.log("펼침!")
         newExpandedRows.delete(rowIndex);
 
-        if (cellIndex === 1) {  // Division 열을 클릭
-          console.log('division펼침!')
-          delete newColSpanInfo[rowIndex];  // colSpan 데이터 삭제
-          // 현재 rowSpan 값을 rowSpanInfo에 저장
-          tableData[rowIndex][0].rowSpan = rowSpan*2-1
-          console.log(rowSpan)
+        if (cellIndex === 1) { // Division 열을 클릭할 때만 동작
+          delete newColSpanInfo[rowIndex]; // colSpan 정보 삭제
 
+          // 현재 rowSpan 값을 rowSpanInfo에 저장
+          newRowSpanInfo[rowIndex] = { 
+            division: tableData[rowIndex][cellIndex].rowSpan,
+            part: partRowSpan,  // Part의 rowSpan도 저장
+          };
+
+          tableData[rowIndex][cellIndex].rowSpan = 1; // Division의 rowSpan을 1로 설정
+          tableData[rowIndex][0].rowSpan = 1;  // Part의 rowSpan을 1로 설정
         }
       } else {
-        console.log('접힘!')
+        console.log("접힘!")
         newExpandedRows.add(rowIndex);
-        if (cellIndex === 1) {  // Division 열을 클릭
-          newColSpanInfo[rowIndex] = 6;  // colSpan을 6
-          // rowSpan을 저장된 값으로 복구하거나 기본 rowSpan 사용
-          tableData[rowIndex][cellIndex].rowSpan = newRowSpanInfo[rowIndex] || rowSpan;
-          delete newRowSpanInfo[rowIndex];  // 복구 후 rowSpanInfo에서 제거
+
+        if (cellIndex === 1) { // Division 열을 클릭할 때만 동작
+          newColSpanInfo[rowIndex] = 6; // colSpan을 6으로 설정
+          
+          // rowSpan을 저장된 값으로 복원하거나 기본 rowSpan 사용
+          tableData[rowIndex][cellIndex].rowSpan = newRowSpanInfo[rowIndex]?.division || rowSpan;
+          tableData[rowIndex][0].rowSpan = newRowSpanInfo[rowIndex]?.part || partRowSpan;
+
+          delete newRowSpanInfo[rowIndex]; // 복원 후 rowSpanInfo에서 제거
         }
       }
-
-      setColSpanInfo(newColSpanInfo); 
-      setRowSpanInfo(newRowSpanInfo);
+      setColSpanInfo(newColSpanInfo);  // 상태 업데이트
+      setRowSpanInfo(newRowSpanInfo);  // 상태 업데이트
       return newExpandedRows;
     });
   };
@@ -156,17 +163,26 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
 
       const colSpan = colSpanInfo[rowIndex] && cellIndex === 1 ? colSpanInfo[rowIndex] : 1; // colSpan이 있으면 적용
 
+      // Find the Part rowSpan for this Division row
+      let partRowSpan = 1;
+      for (let i = rowIndex; i >= 0; i--) {
+        if (tableData[i][0] && tableData[i][0].rowSpan) {
+          partRowSpan = tableData[i][0].rowSpan;
+          break;
+        }
+      }
+
       if (cellIndex === 0 || cellIndex === 1) {
         // Part 및 Division 열에 버튼 추가
         return (
           <TableCell
             key={cellIndex}
-            rowSpan={rowSpanInfo[rowIndex] ? rowSpanInfo[rowIndex] : cell.rowSpan} // rowSpan을 저장된 값으로 설정
+            rowSpan={rowSpanInfo[rowIndex]?.[cellIndex === 1 ? 'division' : 'part'] || cell.rowSpan}
             colSpan={colSpan}  // colSpan 속성 추가
             sx={cellStyleWithEditable}
           >
             <IconButton
-              onClick={() => toggleRowExpand(rowIndex, cellIndex, cell.rowSpan)}
+              onClick={() => toggleRowExpand(rowIndex, cellIndex, cell.rowSpan, partRowSpan)}
               size="small"
               sx={{ padding: '0' }}
             >
