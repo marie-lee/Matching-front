@@ -73,6 +73,7 @@ const WbsView = () => {
           ...updatedTable[rowIndex][cellIndex],
           value: newValue,
         };
+        console.log('asd');
 
         return updatedTable;
       });
@@ -80,6 +81,7 @@ const WbsView = () => {
   };
 
   const handleSave = async () => {
+    console.log('aa');
     setSave((prev) => !prev);
     setEditable((prev) => !prev);
 
@@ -105,6 +107,11 @@ const WbsView = () => {
     setSave((prev) => !prev);
     setEditable((prev) => !prev);
   };
+  const handleCancel = () => {
+    setSave((prev) => !prev);
+    setEditable((prev) => !prev);
+    setReload((prev) => !prev);
+  };
 
   //이슈트레킹 로직 추가 해야함
   const handleView = () => {
@@ -126,6 +133,7 @@ const WbsView = () => {
           handleView={handleView}
           handleTracking={handleTracking}
           tracking={tracking}
+          handleCancel={handleCancel}
         />
         <Stack mt={5} direction="row">
           <Box

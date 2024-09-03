@@ -9,16 +9,6 @@ const TrackingBox = ({ tracking, handleTracking, theme }) =>
     <Box
       onClick={handleTracking}
       sx={{
-        width: 10,
-        height: 20,
-        bgcolor: theme.palette.common.black,
-      }}
-      ml={3}
-      mr={3}
-    />
-  : <Box
-      onClick={handleTracking}
-      sx={{
         display: 'flex',
         alignItems: 'center',
       }}
@@ -40,7 +30,17 @@ const TrackingBox = ({ tracking, handleTracking, theme }) =>
         }}
         mr={3}
       />
-    </Box>;
+    </Box>
+  : <Box
+      onClick={handleTracking}
+      sx={{
+        width: 10,
+        height: 20,
+        bgcolor: theme.palette.common.black,
+      }}
+      ml={3}
+      mr={3}
+    />;
 
 //수정 저장 버튼
 const ActionButtons = ({ save, handleClick, handleSave, handleCancel }) =>
@@ -53,7 +53,7 @@ const ActionButtons = ({ save, handleClick, handleSave, handleCancel }) =>
         Save
       </Button>
       <Button
-        onClick={handleClick}
+        onClick={handleCancel}
         color="greyButton"
         sx={{ width: '80px', marginLeft: 2 }}
       >
@@ -75,6 +75,7 @@ const TopBar = ({
   handleView,
   tracking,
   handleTracking,
+  handleCancel,
 }) => {
   const theme = useTheme();
 
@@ -86,6 +87,7 @@ const TopBar = ({
             save={save}
             handleClick={handleClick}
             handleSave={handleSave}
+            handleCancel={handleCancel}
           />
         </Grid>
         <Grid item xs={2} container alignItems="center" justifyContent="right">
