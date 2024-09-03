@@ -2,12 +2,14 @@ import { Chip, Stack, Typography, useTheme } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { BasicDataGrid } from '@/components/data-grid';
-
+import { createMergedTable } from '@/pages/wbs/components/wbs-table';
 import { PATHS } from '@/routes/paths';
 import { getProjectList, getProject } from '@/services/project';
 import { getWbs } from '@/services/wbs';
+import { setPjtSn } from '@/store/pjtsn-reducer';
 
 import dayjs from 'dayjs';
 
@@ -79,6 +81,7 @@ const ProjectEmptyRows = () => {
 
 const ProjectList = ({ name }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [isFetching, setIsFetching] = useState(false);
   const [data, setData] = useState([]);
@@ -104,16 +107,17 @@ const ProjectList = ({ name }) => {
     try {
       const res = await getProject(pjtSn);
       const res1 = await getWbs(pjtSn);
-      console.log('res1', res1);
+      const pjtName = res.data.pjtNm;
 
+      dispatch(setPjtSn(pjtSn));
       if (res1.data.wbsData.length == 0) {
         if (res.data.teamLeader === name) {
-          navigate(PATHS.wbs.root, { state: { pjtSn } });
+          navigate(PATHS.wbs.root, { state: { pjtSn, pjtName } });
         } else {
           alert('프로젝트 리더가 wbs를 만들때까지 기다려 주세요.');
         }
       } else {
-        navigate(PATHS.task);
+        navigate(PATHS.task.root);
       }
     } catch (error) {
       console.error(error);

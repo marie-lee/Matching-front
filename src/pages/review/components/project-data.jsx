@@ -72,7 +72,7 @@ const ProjectData = ({ reviewMembers, projectInfo }) => {
       },
       {
         USER_ID: 'admin',
-        USER_NM: '김철수',
+        USER_NM: '한혜원',
         CONTRIBUTION: 100,
         ROLE: '백엔드',
         ISREVIEWD: 0,

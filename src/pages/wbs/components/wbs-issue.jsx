@@ -34,14 +34,14 @@ const WbsIssue = () => {
     priority: 'L3',
     present: [
       {
-        name: '김철수',
+        name: '한혜원',
         date: '2021-10-01',
         status: '진행중',
       },
     ],
     mention: [
       {
-        name: '김철수',
+        name: '한혜원',
         date: '2021-10-01',
         status: '진행중',
       },
@@ -52,7 +52,7 @@ const WbsIssue = () => {
     contents: '구글 로그인 연동',
     comments: [
       {
-        name: '김철수',
+        name: '한혜원',
         date: '2021-10-01 10:30:00',
         contents: '구글 로그인 연동',
       },

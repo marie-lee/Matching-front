@@ -1,20 +1,41 @@
+//React Import
 import { useState, useEffect } from 'react';
-import { Grid, Typography, TextField, Box } from '@mui/material';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import { useDispatch, useSelector } from 'react-redux';
+import DatePicker from 'react-datepicker';
+//Mui Import
+import { Grid, Typography, TextField, Box } from '@mui/material';
+
+//Data Import
 import { setPjtData } from '@/store/wbsSlice';
 import { selectName } from '@/store/name-reducer';
+
+//Api Import
+import 'react-datepicker/dist/react-datepicker.css';
 
 const ProjectInfo = () => {
   const dispatch = useDispatch();
   const userName = useSelector(selectName);
+
   const pjtData = useSelector((state) => state.wbs.pjtData || {});
+  const nowData = new Date()
+    .toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    })
+    .replace(/\./g, '-')
+    .replace(/-\s/g, '-')
+    .slice(0, -1);
 
   const [startDate, setStartDate] = useState(
-    new Date(pjtData.startDt || '2024-06-30'),
+    new Date(pjtData.startDt || nowData),
   );
-  const [endDate, setEndDate] = useState(new Date(pjtData.endDt || new Date()));
+  const [endDate, setEndDate] = useState(new Date(pjtData.endDt || nowData));
+
+  useEffect(() => {
+    setStartDate(new Date(pjtData.startDt || nowData));
+    setEndDate(new Date(pjtData.endDt || nowData));
+  }, [pjtData, nowData]);
 
   const handleStartDateChange = (date) => {
     setStartDate(date);
@@ -35,15 +56,10 @@ const ProjectInfo = () => {
     );
   };
 
-  useEffect(() => {
-    setStartDate(new Date(pjtData.startDt || '2024-06-30'));
-    setEndDate(new Date(pjtData.endDt || new Date()));
-  }, [pjtData]);
-
   return (
     <Box sx={{ pl: 3 }}>
       <Grid container spacing={3}>
-        <Grid container xs={12} justifyContent="flex-end" mb={5} mt={10}>
+        <Grid container justifyContent="flex-end" mb={5} mt={10}>
           <Box
             sx={{
               display: 'flex',
@@ -63,7 +79,7 @@ const ProjectInfo = () => {
                 {userName}
               </Typography>
               <Typography variant="body1" fontWeight={'fontWeightSemiBold'}>
-                2024-06-30
+                {nowData}
               </Typography>
             </Box>
           </Box>

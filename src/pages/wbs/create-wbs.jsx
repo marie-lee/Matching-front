@@ -1,16 +1,94 @@
-import { Button, Stack, Typography, Box } from '@mui/material';
-import { useState } from 'react';
+/* eslint-disable react/no-unescaped-entities */
+// React Import
+import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+
+// MUI Import
+import { Button, Stack, Typography, Box } from '@mui/material';
+
+// Data Import
 import { PATHS } from '@/routes/paths';
+import { setPjtSn } from '@/store/pjtsn-reducer';
+import {
+  resetState,
+  setParticipants,
+  setMemberData,
+  setPjtData,
+} from '@/store/wbsSlice';
+
+// Api Import
+import { getProject } from '@/services/project';
+import { getWbsInfo } from '@/services/wbs';
 
 const CreateWbsPage = () => {
-  const [projectName, setProjectName] = useState('참새 방앗간');
   const navigate = useNavigate();
   const location = useLocation();
-  const { pjtSn } = location.state || {};
+  const dispatch = useDispatch();
+  const now = new Date();
+
+  const { pjtSn, pjtName } = location.state || {};
+
+  useEffect(() => {
+    const wbsData = async () => {
+      try {
+        dispatch(resetState());
+
+        const projectData = await getProject(pjtSn);
+        const wbsDataInfo = await getWbsInfo(pjtSn);
+
+        //날짜 설정
+
+        const period = projectData.data.period;
+        const durationUnit = projectData.data.durationUnit;
+
+        const nowData = now
+          .toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+          })
+          .replace(/\./g, '-')
+          .replace(/-\s/g, '-')
+          .slice(0, -1);
+
+        let endDate = new Date(now);
+
+        if (durationUnit === 'MONTH') {
+          endDate.setMonth(endDate.getMonth() + period);
+        } else if (durationUnit === 'DAY') {
+          endDate.setDate(endDate.getDate() + period);
+        }
+        const endDt = endDate
+          .toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+          })
+          .replace(/\./g, '-')
+          .replace(/-\s/g, '-')
+          .slice(0, -1);
+
+        dispatch(
+          setPjtData({
+            startDt: nowData,
+            endDt: endDt,
+          }),
+        );
+        dispatch(setMemberData(wbsDataInfo.data.members));
+        dispatch(setPjtSn(pjtSn));
+        dispatch(
+          setParticipants(projectData.data.role.map((role) => role.part)),
+        );
+      } catch (error) {
+        console.log('error :', error);
+      }
+    };
+    wbsData();
+  }, [pjtSn, dispatch, now]);
 
   const handleCreateWbs = () => {
-    navigate(PATHS.wbs.createWbs, { state: { pjtSn } });
+    navigate(PATHS.wbs.createWbs);
   };
 
   return (
@@ -31,7 +109,7 @@ const CreateWbsPage = () => {
             textAlign={'center'}
           >
             <Box component="span" fontWeight="fontWeightBold" mx={0.5}>
-              '{projectName} '
+              '{pjtName}'
             </Box>
             프로젝트의 WBS 작성 전입니다.
             <br />

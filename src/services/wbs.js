@@ -8,6 +8,9 @@ export const URL_GET_PROJECT_WBS = '/project/wbs';
 export const getWbs = (pjtSn) => {
   return instance.get(`${URL_GET_PROJECT_WBS}/${pjtSn}`);
 };
+export const getWbsInfo = (pjtSn) => {
+  return instance.get(`${URL_GET_PROJECT_WBS}/create/${pjtSn}`);
+};
 
 // WBS 대시보드 조회
 export const URL_GET_WBS_DASHBOARD = '/project/wbs/dashboard';
@@ -83,6 +86,10 @@ export const postWbs = (pjtSn, payload) => {
   return instance.post(`${URL_POST_WBS}/${pjtSn}`, payload);
 };
 
+export const URL_POST_PROJECT_WBS = '/project/wbs';
+export const postEditWbs = (pjtSn, payload) => {
+  return instance.post(`${URL_POST_PROJECT_WBS}/edit/${pjtSn}`, payload);
+};
 // ----------------------------------------------------------------------
 // PUT
 // ----------------------------------------------------------------------

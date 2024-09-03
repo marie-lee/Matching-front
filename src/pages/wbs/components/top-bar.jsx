@@ -1,20 +1,12 @@
+//MUI Import
 import { Grid, Button, Box, useTheme } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
+//간트차트 확인 버튼
 const TrackingBox = ({ tracking, handleTracking, theme }) =>
   tracking ?
     <Box
-      onClick={handleTracking}
-      sx={{
-        width: 10,
-        height: 20,
-        bgcolor: theme.palette.common.black,
-      }}
-      ml={3}
-      mr={3}
-    />
-  : <Box
       onClick={handleTracking}
       sx={{
         display: 'flex',
@@ -38,9 +30,20 @@ const TrackingBox = ({ tracking, handleTracking, theme }) =>
         }}
         mr={3}
       />
-    </Box>;
+    </Box>
+  : <Box
+      onClick={handleTracking}
+      sx={{
+        width: 10,
+        height: 20,
+        bgcolor: theme.palette.common.black,
+      }}
+      ml={3}
+      mr={3}
+    />;
 
-const ActionButtons = ({ save, handleClick, handleSave }) =>
+//수정 저장 버튼
+const ActionButtons = ({ save, handleClick, handleSave, handleCancel }) =>
   save ?
     <Button onClick={handleClick} color="basicButton" sx={{ width: '80px' }}>
       Edit
@@ -50,7 +53,7 @@ const ActionButtons = ({ save, handleClick, handleSave }) =>
         Save
       </Button>
       <Button
-        onClick={handleClick}
+        onClick={handleCancel}
         color="greyButton"
         sx={{ width: '80px', marginLeft: 2 }}
       >
@@ -58,6 +61,7 @@ const ActionButtons = ({ save, handleClick, handleSave }) =>
       </Button>
     </>;
 
+// 이슈 트레킹 버튼
 const ViewIcon = ({ view, handleView }) =>
   view ?
     <VisibilityOffIcon onClick={handleView} />
@@ -65,12 +69,13 @@ const ViewIcon = ({ view, handleView }) =>
 
 const TopBar = ({
   save,
-  handleClick,
   handleSave,
+  handleClick,
   view,
   handleView,
   tracking,
   handleTracking,
+  handleCancel,
 }) => {
   const theme = useTheme();
 
@@ -82,6 +87,7 @@ const TopBar = ({
             save={save}
             handleClick={handleClick}
             handleSave={handleSave}
+            handleCancel={handleCancel}
           />
         </Grid>
         <Grid item xs={2} container alignItems="center" justifyContent="right">
