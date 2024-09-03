@@ -12,14 +12,14 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
       PF_INTRO: payload.profile.PF_INTRO,
       USER_IMG: payload.profile.USER_IMG,
       CAREER: payload.profile.career.map((career) => ({
-        CAREER_NM: career.CARRER_NM,
+        CAREER_NM: career.CAREER_NM,
         ENTERING_DT: career.ENTERING_DT,
         // QUIT_DT 가 true면 현재 재직중
         QUIT_DT: career.QUIT_DT === true ? null : career.QUIT_DT,
       })),
       STACK: payload.profile.stack.map((stack) => ({
         ST_NM: stack.ST_NM,
-        LEVEL: stack.LEVEL,
+        LEVEL: stack.ST_LEVEL,
       })),
       USER_NM: payload.profile.USER_NM,
       INTRST: payload.profile.interest.map((interest) => interest.INTEREST_NM),

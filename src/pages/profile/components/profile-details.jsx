@@ -33,6 +33,7 @@ const Career = ({ data }) => {
 };
 
 const MajorStack = ({ data }) => {
+  console.log('data', data);
   return (
     <Stack spacing={1}>
       <Stack direction={'row'} alignItems={'center'} spacing={1}>
@@ -46,16 +47,14 @@ const MajorStack = ({ data }) => {
           <Typography variant={'sm'} color={'text.secondary'}>
             등록된 스킬이 없습니다.
           </Typography>
-        : data.map((stack, index) =>
-            stack.ST_LEVEL === null ?
-              <Chip
-                key={`stack_${index}`}
-                label={stack.ST_NM}
-                size={'small'}
-                color={stack.ST_LEVEL}
-              />
-            : null,
-          )
+        : data.map((stack, index) => (
+            <Chip
+              key={`stack_${index}`}
+              label={stack.stNm}
+              size={'small'}
+              color={stack.level}
+            />
+          ))
         }
       </Stack>
     </Stack>

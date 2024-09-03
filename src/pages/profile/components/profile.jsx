@@ -105,7 +105,6 @@ const Url = ({ data }) => {
 const ProfilePreviewDetail = ({ profileEditForm }) => {
   const PreviewData = profileEditForm.getValues();
   const profile = PreviewData.profile;
-  console.log('profile', profile);
 
   return (
     <Stack spacing={3} p={3} bgcolor={'background.default'}>
