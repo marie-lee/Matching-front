@@ -30,6 +30,9 @@ const PortfolioList = ({ hasProfile }) => {
       try {
         const response = await instance.get('member/profile');
         const data = response.data;
+        if (data.portfolioInfo === null) {
+          return (data.portfolioInfo = []);
+        }
         const PORTFOLIOS = data.portfolioInfo.map((item) => ({
           id: item.PFOL_SN,
           pfolNm: item.PFOL_NM,

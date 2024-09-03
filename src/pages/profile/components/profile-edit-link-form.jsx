@@ -20,7 +20,7 @@ export const LinkForm = () => {
   // 프로필 링크
   const linkFieldArray = useFieldArray({
     control,
-    name: 'profile[0].url',
+    name: 'profile.url',
   });
 
   const handleAppendLink = () => {
@@ -48,7 +48,7 @@ export const LinkForm = () => {
           <Box>
             <RhfTextField
               label={'URL'}
-              name={`profile[0].url[${index}].URL_ADDR`}
+              name={`profile.url[${index}].URL_ADDR`}
               variant={'outlined'}
               size={'medium'}
               fullWidth
@@ -57,7 +57,7 @@ export const LinkForm = () => {
           <Box sx={{ flexGrow: 1 }}>
             <RhfTextField
               label={'링크 설명'}
-              name={`profile[0].url[${index}].URL_INTRO`}
+              name={`profile.url[${index}].URL_INTRO`}
               variant={'outlined'}
               size={'medium'}
               fullWidth

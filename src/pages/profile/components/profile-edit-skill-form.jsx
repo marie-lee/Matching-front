@@ -22,7 +22,7 @@ export const SkillForm = () => {
   // 프로필 스택
   const stackFieldArray = useFieldArray({
     control,
-    name: 'profile[0].stack',
+    name: 'profile.stack',
   });
 
   const handleAppendStack = () => {
@@ -36,6 +36,7 @@ export const SkillForm = () => {
       setLevel('');
     }
   };
+
   return (
     <Stack spacing={2}>
       <Stack direction={'row'} spacing={1} alignItems={'center'}>

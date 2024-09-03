@@ -11,7 +11,7 @@ export const InterestForm = () => {
   // 프로필 관심사
   const interestFieldArray = useFieldArray({
     control,
-    name: 'profile[0].interest',
+    name: 'profile.interest',
   });
 
   const handleAppendInterest = () => {

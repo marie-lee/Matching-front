@@ -1,8 +1,8 @@
 import { FormControlLabel, Switch } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 
-const RhfSwitch = ({ name, label, ...other }) => {
-  const { control, setValue } = useFormContext();
+const RhfSwitch = ({ name, label, onChange, ...other }) => {
+  const { control } = useFormContext();
 
   return (
     <Controller
@@ -10,7 +10,18 @@ const RhfSwitch = ({ name, label, ...other }) => {
       control={control}
       render={({ field }) => (
         <FormControlLabel
-          control={<Switch onChange={field.onChange} checked={field.value} />}
+          control={
+            <Switch
+              {...field}
+              checked={field.value}
+              onChange={(e) => {
+                field.onChange(e.target.checked);
+                if (onChange) {
+                  onChange(e);
+                }
+              }}
+            />
+          }
           label={label}
         />
       )}

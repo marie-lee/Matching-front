@@ -9,22 +9,21 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
     let payload = _.cloneDeep(_payload);
     console.log('payload', payload);
     const profile = {
-      PF_INTRO: payload.profile[0].PF_INTRO,
-      USER_IMG: payload.profile[0].USER_IMG,
-      CAREER: payload.profile[0].carrer.map((career) => ({
+      PF_INTRO: payload.profile.PF_INTRO,
+      USER_IMG: payload.profile.USER_IMG,
+      CAREER: payload.profile.career.map((career) => ({
         CAREER_NM: career.CARRER_NM,
         ENTERING_DT: career.ENTERING_DT,
-        QUIT_DT: career.QUIT_DT,
+        // QUIT_DT 가 true면 현재 재직중
+        QUIT_DT: career.QUIT_DT === true ? null : career.QUIT_DT,
       })),
-      STACK: payload.profile[0].stack.map((stack) => ({
+      STACK: payload.profile.stack.map((stack) => ({
         ST_NM: stack.ST_NM,
         LEVEL: stack.LEVEL,
       })),
-      USER_NM: payload.profile[0].USER_NM,
-      INTRST: payload.profile[0].interest.map(
-        (interest) => interest.INTEREST_NM,
-      ),
-      URL: payload.profile[0].url.map((url) => ({
+      USER_NM: payload.profile.USER_NM,
+      INTRST: payload.profile.interest.map((interest) => interest.INTEREST_NM),
+      URL: payload.profile.url.map((url) => ({
         URL: url.URL_ADDR,
         URL_INTRO: url.URL_INTRO,
       })),

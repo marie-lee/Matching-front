@@ -1,19 +1,31 @@
 import { Avatar, Chip, Divider, Link, Stack, Typography } from '@mui/material';
 
 const Career = ({ data }) => {
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: 'long',
+    });
+  };
   return (
     <Stack spacing={1}>
       <Typography variant={'lg'}>경력</Typography>
-      {data.map((career, index) => (
-        <Stack key={`career_${index}`} spacing={0.5}>
-          <Typography>{career.CARRER_NM}</Typography>
-          <Stack direction={'row'} alignItems={'center'}>
-            <Typography variant={'xs'} color={'text.secondary'}>
-              {`${career.ENTERING_DT} ~ ${career.QUIT_DT != null ? career.QUIT_DT : '재직중'}`}
-            </Typography>
+      {data === undefined ?
+        <Typography variant={'sm'} color={'text.secondary'}>
+          등록된 경력이 없습니다.
+        </Typography>
+      : data.map((career, index) => (
+          <Stack key={`career_${index}`} spacing={0.5}>
+            <Typography>{career.CARRER_NM}</Typography>
+            <Stack direction={'row'} alignItems={'center'}>
+              <Typography variant={'xs'} color={'text.secondary'}>
+                {`${formatDate(career.ENTERING_DT)} ~ ${career.QUIT_DT != true ? formatDate(career.QUIT_DT) : '재직 중'}`}
+              </Typography>
+            </Stack>
           </Stack>
-        </Stack>
-      ))}
+        ))
+      }
     </Stack>
   );
 };
@@ -28,14 +40,19 @@ const MajorStack = ({ data }) => {
         </Typography>
       </Stack>
       <Stack flexWrap={'wrap'} direction={'row'} useFlexGap spacing={0.5}>
-        {data.map((stack, index) => (
-          <Chip
-            key={`stack_${index}`}
-            label={stack.ST_NM}
-            size={'small'}
-            color={`${stack.ST_LEVEL}`}
-          />
-        ))}
+        {data.length === 0 ?
+          <Typography variant={'sm'} color={'text.secondary'}>
+            등록된 스킬이 없습니다.
+          </Typography>
+        : data.map((stack, index) => (
+            <Chip
+              key={`stack_${index}`}
+              label={stack.ST_NM}
+              size={'small'}
+              color={stack.ST_LEVEL}
+            />
+          ))
+        }
       </Stack>
     </Stack>
   );
@@ -87,7 +104,8 @@ const Url = ({ data }) => {
 
 const ProfilePreviewDetail = ({ profileEditForm }) => {
   const PreviewData = profileEditForm.getValues();
-  const profile = PreviewData.profile[0];
+  const profile = PreviewData.profile;
+  console.log('profile', profile);
 
   return (
     <Stack spacing={3} p={3} bgcolor={'background.default'}>
@@ -107,7 +125,7 @@ const ProfilePreviewDetail = ({ profileEditForm }) => {
         <Typography variant={'lg'}>{profile.PF_INTRO}</Typography>
       </Stack>
       <Divider />
-      <Career data={profile.carrer} />
+      <Career data={profile.career} />
       <Divider />
       <MajorStack data={profile.stack} />
       <Intrst data={profile.interest} />

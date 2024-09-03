@@ -23,7 +23,7 @@ const Career = ({ data }) => {
           <Typography>{career.careerName}</Typography>
           <Stack direction={'row'} alignItems={'center'}>
             <Typography variant={'xs'} color={'text.secondary'}>
-              {`${career.enteringDt} ~ ${career.quitDt != null ? career.quitDt : '재직중'}`}
+              {`${career.enteringDt} ~ ${career.quitDt != true ? career.quitDt : '재직중'}`}
             </Typography>
           </Stack>
         </Stack>
@@ -72,9 +72,14 @@ const Intrst = ({ data }) => {
         </Typography>
       </Stack>
       <Stack flexWrap direction={'row'} spacing={0.5}>
-        {data.map((intrst, index) => (
-          <Chip key={`intrst_${index}`} label={intrst} size={'small'} />
-        ))}
+        {data.length === 0 ?
+          <Typography variant={'sm'} color={'text.secondary'}>
+            등록된 스킬이 없습니다.
+          </Typography>
+        : data.map((intrst, index) => (
+            <Chip key={`intrst_${index}`} label={intrst} size={'small'} />
+          ))
+        }
       </Stack>
     </Stack>
   );
@@ -117,32 +122,50 @@ const ProfileDetails = () => {
       try {
         const response = await instance.get('member/profile');
         const data = response.data;
-        console.log('data', data);
-        const careersData = data.profile[0].carrer.map((career) => ({
-          careerName: career.CARRER_NM,
+        console.log('datadd', data);
+        // 경력 데이터가 없는 경우
+        if (data.profile.career === null) {
+          data.profile.career = [];
+        }
+        const careersData = data.profile.career.map((career) => ({
+          careerName: career.CAREER_NM,
           enteringDt: career.ENTERING_DT,
-          quitDt: career.QUIT_DT,
+          quitDt: career.QUIT_DT === null ? true : career.QUIT_DT,
         }));
         setCareers(careersData);
-        setName(data.profile[0].USER_NM);
-        setIntro(data.profile[0].PF_INTRO);
+        setName(data.profile.USER_NM);
+        setIntro(data.profile.PF_INTRO);
 
-        const stacksData = data.profile[0].stack.map((stack) => ({
+        if (data.profile.stack === null) {
+          data.profile.stack = [];
+        }
+        const stacksData = data.profile.stack.map((stack) => ({
           stNm: stack.ST_NM,
           level: stack.ST_LEVEL,
         }));
         setStack(stacksData);
 
-        const interestData = data.profile[0].interest.map(
+        if (data.profile.interest === null) {
+          data.profile.interest = [];
+        }
+        const interestData = data.profile.interest.map(
           (interest) => interest.INTEREST_NM,
         );
         setInterest(interestData);
 
-        const urlsData = data.profile[0].url.map((url) => ({
+        if (data.profile.url === null) {
+          data.profile.url = [];
+        }
+        const urlsData = data.profile.url.map((url) => ({
           addr: url.URL_ADDR,
           intro: url.URL_INTRO,
         }));
         setUrl(urlsData);
+        // Update quitDt to true if it is null
+        data.profile.career = data.profile.career.map((career) => ({
+          ...career,
+          QUIT_DT: career.QUIT_DT === null ? true : career.QUIT_DT,
+        }));
         setProfileData(data);
       } catch (error) {
         console.log('error: ', error);

@@ -7,21 +7,28 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 
 export const CareerForm = () => {
-  const { control } = useFormContext();
+  const { control, setValue } = useFormContext();
   console.log('render CareerForm');
-
-  const theme = useTheme();
   // 프로필 커리어
   const careerFieldArray = useFieldArray({
     control,
-    name: 'profile[0].carrer',
+    name: 'profile.career',
   });
 
   const handleAppendCareer = () => {
     careerFieldArray.append({
       CARRER_NM: '',
-      ENTERING_DT: null,
-      QUIT_DT: null,
+      ENTERING_DT: new Date(),
+      QUIT_DT: true,
+    });
+  };
+
+  const handleSwitchChange = (index, value) => {
+    // 재렌더링
+    console.log('handleSwitchChange', index, value);
+    careerFieldArray.update(index, {
+      ...careerFieldArray.fields[index],
+      QUIT_DT: new Date(),
     });
   };
 
@@ -36,7 +43,7 @@ export const CareerForm = () => {
         >
           <Box sx={{ flexGrow: 1 }}>
             <RhfTextField
-              name={`profile[0].carrer[${index}].CARRER_NM`}
+              name={`profile.career[${index}].CAREER_NM`}
               label={'회사명'}
               variant={'outlined'}
               size={'medium'}
@@ -44,7 +51,7 @@ export const CareerForm = () => {
           </Box>
           <Box>
             <RhfDatePicker
-              name={`profile[0].carrer[${index}].ENTERING_DT`}
+              name={`profile.career[${index}].ENTERING_DT`}
               label={'시작일'}
               views={['year', 'month']}
               size={'medium'}
@@ -52,17 +59,17 @@ export const CareerForm = () => {
             />
           </Box>
           {/* 재직 중인 경우에만 종료일을 보여줌 */}
-          {entry.QUIT_DT === null ?
+          {entry.QUIT_DT === true ?
             <Box>
               <RhfSwitch
-                name={`profile[0].carrer[${index}].QUIT_DT`}
+                name={`profile.career[${index}].QUIT_DT`}
                 label={'재직 중'}
-                checked={true} // QUIT_DT 값이 null이면 체크 박스가 체크됨
+                onChange={(e) => handleSwitchChange(index, e.target.checked)}
               />
             </Box>
           : <Box>
               <RhfDatePicker
-                name={`profile[0].carrer[${index}].QUIT_DT`}
+                name={`profile.career[${index}].QUIT_DT`}
                 label={'종료일'}
                 views={['year', 'month']}
                 size={'medium'}
