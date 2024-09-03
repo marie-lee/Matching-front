@@ -30,7 +30,7 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
       const newRowSpanInfo = { ...rowSpanInfo }; // 현재 rowSpan 상태 복사
 
       if (newExpandedRows.has(rowIndex)) {
-        console.log("펼침!")
+        // 이미 확장된 상태에서 클릭하면 접음
         newExpandedRows.delete(rowIndex);
 
         if (cellIndex === 1) { // Division 열을 클릭할 때만 동작
@@ -38,27 +38,36 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
 
           // 현재 rowSpan 값을 rowSpanInfo에 저장
           newRowSpanInfo[rowIndex] = { 
-            division: tableData[rowIndex][cellIndex].rowSpan,
+            division: tableData[rowIndex]?.[cellIndex]?.rowSpan,
             part: partRowSpan,  // Part의 rowSpan도 저장
           };
 
-          tableData[rowIndex][cellIndex].rowSpan = 1; // Division의 rowSpan을 1로 설정
-          tableData[rowIndex][0].rowSpan = 1;  // Part의 rowSpan을 1로 설정
+          if (tableData[rowIndex] && tableData[rowIndex][cellIndex]) {
+            tableData[rowIndex][cellIndex].rowSpan = 1; // Division의 rowSpan을 1로 설정
+          }
+          if (tableData[rowIndex] && tableData[rowIndex][0]) {
+            tableData[rowIndex][0].rowSpan = 1;  // Part의 rowSpan을 1로 설정
+          }
         }
       } else {
-        console.log("접힘!")
+        // 접힌 상태에서 클릭하면 펼침
         newExpandedRows.add(rowIndex);
 
         if (cellIndex === 1) { // Division 열을 클릭할 때만 동작
           newColSpanInfo[rowIndex] = 6; // colSpan을 6으로 설정
           
           // rowSpan을 저장된 값으로 복원하거나 기본 rowSpan 사용
-          tableData[rowIndex][cellIndex].rowSpan = newRowSpanInfo[rowIndex]?.division || rowSpan;
-          tableData[rowIndex][0].rowSpan = newRowSpanInfo[rowIndex]?.part || partRowSpan;
+          if (tableData[rowIndex] && tableData[rowIndex][cellIndex]) {
+            tableData[rowIndex][cellIndex].rowSpan = newRowSpanInfo[rowIndex]?.division || rowSpan;
+          }
+          if (tableData[rowIndex] && tableData[rowIndex][0]) {
+            tableData[rowIndex][0].rowSpan = newRowSpanInfo[rowIndex]?.part || partRowSpan;
+          }
 
           delete newRowSpanInfo[rowIndex]; // 복원 후 rowSpanInfo에서 제거
         }
       }
+
       setColSpanInfo(newColSpanInfo);  // 상태 업데이트
       setRowSpanInfo(newRowSpanInfo);  // 상태 업데이트
       return newExpandedRows;
