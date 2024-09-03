@@ -1,5 +1,6 @@
 import { Container, Grid, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import {
   TaskDashBoardTop,
@@ -15,7 +16,7 @@ import { getWbsDashboard, getWbsTaskAdditionalInfo } from '@/services/wbs';
 // ----------------------------------------------------------------------
 
 const TaskDashboardPage = () => {
-  const selectedPjtSn = 5;
+  const { state } = useLocation();
 
   const [isFetching, setIsFetching] = useState(false);
   const [data, setData] = useState({ today: [], task: [], issue: [] });
@@ -25,6 +26,7 @@ const TaskDashboardPage = () => {
     memberList: [],
   });
 
+  const [selectedPjtSn, setSelectedPjtSn] = useState(state?.pjtSn || '');
   const [selectedTaskSn, setSelectedTaskSn] = useState();
   const [selectedIssueSn, setSelectedIssueSn] = useState();
 
@@ -89,9 +91,9 @@ const TaskDashboardPage = () => {
           <Stack spacing={1}>
             <Stack direction={'row'} alignItems={'center'} spacing={1}>
               <Typography variant={'lg'}>Today</Typography>
-              <Typography>{data?.today.length}</Typography>
+              <Typography>{data?.today?.length}</Typography>
             </Stack>
-            {data?.today.map((item) => (
+            {data?.today?.map((item) => (
               <TaskItem
                 key={`dashboard_today_${item.ticketSn}`}
                 data={item}
@@ -105,7 +107,7 @@ const TaskDashboardPage = () => {
           <Stack spacing={1}>
             <Stack direction={'row'} alignItems={'center'} spacing={1}>
               <Typography variant={'lg'}>Task</Typography>
-              <Typography>4</Typography>
+              <Typography>{data?.task?.length}</Typography>
             </Stack>
 
             <TaskAdd
@@ -126,7 +128,7 @@ const TaskDashboardPage = () => {
               />
             )}
 
-            {data?.task.map((item) => (
+            {data?.task?.map((item) => (
               <TaskItem
                 key={`dashboard_task_${item.ticketSn}`}
                 data={item}
@@ -140,10 +142,10 @@ const TaskDashboardPage = () => {
           <Stack spacing={1}>
             <Stack direction={'row'} alignItems={'center'} spacing={1}>
               <Typography variant={'lg'}>Issue</Typography>
-              <Typography>1</Typography>
+              <Typography>{data?.issue?.length}</Typography>
             </Stack>
             <IssueAdd />
-            {data?.issue.map((item) => (
+            {data?.issue?.map((item) => (
               <IssueItem
                 key={`dashboard_issue_${item.issueSn}`}
                 data={item}
