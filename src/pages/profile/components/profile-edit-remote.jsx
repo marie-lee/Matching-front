@@ -48,6 +48,7 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
       (portfolio, index) => (
         console.log('portfolio', portfolio),
         {
+          PFOL_SN: portfolio.PFOL_SN,
           PFOL_NM: portfolio.PFOL_NM,
           INTRO: portfolio.INTRO,
           // 시작일 종료일 기간
@@ -77,21 +78,40 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
               OS: 'WINDOWS',
             };
           }),
-          MEDIA:
-            portfolio.IMG_SUB === null ?
-              []
-            : portfolio.IMG_SUB.map((img, index) => ({
-                // 이거 물어보기
-                MAIN_YN: index === 0 ? '1' : '0',
-              })),
+          // 만약에 IMG 가 file, MAIN_YN 만 가지고 있다면 { MAIN_YN: MAIN_YN } 으로 만들어줌
+          // 만약에 IMG 가 URL, MAIN_YN 만 가지고 있다면 { URL: URL, MAIN_YN: MAIN_YN } 으로 만들어줌
+          // 만약에 DEL_YN을 가지고 있으면 { URL: URL, MAIN_YN: MAIN_YN, DEL_YN: DEL_YN } 으로 만들어줌
+          // MAIN_YN 이 true 면 1 false 면 0
+          MEDIA: portfolio.IMG.map((img) => {
+            console.log('img', img);
+            if (img.file && img.MAIN_YN !== undefined) {
+              return {
+                MAIN_YN: img.MAIN_YN ? 1 : 0,
+              };
+            } else if (img.URL && img.MAIN_YN !== undefined) {
+              const result = {
+                URL: img.URL,
+                MAIN_YN: img.MAIN_YN ? 1 : 0,
+              };
+              if (img.DEL_YN !== undefined) {
+                result.DEL_YN = img.DEL_YN;
+              }
+              return result;
+            } else {
+              // 기본적으로 처리할 수 없는 경우 빈 객체 반환
+              return {};
+            }
+          }),
         }
       ),
     );
-
+    console.log('portfolios', payload.portfolioInfo[0].IMG);
     return {
       profile: profile,
       portfolios,
-      portfolios_file: payload.portfolioImages,
+      portfolios_images: payload.portfolioInfo.map((portfolio) => {
+        return portfolio.IMG;
+      }),
       USER_IMG: payload.USER_IMG,
     };
   };
@@ -106,23 +126,45 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
       console.log('payload.USER_IMG', payload.USER_IMG);
       formData.append('profile[USER_IMG]', payload.USER_IMG);
     }
-    console.log('payload.portfolios', payload.portfolios_file);
     // 포트폴리오가 존재하면 추가
     const pindexCounters = {};
-    if (payload.portfolios_file.length > 0) {
-      payload.portfolios_file.forEach((image) => {
-        // pindex에 대한 카운터가 없으면 초기화
-        if (!pindexCounters[image.pindex]) {
-          pindexCounters[image.pindex] = 0;
-        }
-        // 현재 pindex의 카운터 값을 사용하여 formData에 추가
-        formData.append(
-          `portfolios[${image.pindex}][MEDIA][${pindexCounters[image.pindex]}][file]`,
-          image.file,
-        );
-        // pindex의 카운터를 증가
-        pindexCounters[image.pindex]++;
+    // 포트폴리오 이미지가 존재하면 추가
+    if (payload.portfolios_images) {
+      console.log('payload.portfolios_images', payload.portfolios_images);
+      payload.portfolios_images.forEach((images, pindex) => {
+        images.forEach((image) => {
+          console.log('이미지', image);
+          // pindex에 대한 카운터가 없으면 초기화
+          if (!pindexCounters[pindex]) {
+            pindexCounters[pindex] = 0;
+          }
+          // image.file이 존재하지 않으면 formData에 추가하지 않음
+          if (image.file === undefined) {
+            pindexCounters[pindex]++;
+            return;
+          }
+          // 현재 pindex의 카운터 값을 사용하여 formData에 추가
+          formData.append(
+            `portfolios[${pindex}][MEDIA][${pindexCounters[pindex]}][file]`,
+            image.file,
+          );
+          // pindex의 카운터를 증가
+          pindexCounters[pindex]++;
+        });
       });
+      // payload.portfolios_file.forEach((image) => {
+      //   // pindex에 대한 카운터가 없으면 초기화
+      //   if (!pindexCounters[image.pindex]) {
+      //     pindexCounters[image.pindex] = 0;
+      //   }
+      //   // 현재 pindex의 카운터 값을 사용하여 formData에 추가
+      //   formData.append(
+      //     `portfolios[${image.pindex}][MEDIA][${pindexCounters[image.pindex]}][file]`,
+      //     image.file,
+      //   );
+      //   // pindex의 카운터를 증가
+      //   pindexCounters[image.pindex]++;
+      // });
     }
     formData.append('portfolios', JSON.stringify(payload.portfolios));
 
@@ -130,6 +172,8 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
     for (var pair of formData.entries()) {
       console.log(pair[0] + ', ' + pair[1]);
     }
+    // 포트폴리오 안에 MEDIA 값만 콘솔로그에 출력
+    console.log('payload.portfolios', payload.portfolios[0].MEDIA);
 
     try {
       const res = await postProfile(formData);

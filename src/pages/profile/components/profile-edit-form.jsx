@@ -29,6 +29,7 @@ import { SkillForm } from './profile-edit-skill-form';
 import { InterestForm } from './profile-edit-interest-form';
 import { LinkForm } from './profile-edit-link-form';
 import { useTheme } from '@emotion/react';
+import PortfolioImageList from './portfolio-edit-image';
 
 const FormGroup = ({ title, children }) => {
   return (
@@ -63,8 +64,13 @@ const PortfolioForm = ({ profileEditForm }) => {
   const theme = useTheme();
   const { control, setValue } = useFormContext();
   const [stackName, setStackName] = useState('');
-  const imagefileInputRefs = useRef([]);
   const videofileInputRef = useRef(null);
+  const [mainImage, setMainImage] = useState(null);
+
+  // 이미지 클릭 이벤트 핸들러
+  const handleImageClick = (image) => {
+    setMainImage(image);
+  };
 
   // 프로필 포트폴리오
   const portfolioFieldArray = useFieldArray({
@@ -82,12 +88,6 @@ const PortfolioForm = ({ profileEditForm }) => {
 
   const [links, setLinks] = useState(initialLinks);
   const [stacks, setStacks] = useState(initialStacks);
-
-  if (imagefileInputRefs.current.length !== portfolioFieldArray.fields.length) {
-    imagefileInputRefs.current = portfolioFieldArray.fields.map(
-      (_, i) => imagefileInputRefs.current[i] || React.createRef(),
-    );
-  }
 
   const handleAppendPortfolio = () => {
     portfolioFieldArray.append({
@@ -120,44 +120,8 @@ const PortfolioForm = ({ profileEditForm }) => {
     portfolioFieldArray.fields[index].URL.push({ URL: '', DESCRIPTION: '' });
   };
 
-  const handleAddImageClick = (index) => {
-    if (
-      imagefileInputRefs.current[index] &&
-      imagefileInputRefs.current[index].current
-    ) {
-      imagefileInputRefs.current[index].current.click();
-    }
-  };
-
   const handleAddVideoClick = () => {
     videofileInputRef.current.click();
-  };
-
-  const handleImageFileChange = (index) => (event) => {
-    if (portfolioFieldArray.fields[index].IMG_SUB == null) {
-      portfolioFieldArray.fields[index].IMG_SUB = [];
-    }
-    const currentImageCount = portfolioFieldArray.fields[index].IMG_SUB.length;
-    if (currentImageCount >= 4) {
-      alert('이미지는 최대 4개까지 업로드 가능합니다.');
-      return;
-    }
-    const file = event.target.files[0];
-    const imageUrl = URL.createObjectURL(file);
-    const currentPortfolioImages =
-      profileEditForm.getValues('portfolioImages') || [];
-    const updatedPortfolioImages = [
-      ...currentPortfolioImages,
-      { file: file, pindex: index },
-    ];
-    profileEditForm.setValue('portfolioImages', updatedPortfolioImages);
-    portfolioFieldArray.fields[index].IMG_SUB.push({
-      URL: imageUrl,
-      NAME: file.name,
-    });
-    portfolioFieldArray.update(index, {
-      ...portfolioFieldArray.fields[index],
-    });
   };
 
   const handleRemoveImage = (portfolioIndex, imageIndex) => {
@@ -198,6 +162,8 @@ const PortfolioForm = ({ profileEditForm }) => {
     setValue(`portfolioInfo[${portfolioIndex}].stack`, updatedStacks);
     setStacks(updatedStacks);
   };
+
+  console.log('portfolioFieldArray', portfolioFieldArray.fields);
 
   return (
     <Stack spacing={2}>
@@ -446,71 +412,12 @@ const PortfolioForm = ({ profileEditForm }) => {
             size={'medium'}
             fullWidth
           />
-          <Button
-            color="primary"
-            variant={'outlined'}
-            onClick={() => handleAddImageClick(index)}
-          >
-            <ImageIcon sx={{ mr: 1 }}></ImageIcon>
-            이미지 추가 ({entry.IMG_SUB ? entry.IMG_SUB.length : 0}/4)
-          </Button>
-          <input
-            key={`image_${index}`}
-            type="file"
-            accept="image/*"
-            hidden
-            ref={imagefileInputRefs.current[index]}
-            onChange={handleImageFileChange(index)}
-          />
-          <ImageList
-            sx={{ width: '100%', height: 'auto' }}
-            cols={4}
-            rowHeight={'auto'}
-          >
-            {portfolioFieldArray.fields[index].IMG_SUB == null ?
-              <Typography>이미지가 없습니다.</Typography>
-            : portfolioFieldArray.fields[index].IMG_SUB.map(
-                (item, imageIndex) => (
-                  console.log('item', item),
-                  (
-                    <ImageListItem key={`image_${index}_${imageIndex}`}>
-                      <img
-                        src={typeof item === 'string' ? item : item.URL}
-                        alt={item.NAME}
-                        loading="lazy"
-                      />
-                      <IconButton
-                        sx={{
-                          position: 'absolute',
-                          top: 0,
-                          right: 0,
-                          color: 'white',
-                        }}
-                        onClick={() => handleRemoveImage(index, imageIndex)}
-                      >
-                        <CloseIcon sx={{ stroke: '#111111', strokeWidth: 1 }} />
-                      </IconButton>
-                      {imageIndex === 0 && (
-                        <Box
-                          sx={{
-                            position: 'absolute',
-                            bottom: 0,
-                            left: 0,
-                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                            color: 'white',
-                            padding: '2px 8px',
-                            fontSize: '0.875rem',
-                          }}
-                        >
-                          대표 이미지
-                        </Box>
-                      )}
-                    </ImageListItem>
-                  )
-                ),
-              )
-            }
-          </ImageList>
+          <PortfolioImageList
+            profileEditForm={profileEditForm}
+            portfolioFieldArray={portfolioFieldArray}
+            index={index}
+            handleRemoveImage={handleRemoveImage}
+          ></PortfolioImageList>
           <input
             key={`video_${index}`}
             type="file"
