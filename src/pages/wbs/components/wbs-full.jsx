@@ -1,7 +1,4 @@
-// React Import
-import { memo, useCallback } from 'react';
-
-// MUI Import
+import React, { memo, useCallback, useEffect, useRef } from 'react';
 import {
   Table,
   TableBody,
@@ -14,16 +11,75 @@ import {
   Select,
   MenuItem,
   FormControl,
+  IconButton,
 } from '@mui/material';
 
 // DatePicker Import
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
-const cellStyle = {
-  border: '1px solid #000',
-  padding: '2px 4px',
-};
+const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
+  const [expandedRows, setExpandedRows] = useState(new Set());
+  const [colSpanInfo, setColSpanInfo] = useState({});
+  const [rowSpanInfo, setRowSpanInfo] = useState({}); // 모든 rowSpan 정보를 저장
+
+  const toggleRowExpand = (rowIndex, cellIndex, rowSpan, partRowSpan) => {
+    setExpandedRows((prevExpandedRows) => {
+      const newExpandedRows = new Set(prevExpandedRows);
+      const newColSpanInfo = { ...colSpanInfo }; // 현재 colSpan 상태 복사
+      const newRowSpanInfo = { ...rowSpanInfo }; // 현재 rowSpan 상태 복사
+
+      if (newExpandedRows.has(rowIndex)) {
+        // 이미 확장된 상태에서 클릭하면 접음
+        newExpandedRows.delete(rowIndex);
+
+        if (cellIndex === 1) { // Division 열을 클릭할 때만 동작
+          delete newColSpanInfo[rowIndex]; // colSpan 정보 삭제
+
+          // 현재 rowSpan 값을 rowSpanInfo에 저장
+          newRowSpanInfo[rowIndex] = { 
+            division: tableData[rowIndex]?.[cellIndex]?.rowSpan,
+            part: partRowSpan,  // Part의 rowSpan도 저장
+          };
+
+          if (tableData[rowIndex] && tableData[rowIndex][cellIndex]) {
+            tableData[rowIndex][cellIndex].rowSpan = 1; // Division의 rowSpan을 1로 설정
+          }
+          if (tableData[rowIndex] && tableData[rowIndex][0]) {
+            tableData[rowIndex][0].rowSpan = 1;  // Part의 rowSpan을 1로 설정
+          }
+        }
+      } else {
+        // 접힌 상태에서 클릭하면 펼침
+        newExpandedRows.add(rowIndex);
+
+        if (cellIndex === 1) { // Division 열을 클릭할 때만 동작
+          newColSpanInfo[rowIndex] = 6; // colSpan을 6으로 설정
+          
+          // rowSpan을 저장된 값으로 복원하거나 기본 rowSpan 사용
+          if (tableData[rowIndex] && tableData[rowIndex][cellIndex]) {
+            tableData[rowIndex][cellIndex].rowSpan = newRowSpanInfo[rowIndex]?.division || rowSpan;
+          }
+          if (tableData[rowIndex] && tableData[rowIndex][0]) {
+            tableData[rowIndex][0].rowSpan = newRowSpanInfo[rowIndex]?.part || partRowSpan;
+          }
+
+          delete newRowSpanInfo[rowIndex]; // 복원 후 rowSpanInfo에서 제거
+        }
+      }
+
+      setColSpanInfo(newColSpanInfo);  // 상태 업데이트
+      setRowSpanInfo(newRowSpanInfo);  // 상태 업데이트
+      return newExpandedRows;
+    });
+  };
+
+  const cellStyle = {
+    border: '1px solid #000',
+    padding: '2px 4px',
+  };
 
 const textFieldStyle = {
   '& .MuiOutlinedInput-root': {
@@ -97,17 +153,49 @@ const renderTextField = (value, onChange) => (
   <TextField value={value} onChange={onChange} fullWidth sx={textFieldStyle} />
 );
 
-const Cell = memo(
-  ({ cell, rowIndex, cellIndex, handleCellChange, members, editable }) => {
-    const handleChange = useCallback(
-      (e) => handleCellChange(rowIndex, cellIndex, e.target.value),
-      [rowIndex, cellIndex, handleCellChange],
-    );
+  const Cell = memo(
+    ({ cell, rowIndex, cellIndex, handleCellChange, members, editable }) => {
+      const handleChange = useCallback(
+        (e) => handleCellChange(rowIndex, cellIndex, e.target.value),
+        [rowIndex, cellIndex, handleCellChange],
+      );
 
-    const cellStyleWithEditable = {
-      ...cellStyle,
-      pointerEvents: editable ? 'none' : 'auto',
-    };
+      const cellStyleWithEditable = {
+        ...cellStyle,
+        pointerEvents: editable ? 'none' : 'auto',
+      };
+
+      const colSpan = colSpanInfo[rowIndex] && cellIndex === 1 ? colSpanInfo[rowIndex] : 1; // colSpan이 있으면 적용
+
+      // Find the Part rowSpan for this Division row
+      let partRowSpan = 1;
+      for (let i = rowIndex; i >= 0; i--) {
+        if (tableData[i][0] && tableData[i][0].rowSpan) {
+          partRowSpan = tableData[i][0].rowSpan;
+          break;
+        }
+      }
+
+      if (cellIndex === 0 || cellIndex === 1) {
+        // Part 및 Division 열에 버튼 추가
+        return (
+          <TableCell
+            key={cellIndex}
+            rowSpan={rowSpanInfo[rowIndex]?.[cellIndex === 1 ? 'division' : 'part'] || cell.rowSpan}
+            colSpan={colSpan}  // colSpan 속성 추가
+            sx={cellStyleWithEditable}
+          >
+            <IconButton
+              onClick={() => toggleRowExpand(rowIndex, cellIndex, cell.rowSpan, partRowSpan)}
+              size="small"
+              sx={{ padding: '0' }}
+            >
+              {expandedRows.has(rowIndex) ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </IconButton>
+            {cell.value}
+          </TableCell>
+        );
+      }
 
     if (cellIndex === 4 || cellIndex === 5) {
       // Date
@@ -241,5 +329,5 @@ const WbsFull = memo(({ tableData, handleCellChange, members, editable }) => (
     </Table>
   </TableContainer>
 ));
-
+}
 export default WbsFull;
