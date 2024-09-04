@@ -14,6 +14,7 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
 
     return yearsDifference * 12 + monthsDifference;
   };
+
   const getPayload = (_payload) => {
     let payload = _.cloneDeep(_payload);
     console.log('payload', payload);
@@ -81,7 +82,6 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
               []
             : portfolio.IMG_SUB.map((img, index) => ({
                 // 이거 물어보기
-                URL: img.URL,
                 MAIN_YN: index === 0 ? '1' : '0',
               })),
         }
@@ -91,12 +91,7 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
     return {
       profile: profile,
       portfolios,
-      portfolios_file: payload.portfolioInfo.map((portfolio) => {
-        if (portfolio.IMG_SUB === null) {
-          return null;
-        }
-        return portfolio.IMG_SUB.map((img) => img.FILE);
-      }, null),
+      portfolios_file: payload.portfolioImages,
       USER_IMG: payload.USER_IMG,
     };
   };
@@ -107,22 +102,26 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
     const formData = new FormData();
     formData.append('profile', JSON.stringify(payload.profile));
     // 프로필 사진이 존재하면 추가
-    if (payload.USER_IMG !== null) {
+    if (payload.USER_IMG !== undefined && payload.USER_IMG !== null) {
       console.log('payload.USER_IMG', payload.USER_IMG);
       formData.append('profile[USER_IMG]', payload.USER_IMG);
     }
+    console.log('payload.portfolios', payload.portfolios_file);
     // 포트폴리오가 존재하면 추가
-    if (payload.portfolios.length > 0) {
-      payload.portfolios_file.forEach((portfolio, pIndex) => {
-        if (portfolio !== null) {
-          // null 체크 추가
-          portfolio.forEach((file, fIndex) => {
-            formData.append(
-              `portfolios[${pIndex}][MEDIA][${fIndex}][file]`,
-              file,
-            );
-          });
+    const pindexCounters = {};
+    if (payload.portfolios_file.length > 0) {
+      payload.portfolios_file.forEach((image) => {
+        // pindex에 대한 카운터가 없으면 초기화
+        if (!pindexCounters[image.pindex]) {
+          pindexCounters[image.pindex] = 0;
         }
+        // 현재 pindex의 카운터 값을 사용하여 formData에 추가
+        formData.append(
+          `portfolios[${image.pindex}][MEDIA][${pindexCounters[image.pindex]}][file]`,
+          image.file,
+        );
+        // pindex의 카운터를 증가
+        pindexCounters[image.pindex]++;
       });
     }
     formData.append('portfolios', JSON.stringify(payload.portfolios));

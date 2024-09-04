@@ -58,7 +58,7 @@ const MenuProps = {
 
 const names = ['백엔드', '프론트엔드', '기획', '디자인'];
 
-const PortfolioForm = () => {
+const PortfolioForm = ({ profileEditForm }) => {
   console.log('render PortfolioForm');
   const theme = useTheme();
   const { control, setValue } = useFormContext();
@@ -134,6 +134,9 @@ const PortfolioForm = () => {
   };
 
   const handleImageFileChange = (index) => (event) => {
+    if (portfolioFieldArray.fields[index].IMG_SUB == null) {
+      portfolioFieldArray.fields[index].IMG_SUB = [];
+    }
     const currentImageCount = portfolioFieldArray.fields[index].IMG_SUB.length;
     if (currentImageCount >= 4) {
       alert('이미지는 최대 4개까지 업로드 가능합니다.');
@@ -141,10 +144,16 @@ const PortfolioForm = () => {
     }
     const file = event.target.files[0];
     const imageUrl = URL.createObjectURL(file);
+    const currentPortfolioImages =
+      profileEditForm.getValues('portfolioImages') || [];
+    const updatedPortfolioImages = [
+      ...currentPortfolioImages,
+      { file: file, pindex: index },
+    ];
+    profileEditForm.setValue('portfolioImages', updatedPortfolioImages);
     portfolioFieldArray.fields[index].IMG_SUB.push({
       URL: imageUrl,
       NAME: file.name,
-      FILE: file,
     });
     portfolioFieldArray.update(index, {
       ...portfolioFieldArray.fields[index],
@@ -155,6 +164,7 @@ const PortfolioForm = () => {
     const updatedImages = portfolioFieldArray.fields[
       portfolioIndex
     ].IMG_SUB.filter((_, idx) => idx !== imageIndex);
+    profileEditForm.setValue('portfolioImages', updatedImages);
     portfolioFieldArray.update(portfolioIndex, {
       ...portfolioFieldArray.fields[portfolioIndex],
       IMG_SUB: updatedImages,
@@ -568,7 +578,7 @@ const ProfileEditForm = ({ profileEditForm }) => {
         <MemoizedLinkForm />
       </FormGroup>
       <FormGroup title={'포트폴리오'}>
-        <MemoizedPortfolioForm />
+        <MemoizedPortfolioForm profileEditForm={profileEditForm} />
       </FormGroup>
     </Stack>
   );
