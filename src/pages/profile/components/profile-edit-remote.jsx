@@ -162,15 +162,15 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
     // 포트폴리오 안에 MEDIA 값만 콘솔로그에 출력
     console.log('payload.portfolios', payload.portfolios[0].MEDIA);
 
-    try {
-      const res = await postProfile(formData);
-      if (res?.status === 200) {
-        setPreviewOpen(false);
-        navigate(-1);
-      }
-    } catch (error) {
-      console.log('error', error);
-    }
+    // try {
+    //   const res = await postProfile(formData);
+    //   if (res?.status === 200) {
+    //     setPreviewOpen(false);
+    //     navigate(-1);
+    //   }
+    // } catch (error) {
+    //   console.log('error', error);
+    // }
   });
 
   return (

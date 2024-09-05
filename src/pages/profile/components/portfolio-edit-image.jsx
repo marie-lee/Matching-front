@@ -50,7 +50,10 @@ const PortfolioImageList = ({
     };
 
     // 이미지 추가 대표 이미지가 없다면 첫번째 이미지를 대표 이미지로 설정
-    if (portfolioFieldArray.fields[index].IMG === null) {
+    if (
+      portfolioFieldArray.fields[index].IMG === null ||
+      portfolioFieldArray.fields[index].IMG.length === 0
+    ) {
       console.log('대표 이미지가 없습니다.');
       newImage.MAIN_YN = true;
       portfolioNewImage.MAIN_YN = true;

@@ -104,6 +104,7 @@ const PortfolioForm = ({ profileEditForm }) => {
       url: [],
       MEDIA: [],
       IMG_SUB: [],
+      IMG: [],
     });
 
     setLinks([...links, []]);
