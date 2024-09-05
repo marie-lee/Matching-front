@@ -36,6 +36,11 @@ export const getWbsIssue = (pjtSn, issueSn) => {
   return instance.get(`${URL_GET_WBS_ISSUE}/${pjtSn}/${issueSn}`);
 };
 
+export const URL_GET_WBS_Tracking = '/project/wbs/tracking';
+export const getWbsIssueTracking = (pjtSn) => {
+  return instance.get(`${URL_GET_WBS_Tracking}/${pjtSn}`);
+};
+
 // ----------------------------------------------------------------------
 // POST
 // ----------------------------------------------------------------------

@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   Table,
   TableBody,
@@ -10,18 +10,27 @@ import {
 } from '@mui/material';
 import 'react-datepicker/dist/react-datepicker.css';
 
-const GanttFull = ({ tableData, projectStartDate, projectEndDate }) => {
-  {
-    /* 테이블 스타일 */
-  }
+const GanttFull = ({
+  tableData,
+  projectStartDate,
+  projectEndDate,
+  ticketDetails,
+}) => {
+  const dotList = ticketDetails.map((item) => {
+    const ticketSnIndex = tableData
+      .map((row) => row[2]?.ticketSn)
+      .filter(Boolean)
+      .indexOf(item.ticketSn);
+
+    return [ticketSnIndex, item.day];
+  });
+
   const cellStyle = {
     border: '1px solid #000',
     padding: '2px 4px',
   };
 
-  {
-    /* gantt 날짜 구간 생성 */
-  }
+  // 날짜 범위 생성 함수
   const generateDateRange = (startDate, endDate) => {
     const dates = [];
     const currentDate = new Date(startDate);
@@ -34,9 +43,6 @@ const GanttFull = ({ tableData, projectStartDate, projectEndDate }) => {
     return dates;
   };
 
-  {
-    /* 월별 날짜 구분 */
-  }
   const groupDatesByMonth = (dates) => {
     const groupedDates = [];
     let currentMonth = null;
@@ -68,9 +74,6 @@ const GanttFull = ({ tableData, projectStartDate, projectEndDate }) => {
   const dateRange = generateDateRange(projectStartDate, projectEndDate);
   const groupedDateRange = groupDatesByMonth(dateRange);
 
-  {
-    /* gantt 동시 스크롤 */
-  }
   const ganttHeaderRef = useRef(null);
   const ganttBodyRef = useRef(null);
 
@@ -101,9 +104,6 @@ const GanttFull = ({ tableData, projectStartDate, projectEndDate }) => {
     }
   }, []);
 
-  {
-    /* 렌더링 */
-  }
   return (
     <>
       {/* 간트 차트 헤더 */}
@@ -128,7 +128,6 @@ const GanttFull = ({ tableData, projectStartDate, projectEndDate }) => {
             ))}
           </colgroup>
           <TableHead>
-            {/* Month Header */}
             <TableRow>
               {groupedDateRange.map(({ month, dates }, index) => (
                 <TableCell
@@ -147,7 +146,6 @@ const GanttFull = ({ tableData, projectStartDate, projectEndDate }) => {
                 </TableCell>
               ))}
             </TableRow>
-            {/* Day Header */}
             <TableRow>
               {dateRange.map((date, index) => (
                 <TableCell
@@ -168,6 +166,7 @@ const GanttFull = ({ tableData, projectStartDate, projectEndDate }) => {
           </TableHead>
         </Table>
       </TableContainer>
+
       {/* 간트 차트 내용 */}
       <TableContainer
         component={Paper}
@@ -210,6 +209,14 @@ const GanttFull = ({ tableData, projectStartDate, projectEndDate }) => {
                     date >= taskStartDate &&
                     date <= taskDueDate;
 
+                  //dot찍을 위치 확인
+                  const dotToDisplay = dotList.find(
+                    (dot) =>
+                      dot[0] === rowIndex &&
+                      new Date(dot[1]).setHours(0, 0, 0, 0) ===
+                        date.setHours(0, 0, 0, 0),
+                  );
+
                   return (
                     <TableCell
                       key={dateIndex}
@@ -219,8 +226,24 @@ const GanttFull = ({ tableData, projectStartDate, projectEndDate }) => {
                         width: '20px',
                         minWidth: '20px',
                         height: '30px',
+                        position: 'relative',
                       }}
-                    ></TableCell>
+                    >
+                      {dotToDisplay && (
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: '10px',
+                            height: '10px',
+                            backgroundColor: 'red',
+                            borderRadius: '50%',
+                          }}
+                        />
+                      )}
+                    </TableCell>
                   );
                 })}
               </TableRow>
