@@ -30,14 +30,25 @@ const PortfolioList = ({ hasProfile }) => {
       try {
         const response = await instance.get('member/profile');
         const data = response.data;
-        const PORTFOLIOS = data.portfolioInfo.map((item) => ({
-          id: item.PFOL_SN,
-          pfolNm: item.PFOL_NM,
-          startDt: item.START_DT,
-          endDt: item.END_DT,
-          stacks: item.stack.map((stackItem) => ({ stNm: stackItem.ST_NM })),
-          img: item.IMG,
-        }));
+        if (data.portfolioInfo === null) {
+          return (data.portfolioInfo = []);
+        }
+        const PORTFOLIOS = data.portfolioInfo.map((item) => {
+          // IMG가 없는 경우 빈 배열로 초기화
+          if (!item.IMG) {
+            item.IMG = [];
+          }
+
+          const mainImage = item.IMG.find((img) => img.MAIN_YN === true);
+          return {
+            id: item.PFOL_SN,
+            pfolNm: item.PFOL_NM,
+            startDt: item.START_DT,
+            endDt: item.END_DT,
+            stacks: item.stack.map((stackItem) => ({ stNm: stackItem.ST_NM })),
+            img: mainImage ? mainImage.URL : '', // 대표 이미지 설정
+          };
+        });
         setPortfolio(PORTFOLIOS);
       } catch (error) {
         console.log('error', error);

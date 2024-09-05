@@ -3,26 +3,26 @@ import { ResponsiveImg } from '@/components/img';
 import { PATHS } from '@/routes/paths';
 
 const PortfolioListPreview = ({ profileEditForm }) => {
-  const profile = profileEditForm.getValues();
-  const portfolio = profile.PORTFOLIO;
+  const PreviewData = profileEditForm.getValues();
+  const portfolio = PreviewData.portfolioInfo;
 
   const renderList = () => {
     return (
       <Grid container columnSpacing={2} rowSpacing={3}>
         {portfolio.map((pfol) => (
-          <Grid item xs={12} md={4} key={pfol.id}>
+          <Grid item xs={12} md={4} key={pfol.PFOL_NM}>
             <Stack spacing={0.5} sx={{ cursor: 'pointer' }}>
               {/* 대표 이미지 */}
               <ResponsiveImg
-                src={pfol.IMAGE_URL[0].URL}
-                alt={`${pfol.pfolNm}`}
+                src={pfol.IMG}
+                alt={`${pfol.PFOL_NM}`}
                 width={230}
                 height={150}
               />
 
               {/* 포트폴리오 제목 */}
               <Typography component={'p'} variant={'lg'}>
-                {pfol.pfolNm}
+                {pfol.PFOL_NM}
               </Typography>
 
               {/* 프로젝트 기간 */}
@@ -31,15 +31,15 @@ const PortfolioListPreview = ({ profileEditForm }) => {
                 variant={'sm'}
                 color={'text.secondary'}
               >
-                {`${pfol.startDt} ~ ${pfol.endDt}`}
+                {`${pfol.START_DT} ~ ${pfol.END_DT}`}
               </Typography>
 
               {/* 사용 스킬 */}
               <Stack useFlexGap flexWrap={'wrap'} direction={'row'} gap={0.7}>
-                {pfol.TECH_STACK.map((stack, index) => (
+                {pfol.stack.map((stack, index) => (
                   <Chip
-                    key={`${pfol.pfolNm}_stack_${index}`}
-                    label={stack}
+                    key={`${pfol.PFOL_NM}_stack_${index}`}
+                    label={stack.ST_NM}
                     size={'small'}
                   />
                 ))}

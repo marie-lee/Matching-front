@@ -12,6 +12,7 @@ import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/routes/paths';
 import { instance } from '@/services/config';
+import { set } from 'date-fns';
 
 const Career = ({ data }) => {
   return (
@@ -22,7 +23,7 @@ const Career = ({ data }) => {
           <Typography>{career.careerName}</Typography>
           <Stack direction={'row'} alignItems={'center'}>
             <Typography variant={'xs'} color={'text.secondary'}>
-              {`${career.enteringDt} ~ ${career.quitDt != null ? career.quitDt : '재직중'}`}
+              {`${career.enteringDt} ~ ${career.quitDt != true ? career.quitDt : '재직중'}`}
             </Typography>
           </Stack>
         </Stack>
@@ -32,6 +33,7 @@ const Career = ({ data }) => {
 };
 
 const MajorStack = ({ data }) => {
+  console.log('data', data);
   return (
     <Stack spacing={1}>
       <Stack direction={'row'} alignItems={'center'} spacing={1}>
@@ -41,14 +43,19 @@ const MajorStack = ({ data }) => {
         </Typography>
       </Stack>
       <Stack flexWrap={'wrap'} direction={'row'} useFlexGap spacing={0.5}>
-        {data.map((stack, index) => (
-          <Chip
-            key={`stack_${index}`}
-            label={stack.stNm}
-            size={'small'}
-            color={`${stack.level}`}
-          />
-        ))}
+        {data.length === 0 ?
+          <Typography variant={'sm'} color={'text.secondary'}>
+            등록된 스킬이 없습니다.
+          </Typography>
+        : data.map((stack, index) => (
+            <Chip
+              key={`stack_${index}`}
+              label={stack.stNm}
+              size={'small'}
+              color={stack.level}
+            />
+          ))
+        }
       </Stack>
     </Stack>
   );
@@ -64,9 +71,14 @@ const Intrst = ({ data }) => {
         </Typography>
       </Stack>
       <Stack flexWrap direction={'row'} spacing={0.5}>
-        {data.map((intrst, index) => (
-          <Chip key={`intrst_${index}`} label={intrst} size={'small'} />
-        ))}
+        {data.length === 0 ?
+          <Typography variant={'sm'} color={'text.secondary'}>
+            등록된 스킬이 없습니다.
+          </Typography>
+        : data.map((intrst, index) => (
+            <Chip key={`intrst_${index}`} label={intrst} size={'small'} />
+          ))
+        }
       </Stack>
     </Stack>
   );
@@ -102,38 +114,61 @@ const ProfileDetails = () => {
   const [url, setUrl] = useState([]);
   const [intro, setIntro] = useState([]);
   const [name, setName] = useState([]);
+  const [avatar, setAvatar] = useState(null);
+  const [profileData, setProfileData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await instance.get('member/profile');
         const data = response.data;
-        console.log('data', data);
-        const careersData = data.profile[0].carrer.map((career) => ({
-          careerName: career.CARRER_NM,
+        console.log('datadd', data);
+        // 경력 데이터가 없는 경우
+        if (data.profile.career === null) {
+          data.profile.career = [];
+        }
+        const careersData = data.profile.career.map((career) => ({
+          careerName: career.CAREER_NM,
           enteringDt: career.ENTERING_DT,
-          quitDt: career.QUIT_DT,
+          quitDt: career.QUIT_DT === null ? true : career.QUIT_DT,
         }));
         setCareers(careersData);
-        setName(data.profile[0].USER_NM);
-        setIntro(data.profile[0].PF_INTRO);
+        setName(data.profile.USER_NM);
+        setAvatar(data.profile.USER_IMG);
+        setIntro(data.profile.PF_INTRO);
 
-        const stacksData = data.profile[0].stack.map((stack) => ({
+        if (data.profile.stack === null) {
+          data.profile.stack = [];
+        }
+        const stacksData = data.profile.stack.map((stack) => ({
           stNm: stack.ST_NM,
           level: stack.ST_LEVEL,
         }));
         setStack(stacksData);
 
-        const interestData = data.profile[0].interest.map(
+        if (data.profile.interest === null) {
+          data.profile.interest = [];
+        }
+        const interestData = data.profile.interest.map(
           (interest) => interest.INTEREST_NM,
         );
         setInterest(interestData);
 
-        const urlsData = data.profile[0].url.map((url) => ({
+        if (data.profile.url === null) {
+          data.profile.url = [];
+        }
+        const urlsData = data.profile.url.map((url) => ({
           addr: url.URL_ADDR,
           intro: url.URL_INTRO,
         }));
         setUrl(urlsData);
+        // Update quitDt to true if it is null
+        data.profile.career = data.profile.career.map((career) => ({
+          ...career,
+          QUIT_DT: career.QUIT_DT === null ? true : career.QUIT_DT,
+        }));
+        console.log('인풋값에 넣을거', data);
+        setProfileData(data);
       } catch (error) {
         console.log('error: ', error);
       }
@@ -146,7 +181,11 @@ const ProfileDetails = () => {
     <Stack spacing={3} p={3} bgcolor={'background.default'}>
       <Typography variant={'xl'}>프로필</Typography>
       <Stack alignItems={'center'}>
-        <Avatar alt={'프로필 이미지'} sx={{ width: 100, height: 100 }} />
+        <Avatar
+          alt={'프로필 이미지'}
+          sx={{ width: 100, height: 100 }}
+          src={avatar}
+        />
       </Stack>
       <Stack
         direction={'row'}
@@ -155,7 +194,11 @@ const ProfileDetails = () => {
         spacing={1}
       >
         <Typography variant={'xl'}>{name}</Typography>
-        <IconButton onClick={() => navigate(PATHS.profiles.editProfile)}>
+        <IconButton
+          onClick={() =>
+            navigate(PATHS.profiles.editProfile, { state: { profileData } })
+          }
+        >
           <Icon icon={'akar-icons:edit'} fontSize={24} />
         </IconButton>
       </Stack>

@@ -26,6 +26,12 @@ export const getPortfolioDetail = (pfolSn) => {
   return instance.get(`${URL_GET_PORTFOLIO_DETAIL}/${pfolSn}`);
 };
 
+// 프로필, 포트폴리오 입력
+export const URL_POST_PROFILE = '/member/profile/test';
+export const postProfile = (payload) => {
+  return instance.post(URL_POST_PROFILE, payload);
+};
+
 // 이메일 인증
 export const URL_POST_EMAIL_CERTIFICATION =
   '/member/registration/certification';

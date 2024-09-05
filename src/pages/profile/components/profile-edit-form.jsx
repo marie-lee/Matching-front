@@ -1,16 +1,9 @@
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import {
-  Alert,
-  AlertTitle,
   Autocomplete,
-  Avatar,
   Box,
   Button,
   Chip,
   FormControl,
-  FormControlLabel,
-  Icon,
   IconButton,
   ImageList,
   ImageListItem,
@@ -19,10 +12,8 @@ import {
   OutlinedInput,
   Select,
   Stack,
-  Switch,
   TextField,
   Typography,
-  useTheme,
 } from '@mui/material';
 import 'dayjs/locale/ko';
 import CloseIcon from '@mui/icons-material/Close';
@@ -30,20 +21,15 @@ import AddIcon from '@mui/icons-material/Add'; // Add 아이콘 임포트
 import ImageIcon from '@mui/icons-material/Image';
 import PersonalVideoIcon from '@mui/icons-material/PersonalVideo';
 import React, { useRef, useState } from 'react';
-import {
-  RhfAutocomplete,
-  RhfDatePicker,
-  RhfFormProvider,
-  RhfTextField,
-} from '@/components/hook-form';
-import {
-  Controller,
-  set,
-  useFieldArray,
-  useFormContext,
-} from 'react-hook-form';
-import RhfSwitch from '@/components/hook-form/rhf-switch';
-import { lime } from '@mui/material/colors';
+import { RhfDatePicker, RhfTextField } from '@/components/hook-form';
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
+import { ProfileForm } from './profile-edit-profile-form';
+import { CareerForm } from './profile-edit-career-form';
+import { SkillForm } from './profile-edit-skill-form';
+import { InterestForm } from './profile-edit-interest-form';
+import { LinkForm } from './profile-edit-link-form';
+import { useTheme } from '@emotion/react';
+import PortfolioImageList from './portfolio-edit-image';
 
 const FormGroup = ({ title, children }) => {
   return (
@@ -60,314 +46,6 @@ const FormGroup = ({ title, children }) => {
   );
 };
 
-const ProfileForm = () => {
-  return (
-    <Stack spacing={2}>
-      <Stack alignItems={'center'}>
-        <Avatar alt={'프로필 이미지'} sx={{ width: 100, height: 100 }} />
-      </Stack>
-      <Stack>
-        <RhfTextField
-          name={'NAME'}
-          label={'프로필 이름'}
-          variant={'outlined'}
-          size={'medium'}
-        />
-      </Stack>
-      <Stack>
-        <RhfTextField
-          name={'INTRO'}
-          label={'한 줄 소개'}
-          variant={'outlined'}
-          helperText={'나를 표현할 수 있는 한 줄 소개를 적어주세요'}
-          size={'medium'}
-        />
-      </Stack>
-    </Stack>
-  );
-};
-
-const CareerForm = ({ profileEditForm }) => {
-  const theme = useTheme();
-  // 프로필 커리어
-  const careerFieldArray = useFieldArray({
-    control: profileEditForm.control,
-    name: 'CAREER',
-  });
-
-  const handleAppendCareer = () => {
-    careerFieldArray.append({
-      careerName: '',
-      enteringDt: null,
-      quitDt: null,
-      IS_EMPLOYED: true,
-    });
-  };
-
-  const profileAddFormValues = profileEditForm.watch();
-
-  return (
-    <Stack spacing={2}>
-      {careerFieldArray.fields.map((entry, index) => (
-        <Stack
-          key={entry.id}
-          direction={'row'}
-          spacing={1}
-          alignItems={'center'}
-        >
-          <Box sx={{ flexGrow: 1 }}>
-            <RhfTextField
-              name={`CAREER[${index}].careerName`}
-              label={'회사명'}
-              variant={'outlined'}
-              size={'medium'}
-            />
-          </Box>
-          <Box>
-            <RhfDatePicker
-              name={`CAREER[${index}].enteringDt`}
-              label={'시작일'}
-              views={['year', 'month']}
-              size={'medium'}
-              format={'YYYY-MM'}
-            />
-          </Box>
-          {/* 재직 중인 경우에만 종료일을 보여줌 */}
-          {profileAddFormValues['CAREER'][index].IS_EMPLOYED === true ?
-            <Box>
-              <RhfSwitch
-                name={`CAREER[${index}].IS_EMPLOYED`}
-                label={'재직 중'}
-              />
-            </Box>
-          : <Box>
-              <RhfDatePicker
-                name={`CAREER[${index}].quitDt`}
-                label={'종료일'}
-                views={['year', 'month']}
-                size={'medium'}
-                format={'YYYY-MM'}
-              />
-            </Box>
-          }
-          <IconButton onClick={() => careerFieldArray.remove(index)}>
-            <CloseIcon />
-          </IconButton>
-        </Stack>
-      ))}
-      <Button
-        color="primary"
-        variant="outlined"
-        startIcon={<AddIcon sx={{ color: theme.palette.text.primary }} />}
-        onClick={handleAppendCareer}
-      >
-        추가하기
-      </Button>
-    </Stack>
-  );
-};
-
-const SkillForm = ({ profileEditForm }) => {
-  const [stackName, setStackName] = useState('');
-  const [level, setLevel] = useState('');
-  // 프로필 스택
-  const stackFieldArray = useFieldArray({
-    control: profileEditForm.control,
-    name: 'STACK',
-  });
-
-  const handleAppendStack = () => {
-    if (stackName && level) {
-      stackFieldArray.append({
-        stNm: stackName,
-        level: level,
-      });
-      // 스택 추가 후 상태 초기화
-      setStackName('');
-      setLevel('');
-    }
-  };
-
-  const profileAddFormValues = profileEditForm.watch();
-
-  return (
-    <Stack spacing={2}>
-      <Stack direction={'row'} spacing={1} alignItems={'center'}>
-        <Autocomplete
-          disablePortal
-          id="combo-box-demo"
-          sx={{ flexGrow: 1 }}
-          options={['js', 'node.js']}
-          renderInput={(params) => <TextField {...params} label="기술스택" />}
-          fullWidth
-          onInputChange={(event, newValue) => {
-            setStackName(newValue);
-          }}
-        />
-        <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">난이도</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={level}
-            onChange={(event) => setLevel(event.target.value)}
-          >
-            <MenuItem value={'primary'}>상</MenuItem>
-            <MenuItem value={'secondary'}>중</MenuItem>
-            <MenuItem value={'secondary'}>하</MenuItem>
-          </Select>
-        </FormControl>
-        <IconButton onClick={handleAppendStack}>
-          <AddIcon />
-        </IconButton>
-      </Stack>
-      <Stack spacing={2} p={3} bgcolor={'background.neutral'}>
-        <Typography variant="lg" fontWeight={'fontWeightBold'}>
-          현재 선택한 스킬과 난이도
-        </Typography>
-        <Typography>난이도는 상, 중, 하에 따라 색상으로 나뉘어져요</Typography>
-        <Stack flexWrap={'wrap'} direction={'row'} useFlexGap spacing={0.5}>
-          {profileAddFormValues.STACK.map(
-            (stack, index) =>
-              stack.stNm &&
-              stack.level && (
-                <Chip
-                  key={`stack_${index}`}
-                  label={stack.stNm}
-                  size={'small'}
-                  color={`${stack.level}`}
-                  onDelete={() => stackFieldArray.remove(index)}
-                />
-              ),
-          )}
-        </Stack>
-        <Stack
-          flexWrap={'wrap'}
-          direction={'row'}
-          useFlexGap
-          spacing={0.5}
-        ></Stack>
-      </Stack>
-    </Stack>
-  );
-};
-
-const InterestForm = ({ profileEditForm }) => {
-  const [interest, setInterest] = useState('');
-
-  // 프로필 관심사
-  const interestFieldArray = useFieldArray({
-    control: profileEditForm.control,
-    name: 'INTEREST',
-  });
-
-  const handleAppendInterest = () => {
-    if (interest) {
-      interestFieldArray.append({ interest });
-      setInterest('');
-    }
-  };
-
-  return (
-    <Stack spacing={2}>
-      <Stack direction={'row'} spacing={1} alignItems={'center'}>
-        <TextField
-          id="outlined-helperText"
-          placeholder="관심 있는 스킬, 분야, 프로젝트 주제 등 자유롭게 입력하세요"
-          fullWidth
-          value={interest}
-          onChange={(e) => setInterest(e.target.value)}
-        />
-        <IconButton onClick={handleAppendInterest}>
-          <AddIcon />
-        </IconButton>
-      </Stack>
-      <Stack spacing={2} p={3} bgcolor={'background.neutral'}>
-        <Typography variant="lg" fontWeight={'fontWeightBold'}>
-          현재 관심분야
-        </Typography>
-        <Stack flexWrap={'wrap'} direction={'row'} useFlexGap spacing={0.5}>
-          {interestFieldArray.fields.map((interest, index) => (
-            <Chip
-              key={`stack_${index}`}
-              label={interest.interest}
-              size={'small'}
-              onDelete={() => interestFieldArray.remove(index)}
-            />
-          ))}
-        </Stack>
-      </Stack>
-    </Stack>
-  );
-};
-
-const LinkForm = ({ profileEditForm }) => {
-  const theme = useTheme();
-
-  // 프로필 링크
-  const linkFieldArray = useFieldArray({
-    control: profileEditForm.control,
-    name: 'URL',
-  });
-
-  const handleAppendLink = () => {
-    linkFieldArray.append({
-      addr: '',
-      intro: '',
-    });
-  };
-
-  return (
-    <Stack spacing={2}>
-      <Alert severity="info" variant="standard">
-        <AlertTitle>
-          깃헙, 노션으로 작성한 포트폴리오, 구글 드라이브 파일 등 자신을 보여줄
-          수 있는 링크가 있다면 작성해주세요.
-        </AlertTitle>
-      </Alert>
-      {linkFieldArray.fields.map((link, index) => (
-        <Stack
-          key={link.id}
-          direction={'row'}
-          spacing={1}
-          alignItems={'center'}
-        >
-          <Box>
-            <RhfTextField
-              label={'URL'}
-              name={`URL[${index}].addr`}
-              variant={'outlined'}
-              size={'medium'}
-              fullWidth
-            />
-          </Box>
-          <Box sx={{ flexGrow: 1 }}>
-            <RhfTextField
-              label={'링크 설명'}
-              name={`URL[${index}].intro`}
-              variant={'outlined'}
-              size={'medium'}
-              fullWidth
-            />
-          </Box>
-          <IconButton onClick={() => linkFieldArray.remove(index)}>
-            <CloseIcon />
-          </IconButton>
-        </Stack>
-      ))}
-      <Button
-        color="primary"
-        variant={'outlined'}
-        startIcon={
-          <AddIcon sx={{ color: theme.palette.text.primary }}></AddIcon>
-        }
-        onClick={handleAppendLink}
-      >
-        추가하기
-      </Button>
-    </Stack>
-  );
-};
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -381,122 +59,80 @@ const MenuProps = {
 
 const names = ['백엔드', '프론트엔드', '기획', '디자인'];
 
-function getStyles(name, personName, theme) {
-  return {
-    fontWeight:
-      personName.indexOf(name) === -1 ?
-        theme.typography.fontWeightRegular
-      : theme.typography.fontWeightMedium,
-  };
-}
-const itemData = [
-  {
-    img: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e',
-    title: 'Breakfast',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d',
-    title: 'Burger',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1522770179533-24471fcdba45',
-    title: 'Camera',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c',
-    title: 'Coffee',
-  },
-];
-
-const videoUrl = {
-  url: 'https://assets.codepen.io/6093409/river.mp4',
-};
-
 const PortfolioForm = ({ profileEditForm }) => {
+  console.log('render PortfolioForm');
   const theme = useTheme();
-  const { control } = useFormContext();
+  const { control, setValue } = useFormContext();
   const [stackName, setStackName] = useState('');
-  const imagefileInputRef = useRef(null);
   const videofileInputRef = useRef(null);
+  const [mainImage, setMainImage] = useState(null);
+
+  // 이미지 클릭 이벤트 핸들러
+  const handleImageClick = (image) => {
+    setMainImage(image);
+  };
 
   // 프로필 포트폴리오
   const portfolioFieldArray = useFieldArray({
-    control: profileEditForm.control,
-    name: 'PORTFOLIO',
+    control,
+    name: 'portfolioInfo',
   });
+  // 링크 초기값 설정
+  const initialLinks = portfolioFieldArray.fields.map(
+    (field) => field.url || [],
+  );
+  // 스택 초기값 설정
+  const initialStacks = portfolioFieldArray.fields.map(
+    (field) => field.stack || [],
+  );
+
+  const [links, setLinks] = useState(initialLinks);
+  const [stacks, setStacks] = useState(initialStacks);
 
   const handleAppendPortfolio = () => {
     portfolioFieldArray.append({
-      pfolNm: '',
-      startDt: null,
-      endDt: null,
-      DESCRIPTION: '',
+      PFOL_NM: '',
+      START_DT: '',
+      END_DT: '',
+      INTRO: '',
       ROLE: [],
       CONTRIBUTION: '',
-      TECH_STACK: [],
-      SERVICE_STATUS: '',
-      ACHIEVEMENT: '',
-      URL: [],
-      VIDEO_URL: '',
-      IMAGE_URL: [],
+      MEM_CNT: '',
+      stack: [],
+      SERVICE_STTS: '',
+      RESULT: '',
+      url: [],
+      MEDIA: [],
+      IMG_SUB: [],
+      IMG: [],
     });
+
+    setLinks([...links, []]);
+    setStacks([...stacks, []]);
   };
 
-  const handleAppendStack = () => {
-    if (stackName) {
-      portfolioFieldArray.fields.forEach((entry, index) => {
-        const stack = entry.TECH_STACK;
-        stack.push(stackName);
-      });
-      setStackName('');
-    }
+  const handleAppendStack = (pindex) => {
+    setStacks([...stacks, stacks[pindex].push({ ST_NM: stackName })]);
+    portfolioFieldArray.fields[pindex].stack.push({ ST_NM: stackName });
   };
-  const profileAddFormValues = profileEditForm.watch();
 
   const handleAppendLink = (index) => {
-    portfolioFieldArray.fields[index].URL.push({
-      URL: '',
-      DESCRIPTION: '',
-    });
-    portfolioFieldArray.update(index, {
-      ...portfolioFieldArray.fields[index],
-    });
-  };
-
-  const handleAddImageClick = () => {
-    imagefileInputRef.current.click();
+    setLinks([...links, { URL: '', DESCRIPTION: '' }]);
+    portfolioFieldArray.fields[index].URL.push({ URL: '', DESCRIPTION: '' });
   };
 
   const handleAddVideoClick = () => {
     videofileInputRef.current.click();
   };
 
-  const handleImageFileChange = (index) => (event) => {
-    const currentImageCount =
-      portfolioFieldArray.fields[index].IMAGE_URL.length;
-    if (currentImageCount >= 4) {
-      alert('이미지는 최대 4개까지 업로드 가능합니다.');
-      return;
-    }
-    const file = event.target.files[0];
-    const imageUrl = URL.createObjectURL(file);
-    portfolioFieldArray.fields[index].IMAGE_URL.push({
-      URL: imageUrl,
-      NAME: file.name,
-    });
-    portfolioFieldArray.update(index, {
-      ...portfolioFieldArray.fields[index],
-    });
-  };
-
   const handleRemoveImage = (portfolioIndex, imageIndex) => {
-    console.log(portfolioIndex, imageIndex);
     const updatedImages = portfolioFieldArray.fields[
       portfolioIndex
-    ].IMAGE_URL.filter((_, idx) => idx !== imageIndex);
+    ].IMG_SUB.filter((_, idx) => idx !== imageIndex);
+    profileEditForm.setValue('portfolioImages', updatedImages);
     portfolioFieldArray.update(portfolioIndex, {
       ...portfolioFieldArray.fields[portfolioIndex],
-      IMAGE_URL: updatedImages,
+      IMG_SUB: updatedImages,
     });
   };
 
@@ -517,6 +153,18 @@ const PortfolioForm = ({ profileEditForm }) => {
       },
     });
   };
+
+  const handleRemovePortfolio = (index) => {
+    portfolioFieldArray.remove(index);
+  };
+
+  const handleDeleteStack = (portfolioIndex, stackIndex) => {
+    const updatedStacks = stacks.filter((_, idx) => idx !== stackIndex);
+    setValue(`portfolioInfo[${portfolioIndex}].stack`, updatedStacks);
+    setStacks(updatedStacks);
+  };
+
+  console.log('portfolioFieldArray', portfolioFieldArray.fields);
 
   return (
     <Stack spacing={2}>
@@ -541,19 +189,19 @@ const PortfolioForm = ({ profileEditForm }) => {
             <Typography variant="lg" fontWeight={'fontWeightMedium'}>
               프로젝트{index + 1}
             </Typography>
-            <IconButton>
+            <IconButton onClick={() => handleRemovePortfolio(index)}>
               <CloseIcon />
             </IconButton>
           </Box>
           <RhfTextField
             label={'프로젝트명'}
-            name={`PORTFOLIO[${index}].pfolNm`}
+            name={`portfolioInfo[${index}].PFOL_NM`}
             variant={'outlined'}
             size={'medium'}
           />
           <Stack direction={'row'} spacing={1} alignItems={'center'}>
             <RhfDatePicker
-              name={`PORTFOLIO[${index}].startDt`}
+              name={`portfolioInfo[${index}].START_DT`}
               label={'시작일'}
               views={['year', 'month']}
               size={'medium'}
@@ -561,7 +209,7 @@ const PortfolioForm = ({ profileEditForm }) => {
               sx={{ flexGrow: 1 }}
             />
             <RhfDatePicker
-              name={`PORTFOLIO[${index}].endDt`}
+              name={`portfolioInfo[${index}].END_DT`}
               label={'종료일'}
               views={['year', 'month']}
               size={'medium'}
@@ -570,7 +218,7 @@ const PortfolioForm = ({ profileEditForm }) => {
             />
           </Stack>
           <RhfTextField
-            name={`PORTFOLIO[${index}].DESCRIPTION`}
+            name={`portfolioInfo[${index}].INTRO`}
             label={'프로젝트 설명'}
             size={'medium'}
             variant={'outlined'}
@@ -579,7 +227,7 @@ const PortfolioForm = ({ profileEditForm }) => {
           />
           <Stack direction={'row'} spacing={1}>
             <RhfTextField
-              name={`PORTFOLIO[${index}].CONTRIBUTION`}
+              name={`portfolioInfo[${index}].MEM_CNT`}
               label={'참여인원'}
               size={'medium'}
               variant={'outlined'}
@@ -587,36 +235,48 @@ const PortfolioForm = ({ profileEditForm }) => {
             <FormControl fullWidth>
               <InputLabel>역할</InputLabel>
               <Controller
-                name={`PORTFOLIO[${index}].ROLE`}
+                name={`portfolioInfo[${index}].role`}
                 control={control}
                 render={({ field: { onChange, value } }) => (
                   <Select
                     multiple
                     variant="outlined"
-                    value={value}
-                    onChange={onChange}
+                    value={
+                      Array.isArray(value) ?
+                        value.map((item) => item.ROLE_NM)
+                      : []
+                    }
+                    onChange={(event) => {
+                      const selectedValues = event.target.value;
+                      const selectedObjects = selectedValues.map((name) => {
+                        const role = names.find(
+                          (role) => role.ROLE_NM === name,
+                        );
+                        return role ? role : { ROLE_NM: name };
+                      });
+                      onChange(selectedObjects);
+                    }}
                     input={
                       <OutlinedInput id="select-multiple-chip" label="chip" />
                     }
                     renderValue={(selected) => (
                       <Box sx={{ display: 'flex', gap: 0.5 }}>
-                        {selected.map((value) => (
-                          <Chip
-                            key={value}
-                            label={value}
-                            sx={{ p: `0 !important` }}
-                          />
-                        ))}
+                        {Array.isArray(selected) &&
+                          selected.map((item, idx) => (
+                            <Chip
+                              key={`${item.ROLE_SN}-${idx}`} // 고유한 key 생성
+                              label={
+                                typeof item === 'string' ? item : item.ROLE_NM
+                              }
+                              sx={{ p: `0 !important` }}
+                            />
+                          ))}
                       </Box>
                     )}
                     MenuProps={MenuProps}
                   >
                     {names.map((name) => (
-                      <MenuItem
-                        key={name}
-                        value={name}
-                        style={getStyles(name, value, theme)}
-                      >
+                      <MenuItem key={name} value={name}>
                         {name}
                       </MenuItem>
                     ))}
@@ -625,7 +285,7 @@ const PortfolioForm = ({ profileEditForm }) => {
               ></Controller>
             </FormControl>
             <RhfTextField
-              name={`PORTFOLIO[${index}].CONTRIBUTION`}
+              name={`portfolioInfo[${index}].CONTRIBUTION`}
               label={'기여도(%)'}
               size={'medium'}
               variant={'outlined'}
@@ -635,8 +295,7 @@ const PortfolioForm = ({ profileEditForm }) => {
             <Autocomplete
               disablePortal
               id="combo-box-demo"
-              options={['js', 'node.js']}
-              value={stackName}
+              options={['JS', 'Node.js']}
               sx={{ flexGrow: 1 }}
               renderInput={(params) => (
                 <TextField {...params} label="기술스택" />
@@ -645,8 +304,9 @@ const PortfolioForm = ({ profileEditForm }) => {
               onInputChange={(event, newValue) => {
                 setStackName(newValue);
               }}
+              isOptionEqualToValue={(option, value) => option === value}
             />
-            <IconButton onClick={handleAppendStack}>
+            <IconButton onClick={() => handleAppendStack(index)}>
               <AddIcon />
             </IconButton>
           </Stack>
@@ -655,21 +315,19 @@ const PortfolioForm = ({ profileEditForm }) => {
               현재 선택한 스택
             </Typography>
             <Stack flexWrap={'wrap'} direction={'row'} useFlexGap spacing={0.5}>
-              {portfolioFieldArray.fields[index].TECH_STACK.map(
-                (stack, index) => {
-                  if (stack.length === 0) {
-                    return null;
-                  }
-                  return (
-                    <Chip
-                      key={`stack_${index}`}
-                      label={stack}
-                      size={'small'}
-                      onDelete={() => {}}
-                    />
-                  );
-                },
-              )}
+              {stacks[index].map((stack, sindex) => {
+                if (stack.length === 0) {
+                  return null;
+                }
+                return (
+                  <Chip
+                    key={`stack_${sindex}`}
+                    label={stack.ST_NM}
+                    size={'small'}
+                    onDelete={() => handleDeleteStack(index, sindex)}
+                  />
+                );
+              })}
             </Stack>
           </Stack>
           <Box
@@ -681,27 +339,27 @@ const PortfolioForm = ({ profileEditForm }) => {
             }}
           >
             <Stack spacing={1}>
-              {portfolioFieldArray.fields[index].URL.map((link, index) => (
+              {links[index].map((link, linkindex) => (
                 <Stack
-                  key={`link_${index}`}
+                  key={`link_${linkindex}`}
                   direction={'row'}
                   spacing={1}
                   alignItems={'center'}
                 >
                   <Box>
-                    <TextField
-                      key={`link_${index}`}
-                      id="outlined-helperText"
-                      label="URL"
-                      fullWidth
+                    <RhfTextField
+                      name={`portfolioInfo[${index}].url[${linkindex}].URL`}
+                      label={'URL'}
+                      size={'medium'}
+                      variant={'outlined'}
                     />
                   </Box>
                   <Box sx={{ flexGrow: 1 }}>
-                    <TextField
-                      key={`link_${index}`}
-                      id="outlined-helperText"
-                      label="링크 설명"
-                      fullWidth
+                    <RhfTextField
+                      name={`portfolioInfo[${index}].url[${linkindex}].URL_INTRO`}
+                      label={'URL'}
+                      size={'medium'}
+                      variant={'outlined'}
                     />
                   </Box>
                   <Box>
@@ -727,84 +385,40 @@ const PortfolioForm = ({ profileEditForm }) => {
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">서비스 상태</InputLabel>
             <Controller
-              name={`PORTFOLIO[${index}].SERVICE_STATUS`}
+              name={`portfolioInfo[${index}].SERVICE_STTS`}
               control={control}
-              render={({ field: { onChange, value } }) => (
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={value}
-                  onChange={onChange}
-                >
-                  <MenuItem value={'배포 중'}>배포 중</MenuItem>
-                  <MenuItem value={'중단'}>중단</MenuItem>
-                  <MenuItem value={'완료'}>완료</MenuItem>
-                </Select>
-              )}
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={value}
+                      onChange={onChange}
+                      label="서비스 상태"
+                    >
+                      <MenuItem value={'ACTIVE'}>배포 중</MenuItem>
+                      <MenuItem value={'STOP'}>중단</MenuItem>
+                      <MenuItem value={'COMPLETE'}>완료</MenuItem>
+                    </Select>
+                  </>
+                );
+              }}
             ></Controller>
           </FormControl>
           <RhfTextField
             label={'성과'}
-            name={`PORTFOLIO[${index}].ACHIEVEMENT`}
+            name={`portfolioInfo[${index}].RESULT`}
             variant={'outlined'}
             size={'medium'}
             fullWidth
           />
-          <Button
-            color="primary"
-            variant={'outlined'}
-            onClick={handleAddImageClick}
-          >
-            <ImageIcon sx={{ mr: 1 }}></ImageIcon>
-            이미지 추가 ({portfolioFieldArray.fields[index].IMAGE_URL.length}/4)
-          </Button>
-          <input
-            key={`image_${index}`}
-            type="file"
-            accept="image/*"
-            hidden
-            ref={imagefileInputRef}
-            onChange={handleImageFileChange(index)}
-          />
-          <ImageList
-            sx={{ width: '100%', height: 'auto' }}
-            cols={4}
-            rowHeight={'auto'}
-          >
-            {portfolioFieldArray.fields[index].IMAGE_URL.map(
-              (item, imageIndex) => (
-                <ImageListItem key={item.URL}>
-                  <img src={item.URL} alt={item.NAME} loading="lazy" />
-                  <IconButton
-                    sx={{
-                      position: 'absolute',
-                      top: 0,
-                      right: 0,
-                      color: 'white',
-                    }}
-                    onClick={() => handleRemoveImage(index, imageIndex)}
-                  >
-                    <CloseIcon sx={{ stroke: '#111111', strokeWidth: 1 }} />
-                  </IconButton>
-                  {index === 0 && (
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                        color: 'white',
-                        padding: '2px 8px',
-                        fontSize: '0.875rem',
-                      }}
-                    >
-                      대표 이미지
-                    </Box>
-                  )}
-                </ImageListItem>
-              ),
-            )}
-          </ImageList>
+          <PortfolioImageList
+            profileEditForm={profileEditForm}
+            portfolioFieldArray={portfolioFieldArray}
+            index={index}
+            handleRemoveImage={handleRemoveImage}
+          ></PortfolioImageList>
           <input
             key={`video_${index}`}
             type="file"
@@ -846,30 +460,35 @@ const PortfolioForm = ({ profileEditForm }) => {
   );
 };
 
+const MemoizedProfileForm = React.memo(ProfileForm);
+const MemoizedCareerForm = React.memo(CareerForm);
+const MemoizedSkillForm = React.memo(SkillForm);
+const MemoizedInterestForm = React.memo(InterestForm);
+const MemoizedLinkForm = React.memo(LinkForm);
+const MemoizedPortfolioForm = React.memo(PortfolioForm);
+
 const ProfileEditForm = ({ profileEditForm }) => {
   return (
-    <RhfFormProvider form={profileEditForm}>
-      <Stack spacing={4}>
-        <FormGroup title={'프로필'}>
-          <ProfileForm />
-        </FormGroup>
-        <FormGroup title={'경력'}>
-          <CareerForm profileEditForm={profileEditForm} />
-        </FormGroup>
-        <FormGroup title={'주요 스킬'}>
-          <SkillForm profileEditForm={profileEditForm} />
-        </FormGroup>
-        <FormGroup title={'관심분야'}>
-          <InterestForm profileEditForm={profileEditForm} />
-        </FormGroup>
-        <FormGroup title={'링크'}>
-          <LinkForm profileEditForm={profileEditForm} />
-        </FormGroup>
-        <FormGroup title={'포트폴리오'}>
-          <PortfolioForm profileEditForm={profileEditForm} />
-        </FormGroup>
-      </Stack>
-    </RhfFormProvider>
+    <Stack spacing={4}>
+      <FormGroup title={'프로필'}>
+        <MemoizedProfileForm profileEditForm={profileEditForm} />
+      </FormGroup>
+      <FormGroup title={'경력'}>
+        <MemoizedCareerForm />
+      </FormGroup>
+      <FormGroup title={'주요 스킬'}>
+        <MemoizedSkillForm />
+      </FormGroup>
+      <FormGroup title={'관심분야'}>
+        <MemoizedInterestForm />
+      </FormGroup>
+      <FormGroup title={'링크'}>
+        <MemoizedLinkForm />
+      </FormGroup>
+      <FormGroup title={'포트폴리오'}>
+        <MemoizedPortfolioForm profileEditForm={profileEditForm} />
+      </FormGroup>
+    </Stack>
   );
 };
 
