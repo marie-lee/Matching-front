@@ -24,26 +24,17 @@ const PortfolioImageList = ({
   }
 
   // 이미지를 상태로 관리
-  const [pimages, setPimages] = useState(
-    portfolioFieldArray.fields[index].IMG || [],
-  );
+  const [pimages, setPimages] = useState([]);
 
   const handleImageFileChange = (index) => (event) => {
     console.log('handleImageFileChange', index);
-    // 4장 이상 이미지를 업로드 할 수 없음 DEL_YN이 있는 갯수를 세서 해야됨
 
-    if (
-      portfolioFieldArray.fields[index].IMG.filter((img) => !img.DEL_YN)
-        .length >= 4
-    ) {
+    // DEL_YN이 true인 이미지를 제외한 갯수를 확인
+    if (pimages.filter((img) => !img.DEL_YN).length >= 4) {
       alert('이미지는 최대 4개까지 업로드 가능합니다.');
       return;
     }
 
-    // 만약 IMG가 초기에 없다면 빈 배열로 초기화
-    if (!portfolioFieldArray.fields[index].IMG) {
-      portfolioFieldArray.fields[index].IMG = [];
-    }
     const file = event.target.files[0];
 
     const portfolioNewImage = {
@@ -59,22 +50,29 @@ const PortfolioImageList = ({
     };
 
     // 이미지 추가 대표 이미지가 없다면 첫번째 이미지를 대표 이미지로 설정
-    if (pimages.length === 0) {
+    if (portfolioFieldArray.fields[index].IMG === null) {
       console.log('대표 이미지가 없습니다.');
       newImage.MAIN_YN = true;
       portfolioNewImage.MAIN_YN = true;
     }
 
+    // 상태 업데이트
     const updatedImages = [...pimages, newImage];
     setPimages(updatedImages);
-    setValue(`portfolioInfo[${index}].IMG`, [
-      ...portfolioFieldArray.fields[index].IMG,
-      portfolioNewImage,
-    ]);
-    portfolioFieldArray.fields[index].IMG = [
-      ...portfolioFieldArray.fields[index].IMG,
-      portfolioNewImage,
-    ];
+    if (portfolioFieldArray.fields[index].IMG === null) {
+      portfolioFieldArray.fields[index].IMG = [];
+    }
+    portfolioFieldArray.fields[index].IMG.push(portfolioNewImage);
+    console.log(
+      'portfolioFieldArray.fields[index].IMG',
+      portfolioFieldArray.fields[index].IMG,
+    );
+
+    // 이미지 상태 업데이트
+    setValue(
+      `portfolioInfo[${index}].IMG`,
+      portfolioFieldArray.fields[index].IMG,
+    );
   };
 
   const handleAddImageClick = (index) => {
@@ -89,6 +87,7 @@ const PortfolioImageList = ({
 
   // 이미지 클릭 이벤트 핸들러
   const handleImageClick = (image) => {
+    console.log('handleImageClick', image);
     // 클릭한 이미지를 메인 이미지로 설정
     const mainImage = pimages.map((item) => {
       if (item.ID === image.ID) {
@@ -120,14 +119,10 @@ const PortfolioImageList = ({
   };
 
   const handleRemoveImage = (portfolioIndex, imageIndex) => {
+    console.log('handleRemoveImage', portfolioIndex, imageIndex);
     // 이미지 삭제
     const updatedImages = pimages.filter((item, index) => index !== imageIndex);
     setPimages(updatedImages);
-
-    // 만약 삭제한 이미지가 대표 이미지라면 대표 이미지를 첫번째 이미지로 설정
-    if (portfolioFieldArray.fields[portfolioIndex].IMG[imageIndex].MAIN_YN) {
-      portfolioFieldArray.fields[portfolioIndex].IMG[0].MAIN_YN = true;
-    }
 
     // 삭제된 이미지 값에 DEL_YN 추가
     const deletedImage =
@@ -154,15 +149,15 @@ const PortfolioImageList = ({
       updatedPortfolioImages.splice(imageIndex, 1);
     }
 
+    // 만약 삭제한 이미지가 대표 이미지라면 다음 대표 이미지를 설정
+    if (deletedImage.MAIN_YN && updatedPortfolioImages.length > 0) {
+      updatedPortfolioImages[0].MAIN_YN = true;
+    }
+
     // 상태 업데이트
     setValue(`portfolioInfo[${portfolioIndex}].IMG`, updatedPortfolioImages);
     portfolioFieldArray.fields[portfolioIndex].IMG = updatedPortfolioImages;
   };
-
-  console.log(
-    'portfolioFieldArray.fields[index].IMG',
-    portfolioFieldArray.fields[index].IMG,
-  );
 
   return (
     <>
@@ -172,7 +167,11 @@ const PortfolioImageList = ({
         onClick={() => handleAddImageClick(index)}
       >
         <ImageIcon sx={{ mr: 1 }}></ImageIcon>
-        이미지 추가 ({pimages?.length || 0} / 4)
+        이미지 추가 (
+        {portfolioFieldArray.fields[index].IMG ?
+          portfolioFieldArray.fields[index].IMG.length
+        : 0}{' '}
+        / 4)
       </Button>
       <input
         key={`image_${index}`}
@@ -187,15 +186,15 @@ const PortfolioImageList = ({
         cols={4}
         rowHeight={'auto'}
       >
-        {pimages == null ?
+        {portfolioFieldArray.fields[index].IMG === null ?
           <Typography>이미지가 없습니다.</Typography>
         : <>
-            {pimages.map((item, imageIndex) =>
+            {portfolioFieldArray.fields[index].IMG.map((item, imageIndex) =>
               // item.DEL_YN 이 true 이면 삭제된 이미지로 간주
               item.DEL_YN ? null : (
                 <ImageListItem key={`image_${index}_${imageIndex}`}>
                   <img
-                    src={item.URL}
+                    src={item.URL || URL.createObjectURL(item.file)}
                     alt={item.NAME}
                     loading="lazy"
                     style={{
@@ -220,7 +219,7 @@ const PortfolioImageList = ({
                   >
                     <CloseIcon sx={{ stroke: '#111111', strokeWidth: 1 }} />
                   </IconButton>
-                  {item.MAIN_YN == true && (
+                  {item.MAIN_YN && (
                     <Box
                       sx={{
                         position: 'absolute',

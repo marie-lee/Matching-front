@@ -152,19 +152,6 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
           pindexCounters[pindex]++;
         });
       });
-      // payload.portfolios_file.forEach((image) => {
-      //   // pindex에 대한 카운터가 없으면 초기화
-      //   if (!pindexCounters[image.pindex]) {
-      //     pindexCounters[image.pindex] = 0;
-      //   }
-      //   // 현재 pindex의 카운터 값을 사용하여 formData에 추가
-      //   formData.append(
-      //     `portfolios[${image.pindex}][MEDIA][${pindexCounters[image.pindex]}][file]`,
-      //     image.file,
-      //   );
-      //   // pindex의 카운터를 증가
-      //   pindexCounters[image.pindex]++;
-      // });
     }
     formData.append('portfolios', JSON.stringify(payload.portfolios));
 
