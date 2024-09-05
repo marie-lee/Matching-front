@@ -16,7 +16,7 @@ const Group = ({ title, currentCnt, expectCnt }) => {
   const userInfo = [
     {
       part: 'Frontend',
-      names: '김철수, 박영희, 이민수',
+      names: '한혜원, 박영희, 이민수',
     },
     {
       part: 'Backend',
@@ -24,7 +24,7 @@ const Group = ({ title, currentCnt, expectCnt }) => {
     },
     {
       part: 'Design',
-      names: '김철수, 박영희, 이민수',
+      names: '한혜원, 박영희, 이민수',
     },
   ];
   return (

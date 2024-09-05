@@ -8,6 +8,7 @@ export function mergeTableDataByRowSpan(tableData, memberData) {
 
     const primaryGroup = {
       name: firstValue,
+      ticketSn: currentRow[0]?.ticketSn || null,
       child: [],
     };
 
@@ -18,6 +19,7 @@ export function mergeTableDataByRowSpan(tableData, memberData) {
 
       const secondaryGroup = {
         name: secondValue,
+        ticketSn: subRow[1]?.ticketSn || null,
         child: [],
       };
 
@@ -26,7 +28,6 @@ export function mergeTableDataByRowSpan(tableData, memberData) {
         const innerRow = tableData[i + j + k];
         const thirdValue = innerRow[2]?.value || '';
 
-        // worker 이름을 userSn으로 매핑
         const workerName = innerRow[3]?.value || '';
         const workerData = memberData.find(
           (member) => member.userNm === workerName,
@@ -44,6 +45,7 @@ export function mergeTableDataByRowSpan(tableData, memberData) {
 
         const tertiaryGroup = {
           name: thirdValue,
+          ticketSn: innerRow[2]?.ticketSn || null,
           data: {
             worker: workerSn !== null ? workerSn : null,
             startDt: startDt || null,

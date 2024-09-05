@@ -8,12 +8,13 @@ const initialState = {
     endDt: '',
   },
   memberData: [],
+  data: [],
   tableData: createMergedTable(wbsData).map((row) => [
     ...row,
     { value: '', rowSpan: 1 },
     { value: '', rowSpan: 1 },
     { value: '', rowSpan: 1 },
-    { value: '대기', rowSpan: 1 },
+    { value: 'WAIT', rowSpan: 1 },
   ]),
   participants: [],
 };
@@ -40,7 +41,10 @@ const wbsSlice = createSlice({
     setMemberData: (state, action) => {
       state.memberData = action.payload;
     },
-    resetState: (state) => {
+    setData: (state, action) => {
+      state.data = action.payload;
+    },
+    resetState: () => {
       return initialState;
     },
   },
@@ -53,6 +57,7 @@ export const {
   setPjtData,
   setMemberData,
   resetState,
+  setData,
 } = wbsSlice.actions;
 
 export default wbsSlice.reducer;
