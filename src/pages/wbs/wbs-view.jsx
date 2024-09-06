@@ -9,6 +9,7 @@ import { Stack, Container, Box } from '@mui/material';
 //Data Import
 import { selectPjtSn } from '@/store/pjtsn-reducer';
 import { setMemberData } from '@/store/wbsSlice';
+import { issue } from './components/constants';
 //Component Import
 import TopBar from '@/pages/wbs/components/top-bar';
 import WbsFull from '@/pages/wbs/components/wbs-full';
@@ -17,8 +18,12 @@ import { transformWbsDataToTableFormat } from './components/wbs-utils';
 import { mergeTableDataByRowSpan } from '@/pages/wbs/components/merge-table-data';
 
 //Api Import
-import { getWbs } from '@/services/wbs';
-import { postEditWbs, getWbsInfo } from '@/services/wbs';
+import {
+  getWbs,
+  getWbsIssueTracking,
+  postEditWbs,
+  getWbsInfo,
+} from '@/services/wbs';
 
 const WbsView = () => {
   const dispatch = useDispatch();
@@ -38,11 +43,20 @@ const WbsView = () => {
 
   const [reload, setReload] = useState(false);
 
+  const ticketDetails = issue.flatMap((item) =>
+    item.TICKETS.map((ticket) => ({
+      ticketSn: ticket.TICKET_SN,
+      day: ticket.CREATED_DT,
+    })),
+  );
+
   useEffect(() => {
     const fetchWbsData = async () => {
       try {
         const wbsData = await getWbs(pjtSn);
         const ProjectData = await getWbsInfo(pjtSn);
+        const tracking = await getWbsIssueTracking(pjtSn);
+        console.log('tracking', tracking);
         dispatch(setMemberData(ProjectData.data.members));
 
         const transformedData = transformWbsDataToTableFormat(
@@ -81,7 +95,6 @@ const WbsView = () => {
   };
 
   const handleSave = async () => {
-    console.log('aa');
     setSave((prev) => !prev);
     setEditable((prev) => !prev);
 
@@ -140,7 +153,7 @@ const WbsView = () => {
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              flex: tracking ? 10 : 6,
+              flex: tracking ? 6 : 4,
             }}
           >
             <WbsFull
@@ -163,6 +176,7 @@ const WbsView = () => {
                 tableData={localTableData}
                 projectStartDate={ProjectStartDate}
                 projectEndDate={ProjectEndDate}
+                ticketDetails={ticketDetails}
               />
             </Box>
           )}

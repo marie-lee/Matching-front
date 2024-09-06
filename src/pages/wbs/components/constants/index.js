@@ -456,3 +456,51 @@ export const wbsData = [
     ],
   },
 ];
+
+export const issue = [
+  {
+    PARENT_TICKET_SN: 4,
+    ISSUE_SN: 2,
+    ISSUE_CREATED_DT: '2024-08-01T12:06:54.000Z',
+    TICKETS: [
+      {
+        TICKET_SN: 1345,
+        CREATED_DT: '2024-09-05T12:06:54.000Z',
+      },
+      {
+        TICKET_SN: 1346,
+        CREATED_DT: '2024-09-10T12:06:54.000Z',
+      },
+    ],
+  },
+  {
+    PARENT_TICKET_SN: 10,
+    ISSUE_SN: 9,
+    ISSUE_CREATED_DT: '2024-08-01T12:06:54.000Z',
+    TICKETS: [
+      {
+        TICKET_SN: 1351,
+        CREATED_DT: '2024-09-20T12:06:54.000Z',
+      },
+      {
+        TICKET_SN: 1363,
+        CREATED_DT: '2024-09-09T12:06:54.000Z',
+      },
+    ],
+  },
+  {
+    PARENT_TICKET_SN: 299,
+    ISSUE_SN: 34,
+    ISSUE_CREATED_DT: '2024-08-01T12:06:54.000Z',
+    TICKETS: [
+      {
+        TICKET_SN: 1368,
+        CREATED_DT: '2024-09-12T12:06:54.000Z',
+      },
+      {
+        TICKET_SN: 1367,
+        CREATED_DT: '2024-09-15T12:06:54.000Z',
+      },
+    ],
+  },
+];

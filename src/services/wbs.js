@@ -36,6 +36,17 @@ export const getWbsIssue = (pjtSn, issueSn) => {
   return instance.get(`${URL_GET_WBS_ISSUE}/${pjtSn}/${issueSn}`);
 };
 
+export const URL_GET_WBS_Tracking = '/project/wbs/tracking';
+export const getWbsIssueTracking = (pjtSn) => {
+  return instance.get(`${URL_GET_WBS_Tracking}/${pjtSn}`);
+};
+
+// WBS 이슈 등록 시, 업무 선택을 위한 전체 업무 목록 조회
+export const URL_GET_WBS_ALL_TASK_LIST = '/project/wbs/create/issue';
+export const getWbsAllTaskList = (pjtSn) => {
+  return instance.get(`${URL_GET_WBS_ALL_TASK_LIST}/${pjtSn}`);
+};
+
 // ----------------------------------------------------------------------
 // POST
 // ----------------------------------------------------------------------

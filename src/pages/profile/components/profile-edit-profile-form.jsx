@@ -30,7 +30,7 @@ export const ProfileForm = ({ profileEditForm }) => {
 
   // 처음 렌더링 시 프로필 이미지가 존재하면 미리보기 이미지로 설정
   useEffect(() => {
-    if (profileEditForm.getValues('profile').USER_IMG) {
+    if (profileEditForm.getValues('profile')?.USER_IMG) {
       setAvatar(profileEditForm.getValues('profile').USER_IMG);
     }
   }, []);

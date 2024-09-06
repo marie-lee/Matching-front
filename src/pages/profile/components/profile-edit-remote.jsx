@@ -176,8 +176,8 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
     try {
       const res = await postProfile(formData);
       if (res?.status === 200) {
-        setPreviewOpen(false);
-        navigate(-1);
+        // setPreviewOpen(false);
+        // navigate(-1);
       }
     } catch (error) {
       console.log('error', error);
