@@ -200,7 +200,7 @@ const IssueDetail = ({
                 <Typography textAlign={'right'}>No</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <Typography></Typography>
+                <Typography>{data?.issueNum}</Typography>
               </Grid>
 
               <Grid item xs={12} sm={3}>

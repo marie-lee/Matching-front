@@ -133,7 +133,7 @@ const TaskDetail = ({
                 <Typography textAlign={'right'}>No</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <Typography>{data?.ticketNum}</Typography>
+                <Typography>{data?.taskNum}</Typography>
               </Grid>
 
               <Grid item xs={12} sm={3}>
