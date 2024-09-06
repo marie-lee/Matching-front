@@ -106,7 +106,7 @@ const Url = ({ data }) => {
   );
 };
 
-const ProfileDetails = () => {
+const ProfileDetails = ({ profileData, setProfileData }) => {
   const navigate = useNavigate();
   const [careers, setCareers] = useState([]);
   const [stack, setStack] = useState([]);
@@ -115,7 +115,6 @@ const ProfileDetails = () => {
   const [intro, setIntro] = useState([]);
   const [name, setName] = useState([]);
   const [avatar, setAvatar] = useState(null);
-  const [profileData, setProfileData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
