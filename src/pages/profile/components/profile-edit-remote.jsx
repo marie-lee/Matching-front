@@ -102,16 +102,20 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
               return {};
             }
           }),
+          VIDEO: portfolio.VIDEO,
         }
       ),
     );
-
     return {
       profile: profile,
       portfolios,
       portfolios_images: payload.portfolioInfo.map((portfolio) => {
         return portfolio.IMG;
       }),
+      PORTFOLIO_VIDEO:
+        payload.portfolioVideoFile ?
+          payload.portfolioVideoFile.map((video) => video)
+        : [],
       USER_IMG: payload.USER_IMG,
     };
   };
@@ -130,10 +134,8 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
     const pindexCounters = {};
     // 포트폴리오 이미지가 존재하면 추가
     if (payload.portfolios_images) {
-      console.log('payload.portfolios_images', payload.portfolios_images);
       payload.portfolios_images.forEach((images, pindex) => {
         images.forEach((image) => {
-          console.log('이미지', image);
           // pindex에 대한 카운터가 없으면 초기화
           if (!pindexCounters[pindex]) {
             pindexCounters[pindex] = 0;
@@ -155,12 +157,21 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
     }
     formData.append('portfolios', JSON.stringify(payload.portfolios));
 
+    // 비디오 업로드가 존재하면 추가
+    if (payload.PORTFOLIO_VIDEO) {
+      payload.PORTFOLIO_VIDEO.forEach((video) => {
+        console.log('video', video);
+        if (video === undefined) {
+          return;
+        }
+        formData.append(`portfolios[${video.pindex}][VIDEO][file]`, video.file);
+      });
+    }
+
     // 폼 데이터에 들어가는 값 확인 보기 편하게 가공
     for (var pair of formData.entries()) {
       console.log(pair[0] + ', ' + pair[1]);
     }
-    // 포트폴리오 안에 MEDIA 값만 콘솔로그에 출력
-    console.log('payload.portfolios', payload?.portfolios[0]?.MEDIA);
 
     try {
       const res = await postProfile(formData);

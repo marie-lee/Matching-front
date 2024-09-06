@@ -18,8 +18,6 @@ import {
 import 'dayjs/locale/ko';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add'; // Add 아이콘 임포트
-import ImageIcon from '@mui/icons-material/Image';
-import PersonalVideoIcon from '@mui/icons-material/PersonalVideo';
 import React, { useRef, useState } from 'react';
 import { RhfDatePicker, RhfTextField } from '@/components/hook-form';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
@@ -30,6 +28,7 @@ import { InterestForm } from './profile-edit-interest-form';
 import { LinkForm } from './profile-edit-link-form';
 import { useTheme } from '@emotion/react';
 import PortfolioImageList from './portfolio-edit-image';
+import PortfolioVideo from './portfolio-edit-video';
 
 const FormGroup = ({ title, children }) => {
   return (
@@ -64,7 +63,6 @@ const PortfolioForm = ({ profileEditForm }) => {
   const theme = useTheme();
   const { control, setValue } = useFormContext();
   const [stackName, setStackName] = useState('');
-  const videofileInputRef = useRef(null);
   const [mainImage, setMainImage] = useState(null);
 
   // 이미지 클릭 이벤트 핸들러
@@ -105,6 +103,7 @@ const PortfolioForm = ({ profileEditForm }) => {
       MEDIA: [],
       IMG_SUB: [],
       IMG: [],
+      VIDEO: '',
     });
 
     setLinks([...links, []]);
@@ -121,10 +120,6 @@ const PortfolioForm = ({ profileEditForm }) => {
     portfolioFieldArray.fields[index].URL.push({ URL: '', DESCRIPTION: '' });
   };
 
-  const handleAddVideoClick = () => {
-    videofileInputRef.current.click();
-  };
-
   const handleRemoveImage = (portfolioIndex, imageIndex) => {
     const updatedImages = portfolioFieldArray.fields[
       portfolioIndex
@@ -133,24 +128,6 @@ const PortfolioForm = ({ profileEditForm }) => {
     portfolioFieldArray.update(portfolioIndex, {
       ...portfolioFieldArray.fields[portfolioIndex],
       IMG_SUB: updatedImages,
-    });
-  };
-
-  const handleVideoFileChange = (index) => (event) => {
-    const currentVideoCount =
-      portfolioFieldArray.fields[index].VIDEO_URL.length;
-    if (currentVideoCount >= 1) {
-      alert('비디오는 최대 1개까지 업로드 가능합니다.');
-      return;
-    }
-    const file = event.target.files[0];
-    const videoUrl = URL.createObjectURL(file);
-    portfolioFieldArray.update(index, {
-      ...portfolioFieldArray.fields[index],
-      VIDEO_URL: {
-        URL: videoUrl,
-        NAME: file.name,
-      },
     });
   };
 
@@ -163,8 +140,6 @@ const PortfolioForm = ({ profileEditForm }) => {
     setValue(`portfolioInfo[${portfolioIndex}].stack`, updatedStacks);
     setStacks(updatedStacks);
   };
-
-  console.log('portfolioFieldArray', portfolioFieldArray.fields);
 
   return (
     <Stack spacing={2}>
@@ -419,33 +394,11 @@ const PortfolioForm = ({ profileEditForm }) => {
             index={index}
             handleRemoveImage={handleRemoveImage}
           ></PortfolioImageList>
-          <input
-            key={`video_${index}`}
-            type="file"
-            ref={videofileInputRef}
-            onChange={handleVideoFileChange(index)}
-            style={{ display: 'none' }} // 파일 입력 요소 숨기기
-            accept="video/*" // 오직 비디오 파일만 허용
-          />
-          <Button
-            color="primary"
-            variant={'outlined'}
-            onClick={handleAddVideoClick}
-          >
-            <PersonalVideoIcon sx={{ mr: 1 }}></PersonalVideoIcon>
-            동영상 추가 ({portfolioFieldArray.fields[index].VIDEO_URL ? 1 : 0}
-            /1)
-          </Button>
-          {/* 비디오 URL이 있을 때만 비디오 컴포넌트 표시 */}
-          {portfolioFieldArray.fields[index].VIDEO_URL && (
-            <Box mt={2}>
-              <video
-                src={portfolioFieldArray.fields[index].VIDEO_URL.URL}
-                controls
-                width="100%"
-              ></video>
-            </Box>
-          )}
+          <PortfolioVideo
+            index={index}
+            portfolioFieldArray={portfolioFieldArray}
+            profileEditForm={profileEditForm}
+          ></PortfolioVideo>
         </Stack>
       ))}
       <Button
