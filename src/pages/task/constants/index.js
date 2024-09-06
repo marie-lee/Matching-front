@@ -28,7 +28,22 @@ export const taskEditFormDefaultValues = {
   status: '',
 };
 
-// 업무 이슈 추가
+// 이슈 추가
+export const issueAddFormDefaultValues = {
+  ticketSn: '',
+  ISSUE_NM: '',
+  PRIORITY: '',
+  MENTIONS: [],
+  CONTENT: '',
+};
+
+export const issueAddFormSchema = yup.object().shape({
+  ticketSn: yup.string().required('Task를 선택해주세요'),
+  ISSUE_NM: yup.string().required('Title을 입력해주세요'),
+  CONTENT: yup.string().required('Contents를 입력해주세요'),
+});
+
+// 업무 상세 > 이슈 추가
 export const taskIssueAddFormDefaultValues = {
   ISSUE_NM: '',
   PRIORITY: '',
@@ -40,14 +55,6 @@ export const taskIssueAddFormSchema = yup.object().shape({
   ISSUE_NM: yup.string().required('Title을 입력해주세요'),
   CONTENT: yup.string().required('Contents를 입력해주세요'),
 });
-
-export const issueAddFormDefaultValues = {
-  task: '',
-  title: '',
-  priority: '',
-  mention: [],
-  contents: '',
-};
 
 export const issueEditFormDefaultValues = {
   MENTIONS: [],
