@@ -43,13 +43,15 @@ const WbsView = () => {
 
   const [reload, setReload] = useState(false);
 
+  const foldResult = renderTable(localTableData);
+
   const ticketDetails = issue.flatMap((item) =>
     item.TICKETS.map((ticket) => ({
       ticketSn: ticket.TICKET_SN,
       day: ticket.CREATED_DT,
     })),
   );
-
+  console.log('ticketDetails', ticketDetails);
   useEffect(() => {
     const fetchWbsData = async () => {
       try {
@@ -93,6 +95,27 @@ const WbsView = () => {
       });
     }
   };
+
+  function renderTable(data) {
+    const foldInfo = data.map((row, rowIndex) => {
+      const foldFirstColumn =
+        row[0] !== null &&
+        rowIndex < data.length - 1 &&
+        data[rowIndex + 1][0] === null;
+
+      const foldSecondColumn =
+        row[1] !== null &&
+        rowIndex < data.length - 1 &&
+        data[rowIndex + 1][1] === null;
+
+      return {
+        foldFirstColumn,
+        foldSecondColumn,
+      };
+    });
+
+    return foldInfo;
+  }
 
   const handleSave = async () => {
     setSave((prev) => !prev);
@@ -161,6 +184,7 @@ const WbsView = () => {
               handleCellChange={handleCellChange}
               members={memberNames}
               editable={editable}
+              foldResult={foldResult}
             />
           </Box>
           {tracking && (
