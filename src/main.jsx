@@ -13,6 +13,7 @@ import { persistor, store } from '@/store';
 import ThemeProvider from '@/theme';
 
 import { AxiosInterceptor } from '@/services/components';
+import ToastProvider from '@/contexts/toast-provider';
 
 // ----------------------------------------------------------------------
 
@@ -22,8 +23,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <BrowserRouter>
         <Suspense>
           <ThemeProvider>
-            <AxiosInterceptor />
-            <App />
+            <ToastProvider>
+              <AxiosInterceptor />
+              <App />
+            </ToastProvider>
           </ThemeProvider>
         </Suspense>
       </BrowserRouter>
