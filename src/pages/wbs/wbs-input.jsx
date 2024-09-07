@@ -16,7 +16,7 @@ import { selectPjtSn } from '@/store/pjtsn-reducer';
 import StepperComponent from '@/pages/wbs/components/stepper-component';
 import { mergeTableDataByRowSpan } from '@/pages/wbs/components/merge-table-data';
 import WbsFull from '@/pages/wbs/components/wbs-full';
-import GanttFull from '@/pages/wbs/components/gantt-full';
+import GanttInputFull from '@/pages/wbs/components/gant-input-full';
 
 //Api Import
 import { postWbs } from '@/services/wbs';
@@ -133,7 +133,7 @@ const WbsInput = () => {
                     flex: 3,
                   }}
                 >
-                  <GanttFull
+                  <GanttInputFull
                     tableData={localTableData}
                     projectStartDate={ProjectStartDate}
                     projectEndDate={ProjectEndDate}

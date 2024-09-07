@@ -51,7 +51,7 @@ const WbsView = () => {
       day: ticket.CREATED_DT,
     })),
   );
-  console.log('ticketDetails', ticketDetails);
+
   useEffect(() => {
     const fetchWbsData = async () => {
       try {
