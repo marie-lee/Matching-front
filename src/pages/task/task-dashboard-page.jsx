@@ -12,11 +12,12 @@ import {
   IssueDetail,
 } from '@/pages/task/components';
 import { getWbsDashboard, getWbsTaskAdditionalInfo } from '@/services/wbs';
+import { useSelector } from 'react-redux';
 
 // ----------------------------------------------------------------------
 
 const TaskDashboardPage = () => {
-  const { state } = useLocation();
+  const pjtSn = useSelector((state) => state.pjtSn.pjtSn);
 
   const [isFetching, setIsFetching] = useState(false);
   const [data, setData] = useState({ today: [], task: [], issue: [] });
@@ -26,7 +27,7 @@ const TaskDashboardPage = () => {
     memberList: [],
   });
 
-  const [selectedPjtSn, setSelectedPjtSn] = useState(state?.pjtSn || '');
+  const [selectedPjtSn, setSelectedPjtSn] = useState(pjtSn || '');
   const [selectedTaskSn, setSelectedTaskSn] = useState();
   const [selectedIssueSn, setSelectedIssueSn] = useState();
 
@@ -66,7 +67,6 @@ const TaskDashboardPage = () => {
       });
     } catch (error) {
       console.log(error);
-      // error.data.message = error.message;
     }
   };
 
