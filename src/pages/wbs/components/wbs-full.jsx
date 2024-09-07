@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 // React Import
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useState, useEffect } from 'react';
 
 // MUI Import
 import {
@@ -15,6 +16,7 @@ import {
   MenuItem,
   FormControl,
   Box,
+  IconButton,
 } from '@mui/material';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -108,8 +110,39 @@ const Cell = memo(
     handleCellChange,
     members,
     editable,
-    foldResult,
+    row,
+    cost,
+    setCost,
   }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    const toggleExpand = () => {
+      setIsExpanded((prev) => !prev);
+
+      // console.log('row', row);
+      // console.log('cell.rowSpan', cell.rowSpan);
+      // console.log('cellIndex', cellIndex);
+      // console.log('cell', cell.ticketSn);
+      // console.log('rowIndex', rowIndex);
+      // console.log('cost', cost[0]);
+
+      const targetArrayIndex = cost[0].findIndex(
+        (innerRow) => innerRow[cellIndex]?.ticketSn === cell.ticketSn,
+      );
+
+      if (targetArrayIndex !== -1) {
+        const rowSpan = cell.rowSpan || 1;
+
+        const updatedCost = [...cost[0]];
+
+        updatedCost.splice(targetArrayIndex, rowSpan);
+
+        cost[0] = updatedCost;
+
+        handleCellChange(rowIndex, cellIndex, cell.value, cost[0]);
+      }
+    };
+
     const handleChange = useCallback(
       (e) => handleCellChange(rowIndex, cellIndex, e.target.value),
       [rowIndex, cellIndex, handleCellChange],
@@ -121,9 +154,6 @@ const Cell = memo(
     };
 
     if (cellIndex === 0 || cellIndex === 1) {
-      const shouldShowExpandMoreIcon =
-        (cellIndex === 0 && foldResult[rowIndex]?.foldFirstColumn) ||
-        (cellIndex === 1 && foldResult[rowIndex]?.foldSecondColumn);
       // text
       return (
         <TableCell
@@ -135,13 +165,18 @@ const Cell = memo(
             {/* TextField */}
             {renderTextField(cell.value, (e) =>
               !editable ?
-                handleCellChange(rowIndex, cellIndex, e.target.value)
+                handleCellChange(rowIndex, cellIndex, e.target.value, cost[0])
               : null,
             )}
 
-            {shouldShowExpandMoreIcon && (
-              <ExpandMoreIcon sx={{ marginLeft: '4px' }} />
-            )}
+            <IconButton
+              sx={{ padding: 0, minWidth: 'auto' }}
+              onClick={toggleExpand}
+            >
+              {isExpanded ?
+                <ExpandLessIcon sx={{ marginLeft: '4px' }} />
+              : <ExpandMoreIcon sx={{ marginLeft: '4px' }} />}
+            </IconButton>
           </Box>
         </TableCell>
       );
@@ -213,77 +248,77 @@ const Cell = memo(
     prevProps.editable === nextProps.editable,
 );
 
-const WbsFull = memo(
-  ({ tableData, handleCellChange, members, editable, foldResult }) => {
-    return (
-      <TableContainer
-        component={Paper}
-        sx={{ width: '100%', overflowX: 'hidden', borderRadius: '0', mb: 5 }}
-        elevation={0}
-      >
-        <Table>
-          <colgroup>
-            <col style={{ width: '10%' }} />
-            <col style={{ width: '20%' }} />
-            <col style={{ width: '30%' }} />
-            <col style={{ width: '10%' }} />
-            <col style={{ width: '10%' }} />
-            <col style={{ width: '10%' }} />
-            <col style={{ width: '10%' }} />
-          </colgroup>
-          <TableHead>
-            <TableRow>
-              {[
-                'Part',
-                'Division',
-                'Work',
-                'Engineer',
-                'Start-Date',
-                'Due-Date',
-                'Status',
-              ].map((header) => (
-                <TableCell
-                  key={header}
-                  sx={{
-                    ...cellStyle,
-                    textAlign: 'center',
-                    fontSize: '14px',
-                    fontWeight: 'fontWeightSemiBold',
-                    height: '60px',
-                  }}
-                >
-                  {header}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody sx={{ height: '100vh' }}>
-            {tableData.map((row, rowIndex) => {
-              return (
-                <TableRow key={rowIndex}>
-                  {row.map(
-                    (cell, cellIndex) =>
-                      cell && (
-                        <Cell
-                          key={cellIndex}
-                          cell={cell}
-                          rowIndex={rowIndex}
-                          cellIndex={cellIndex}
-                          handleCellChange={handleCellChange}
-                          members={members}
-                          editable={editable}
-                          foldResult={foldResult}
-                        />
-                      ),
-                  )}
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    );
-  },
-);
+const WbsFull = memo(({ tableData, handleCellChange, members, editable }) => {
+  return (
+    <TableContainer
+      component={Paper}
+      sx={{ width: '100%', overflowX: 'hidden', borderRadius: '0', mb: 5 }}
+      elevation={0}
+    >
+      <Table>
+        <colgroup>
+          <col style={{ width: '10%' }} />
+          <col style={{ width: '20%' }} />
+          <col style={{ width: '30%' }} />
+          <col style={{ width: '10%' }} />
+          <col style={{ width: '10%' }} />
+          <col style={{ width: '10%' }} />
+          <col style={{ width: '10%' }} />
+        </colgroup>
+        <TableHead>
+          <TableRow>
+            {[
+              'Part',
+              'Division',
+              'Work',
+              'Engineer',
+              'Start-Date',
+              'Due-Date',
+              'Status',
+            ].map((header) => (
+              <TableCell
+                key={header}
+                sx={{
+                  ...cellStyle,
+                  textAlign: 'center',
+                  fontSize: '14px',
+                  fontWeight: 'fontWeightSemiBold',
+                  height: '60px',
+                }}
+              >
+                {header}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody sx={{ height: '100vh' }}>
+          {tableData.map((row, rowIndex) => {
+            const cost = useState(tableData);
+            return (
+              <TableRow key={rowIndex}>
+                {row.map(
+                  (cell, cellIndex) =>
+                    cell && (
+                      <Cell
+                        key={cellIndex}
+                        cellIndex={cellIndex}
+                        cell={cell}
+                        rowIndex={rowIndex}
+                        handleCellChange={handleCellChange}
+                        members={members}
+                        editable={editable}
+                        row={row}
+                        cost={cost}
+                      />
+                    ),
+                )}
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+});
 
 export default WbsFull;

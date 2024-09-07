@@ -58,7 +58,7 @@ const WbsView = () => {
         const wbsData = await getWbs(pjtSn);
         const ProjectData = await getWbsInfo(pjtSn);
         const tracking = await getWbsIssueTracking(pjtSn);
-        console.log('tracking', tracking);
+
         dispatch(setMemberData(ProjectData.data.members));
 
         const transformedData = transformWbsDataToTableFormat(
@@ -83,13 +83,13 @@ const WbsView = () => {
     else {
       setLocalTableData((prevData) => {
         const updatedTable = [...prevData];
+
         updatedTable[rowIndex] = [...updatedTable[rowIndex]];
 
         updatedTable[rowIndex][cellIndex] = {
           ...updatedTable[rowIndex][cellIndex],
           value: newValue,
         };
-        console.log('asd');
 
         return updatedTable;
       });
