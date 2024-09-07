@@ -12,7 +12,7 @@ const initialState = {
   msg: '',
   anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
   slideTransition: 'left',
-  autoHideDuration: 1800,
+  autoHideDuration: 2000,
   actionButtonText: '닫기',
   onAction: undefined,
   title: '',

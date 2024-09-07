@@ -9,8 +9,8 @@ import recommend from '@/routes/recommend';
 import match from '@/routes/match';
 import Home from '@/pages/home';
 import wbs from '@/routes/wbs';
-import task from '@/routes/task.jsx';
-import review from '@/routes/review.jsx';
+import task from '@/routes/task';
+import review from '@/routes/review';
 
 import NotFoundPage from '@/pages/error/404';
 import GuestLayout from '@/layouts/guest/guest-layout';
@@ -21,12 +21,9 @@ import MainLayout from '@/layouts/main/main-layout';
 const GuestPage = lazy(() => import('@/pages/guest/guest-page'));
 
 // ----------------------------------------------------------------------
-
 const Router = () => {
   const { isSignIn } = useSelector(
-    ({ auth }) => ({
-      isSignIn: auth.isSignIn,
-    }),
+    ({ auth }) => ({ isSignIn: auth.isSignIn }),
     shallowEqual,
   );
 
@@ -41,34 +38,37 @@ const Router = () => {
     ],
   };
 
-  // ----------------------------------------------------------------------
-
-  return useRoutes([
-    // 메인
+  const privateRoutes = [
     main,
-
-    // 인증
     auth,
-    // 프로필&포트폴리오
+
     profiles,
-    // 프로젝트
     project,
-    // 추천
     recommend,
-    // 매칭
     match,
-    // wbs
     wbs,
-    // 업무/이슈
     task,
-    // 상호평가
     review,
 
     {
       path: '*',
       element: <NotFoundPage />,
     },
-  ]);
+  ];
+
+  const publicRoutes = [
+    main,
+    auth,
+    {
+      path: '*',
+      element: <NotFoundPage />,
+    },
+  ];
+
+  const routes = isSignIn ? privateRoutes : publicRoutes;
+  // const routes = privateRoutes;
+
+  return useRoutes(routes);
 };
 
 export default Router;
