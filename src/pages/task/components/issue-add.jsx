@@ -94,10 +94,10 @@ const IssueAdd = ({ selectedPjtSn, optionData, fetchDashboard }) => {
   };
 
   useEffect(() => {
-    if (selectedPjtSn) {
+    if (open) {
       fetchAllTaskList();
     }
-  }, [selectedPjtSn]);
+  }, [open]);
 
   // ----------------------------------------------------------------------
 
