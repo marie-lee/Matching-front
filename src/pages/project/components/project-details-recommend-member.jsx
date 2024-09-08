@@ -75,6 +75,7 @@ const ProjectDetailsRecommendMember = ({ setSelectedMember }) => {
       const recommendList = await getRecommend(pjtSn);
       setRecommendList(recommendList.data);
       console.log('recommendList', recommendList);
+      setSelectedMember(recommendList.data[0]);
     } catch (error) {
       console.error(error);
     }
