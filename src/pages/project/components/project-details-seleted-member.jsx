@@ -119,10 +119,10 @@ const ProjectDetailsSelectedMember = ({ member, handleClickReq }) => {
         container
         bgcolor={'background.default'}
       >
-        <Grid item container xs={12} md={'auto'}>
+        <Grid item container xs={12} md={'auto'} alignContent={'center'}>
           <Avatar alt={'프로필 이미지'} sx={{ width: 130, height: 130 }} />
         </Grid>
-        <Grid item container xs pl={2}>
+        <Grid item container xs md={true} pl={2}>
           {/* 이름 및 요청 버튼 */}
           <Grid
             item
@@ -140,20 +140,28 @@ const ProjectDetailsSelectedMember = ({ member, handleClickReq }) => {
               {member.profile.introduction}
             </Typography>
             <Grid item container spacing={0.5} alignItems={'center'} mt={2}>
-              <Grid item xs={12} sm={2}>
+              <Grid item xs={12} sm={2} md={2}>
                 <Typography fontWeight={'fontWeightMedium'}>링크</Typography>
               </Grid>
-              <Grid item xs={12} md={10}>
-                <Typography size={'sm'} color={'text.secondary'}>
+              <Grid item xs={12} sm={10} md={10}>
+                <Typography
+                  size={'sm'}
+                  color={'text.secondary'}
+                  style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}
+                >
                   {member.profile.url}
                 </Typography>
               </Grid>
-              <Grid item xs={12} sm={2}>
+              <Grid item xs={12} sm={2} md={2}>
                 {/* 이메일없어서 링크로 일단 대체*/}
                 <Typography fontWeight={'fontWeightMedium'}>이메일</Typography>
               </Grid>
-              <Grid item xs={12} md={10}>
-                <Typography size={'sm'} color={'text.secondary'}>
+              <Grid item xs={12} sm={10} md={10}>
+                <Typography
+                  size={'sm'}
+                  color={'text.secondary'}
+                  style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}
+                >
                   {member.profile.url}
                 </Typography>
               </Grid>
