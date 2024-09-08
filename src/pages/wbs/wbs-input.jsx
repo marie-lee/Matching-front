@@ -1,24 +1,14 @@
-/* eslint-disable no-unused-vars */
-//React Import
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-
-//Mui Import
 import { Button, Stack, Container, Grid, Box } from '@mui/material';
-
-//Data Import
 import { setTableData } from '@/store/wbsSlice';
 import { PATHS } from '@/routes/paths';
 import { selectPjtSn } from '@/store/pjtsn-reducer';
-
-//Components Import
 import StepperComponent from '@/pages/wbs/components/stepper-component';
 import { mergeTableDataByRowSpan } from '@/pages/wbs/components/merge-table-data';
 import WbsFull from '@/pages/wbs/components/wbs-full';
 import GanttFull from '@/pages/wbs/components/gantt-full';
-
-//Api Import
 import { postWbs } from '@/services/wbs';
 
 const WbsInput = () => {
@@ -43,31 +33,31 @@ const WbsInput = () => {
     }
   }, [tableData]);
 
-  const handleCellChange = (rowIndex, cellIndex, newValue) => {
-    setLocalTableData((prevData) => {
-      // 기존 데이터를 복사합니다.
-      const updatedTable = [...prevData];
-  
-      // rowIndex가 유효한지, 해당하는 값이 배열인지 확인합니다.
-      if (!Array.isArray(updatedTable[rowIndex])) {
-        // 배열이 아니라면 빈 배열로 초기화합니다.
-        updatedTable[rowIndex] = [];
-      }
-  
-      // 해당 행을 복사합니다.
-      updatedTable[rowIndex] = [...updatedTable[rowIndex]];
-  
-      // 셀을 업데이트합니다.
-      updatedTable[rowIndex][cellIndex] = {
-        ...updatedTable[rowIndex][cellIndex],
-        value: newValue,
-      };
-  
-      // 업데이트된 테이블 데이터를 반환합니다.
-      return updatedTable;
-    });
+  const addRow = (rowIndex, cellIndex) => {
+    const updatedTable = [...localTableData.map(row => [...row])];
+
+    let partRowSpan = updatedTable[rowIndex][0]?.rowSpan || 1;
+    let divisionRowSpan = updatedTable[rowIndex][1]?.rowSpan || 1;
+
+    const newRow = Array(updatedTable[0].length).fill({ value: '', rowSpan: 1 });
+
+    // Part, Division의 rowSpan 업데이트
+    updatedTable[rowIndex][0].rowSpan = partRowSpan + 1;
+    updatedTable[rowIndex][1].rowSpan = divisionRowSpan + 1;
+
+    const insertPosition = rowIndex + divisionRowSpan;
+    
+    // 새 행 추가 후 Part와 Division이 병합된 경우 null 처리
+    updatedTable.splice(insertPosition, 0, newRow);
+    updatedTable[insertPosition][0] = null;
+    updatedTable[insertPosition][1] = null;
+
+    setLocalTableData(updatedTable);  
   };
-  
+
+  const handleCellChange = (updatedTable) => {
+    setLocalTableData(updatedTable);
+  };
 
   const handleSave = () => {
     dispatch(setTableData(localTableData));
@@ -91,34 +81,23 @@ const WbsInput = () => {
 
     console.log('Final Data:', JSON.stringify(finalData, null, 2));
     try {
-      const postCreateWbs = await postWbs(pjtSn, finalData);
+      await postWbs(pjtSn, finalData);
       navigate(PATHS.task.root);
     } catch (error) {
       console.error('Error posting WBS Data:', error);
     }
   };
+
   return (
     <>
       <Container maxWidth="lg" sx={{ p: 3 }}>
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="start"
-        >
+        <Stack direction="row" justifyContent="space-between" alignItems="start">
           <StepperComponent activeStep={2} />
           <Stack direction="row" spacing={1}>
-            <Button
-              color="greyButton"
-              sx={{ width: '100px' }}
-              onClick={handleBack}
-            >
+            <Button color="greyButton" sx={{ width: '100px' }} onClick={handleBack}>
               BACK
             </Button>
-            <Button
-              color="basicButton"
-              sx={{ width: '100px' }}
-              onClick={handleNext}
-            >
+            <Button color="basicButton" sx={{ width: '100px' }} onClick={handleNext}>
               SAVE
             </Button>
           </Stack>
@@ -134,27 +113,19 @@ const WbsInput = () => {
                   <WbsFull
                     tableData={localTableData}
                     handleCellChange={handleCellChange}
+                    addRow={addRow}  // WbsFull로 addRow 함수 전달
                     members={memberNames}
                     editable={false}
                   />
                 </Box>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    overflowX: 'auto',
-                    flex: 3,
-                  }}
-                >
+                <Box sx={{ display: 'flex', flexDirection: 'column', overflowX: 'auto', flex: 3 }}>
                   <GanttFull
                     tableData={localTableData}
                     projectStartDate={ProjectStartDate}
                     projectEndDate={ProjectEndDate}
                   />
-                  ;
                 </Box>
               </Box>
-              ;
             </Box>
           </Grid>
         </Grid>

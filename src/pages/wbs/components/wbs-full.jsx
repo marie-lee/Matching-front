@@ -19,14 +19,20 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import AddIcon from '@mui/icons-material/Add';
 
-const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
+const WbsFull = ({
+  tableData,
+  handleCellChange,
+  addRow,
+  members,
+  editable,
+}) => {
   const [expandedRows, setExpandedRows] = useState(new Set());
   const [colSpanInfo, setColSpanInfo] = useState({});
-  const [rowSpanInfo, setRowSpanInfo] = useState({}); 
+  const [rowSpanInfo, setRowSpanInfo] = useState({});
   const [hoveredRow, setHoveredRow] = useState(null);
   const [hoveredCellIndex, setHoveredCellIndex] = useState(null);
 
-  const renderAddButton = (rowIndex, cellIndex) => {
+  const renderAddButton = (rowIndex, cellIndex, rowSpan) => {
     if (hoveredRow === rowIndex && hoveredCellIndex === cellIndex) {
       return (
         <IconButton
@@ -38,7 +44,7 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
             transform: 'translateY(-50%)',
             backgroundColor: 'white',
           }}
-          onClick={() => addRow(rowIndex, cellIndex)}
+          onClick={() => addRow(rowIndex, cellIndex, rowSpan)} // 부모 컴포넌트의 addRow 호출
         >
           <AddIcon fontSize="small" />
         </IconButton>
@@ -47,80 +53,80 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
     return null;
   };
 
-  const addRow = (rowIndex, cellIndex) => {
-    const updatedTable = [...tableData];
-    const newRow = Array(tableData[0].length).fill({ value: '', rowSpan: 1 });
-    updatedTable.splice(rowIndex + 1, 0, newRow);
-
-    handleCellChange(updatedTable);
-  };
-
   const toggleRowExpand = (rowIndex, cellIndex, rowSpan, partRowSpan) => {
     setExpandedRows((prevExpandedRows) => {
       const newExpandedRows = new Set(prevExpandedRows);
       const newColSpanInfo = { ...colSpanInfo }; // 현재 colSpan 상태 복사
       const newRowSpanInfo = { ...rowSpanInfo }; // 현재 rowSpan 상태 복사
-  
+
       if (newExpandedRows.has(rowIndex)) {
         // 이미 확장된 상태에서 클릭하면 접음
         newExpandedRows.delete(rowIndex);
-  
+
         for (let i = rowIndex + 1; i < rowIndex + rowSpan; i++) {
           newExpandedRows.delete(i);
         }
-  
-        if (cellIndex === 1) { // Division 열을 클릭할 때만 동작
+
+        if (cellIndex === 1) {
+          // Division 열을 클릭할 때만 동작
           delete newColSpanInfo[rowIndex]; // colSpan 정보 삭제
-  
+
           // 현재 rowSpan 값을 rowSpanInfo에 저장
           newRowSpanInfo[rowIndex] = {
             division: tableData[rowIndex]?.[cellIndex]?.rowSpan,
-            part: partRowSpan,  // Part의 rowSpan도 저장
-            data: JSON.parse(JSON.stringify(tableData.slice(rowIndex + 1, rowIndex + rowSpan))) // 현재 데이터를 깊은 복사로 저장
+            part: partRowSpan, // Part의 rowSpan도 저장
+            data: JSON.parse(
+              JSON.stringify(tableData.slice(rowIndex + 1, rowIndex + rowSpan)),
+            ), // 현재 데이터를 깊은 복사로 저장
           };
-  
+
           if (tableData[rowIndex] && tableData[rowIndex][cellIndex]) {
             tableData[rowIndex][cellIndex].rowSpan = 1; // Division의 rowSpan을 1로 설정
           }
           if (tableData[rowIndex] && tableData[rowIndex][0]) {
-            tableData[rowIndex][0].rowSpan = 1;  // Part의 rowSpan을 1로 설정
+            tableData[rowIndex][0].rowSpan = 1; // Part의 rowSpan을 1로 설정
           }
         }
       } else {
         // 접힌 상태에서 클릭하면 펼침
         newExpandedRows.add(rowIndex);
-  
-        if (cellIndex === 1) { // Division 열을 클릭할 때만 동작
+
+        if (cellIndex === 1) {
+          // Division 열을 클릭할 때만 동작
           newColSpanInfo[rowIndex] = 1; // colSpan을 원래대로 설정
-  
+
           const savedRowSpan = newRowSpanInfo[rowIndex]?.division || rowSpan;
-  
+
           for (let i = rowIndex + 1; i < rowIndex + savedRowSpan; i++) {
             newExpandedRows.add(i);
           }
-  
+
           if (tableData[rowIndex] && tableData[rowIndex][cellIndex]) {
             tableData[rowIndex][cellIndex].rowSpan = savedRowSpan;
           }
           if (tableData[rowIndex] && tableData[rowIndex][0]) {
-            tableData[rowIndex][0].rowSpan = newRowSpanInfo[rowIndex]?.part || partRowSpan;
+            tableData[rowIndex][0].rowSpan =
+              newRowSpanInfo[rowIndex]?.part || partRowSpan;
           }
-  
+
           // 이전에 저장한 데이터를 완벽하게 다시 띄움
           if (newRowSpanInfo[rowIndex]?.data) {
-            tableData.splice(rowIndex + 1, savedRowSpan - 1, ...newRowSpanInfo[rowIndex].data);
+            tableData.splice(
+              rowIndex + 1,
+              savedRowSpan - 1,
+              ...newRowSpanInfo[rowIndex].data,
+            );
           }
-  
+
           delete newRowSpanInfo[rowIndex]; // 복원 후 rowSpanInfo에서 제거
         }
       }
-  
+
       setColSpanInfo(newColSpanInfo); // 상태 업데이트
       setRowSpanInfo(newRowSpanInfo); // 상태 업데이트
       return newExpandedRows;
     });
   };
-  
 
   const cellStyle = {
     border: '1px solid #000',
@@ -219,9 +225,9 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
         position: 'relative',
       };
 
-      const colSpan = colSpanInfo[rowIndex] && cellIndex === 1 ? colSpanInfo[rowIndex] : 1; 
+      const colSpan =
+        colSpanInfo[rowIndex] && cellIndex === 1 ? colSpanInfo[rowIndex] : 1;
 
-      
       let partRowSpan = 1;
       for (let i = rowIndex; i >= 0; i--) {
         if (tableData[i][0] && tableData[i][0].rowSpan) {
@@ -234,27 +240,34 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
         return (
           <TableCell
             key={cellIndex}
-            rowSpan={rowSpanInfo[rowIndex]?.[cellIndex === 1 ? 'division' : 'part'] || cell.rowSpan}
-            colSpan={colSpan}  
+            rowSpan={
+              rowSpanInfo[rowIndex]?.[cellIndex === 1 ? 'division' : 'part'] ||
+              cell.rowSpan
+            }
+            colSpan={colSpan}
             sx={cellStyleWithEditable}
             onMouseEnter={() => {
-              setHoveredRow(rowIndex); 
-              setHoveredCellIndex(cellIndex); 
+              setHoveredRow(rowIndex);
+              setHoveredCellIndex(cellIndex);
             }}
             onMouseLeave={() => {
-              setHoveredRow(null); 
-              setHoveredCellIndex(null); 
+              setHoveredRow(null);
+              setHoveredCellIndex(null);
             }}
           >
             <IconButton
-              onClick={() => toggleRowExpand(rowIndex, cellIndex, cell.rowSpan, partRowSpan)}
+              onClick={() =>
+                toggleRowExpand(rowIndex, cellIndex, cell.rowSpan, partRowSpan)
+              }
               size="small"
               sx={{ padding: '0' }}
             >
-              {expandedRows.has(rowIndex) ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              {expandedRows.has(rowIndex) ?
+                <ExpandLessIcon />
+              : <ExpandMoreIcon />}
             </IconButton>
             {cell.value}
-            {renderAddButton(rowIndex, cellIndex)} 
+            {renderAddButton(rowIndex, cellIndex, cell.rowSpan)}
           </TableCell>
         );
       }
