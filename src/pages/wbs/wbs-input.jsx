@@ -45,16 +45,29 @@ const WbsInput = () => {
 
   const handleCellChange = (rowIndex, cellIndex, newValue) => {
     setLocalTableData((prevData) => {
+      // 기존 데이터를 복사합니다.
       const updatedTable = [...prevData];
+  
+      // rowIndex가 유효한지, 해당하는 값이 배열인지 확인합니다.
+      if (!Array.isArray(updatedTable[rowIndex])) {
+        // 배열이 아니라면 빈 배열로 초기화합니다.
+        updatedTable[rowIndex] = [];
+      }
+  
+      // 해당 행을 복사합니다.
       updatedTable[rowIndex] = [...updatedTable[rowIndex]];
+  
+      // 셀을 업데이트합니다.
       updatedTable[rowIndex][cellIndex] = {
         ...updatedTable[rowIndex][cellIndex],
         value: newValue,
       };
-
+  
+      // 업데이트된 테이블 데이터를 반환합니다.
       return updatedTable;
     });
   };
+  
 
   const handleSave = () => {
     dispatch(setTableData(localTableData));

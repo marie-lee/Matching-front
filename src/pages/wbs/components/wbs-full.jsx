@@ -17,11 +17,43 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import AddIcon from '@mui/icons-material/Add';
 
 const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
   const [expandedRows, setExpandedRows] = useState(new Set());
   const [colSpanInfo, setColSpanInfo] = useState({});
-  const [rowSpanInfo, setRowSpanInfo] = useState({}); // 모든 rowSpan 정보를 저장
+  const [rowSpanInfo, setRowSpanInfo] = useState({}); 
+  const [hoveredRow, setHoveredRow] = useState(null);
+  const [hoveredCellIndex, setHoveredCellIndex] = useState(null);
+
+  const renderAddButton = (rowIndex, cellIndex) => {
+    if (hoveredRow === rowIndex && hoveredCellIndex === cellIndex) {
+      return (
+        <IconButton
+          size="small"
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            right: '-16px',
+            transform: 'translateY(-50%)',
+            backgroundColor: 'white',
+          }}
+          onClick={() => addRow(rowIndex, cellIndex)}
+        >
+          <AddIcon fontSize="small" />
+        </IconButton>
+      );
+    }
+    return null;
+  };
+
+  const addRow = (rowIndex, cellIndex) => {
+    const updatedTable = [...tableData];
+    const newRow = Array(tableData[0].length).fill({ value: '', rowSpan: 1 });
+    updatedTable.splice(rowIndex + 1, 0, newRow);
+
+    handleCellChange(updatedTable);
+  };
 
   const toggleRowExpand = (rowIndex, cellIndex, rowSpan, partRowSpan) => {
     setExpandedRows((prevExpandedRows) => {
@@ -184,11 +216,12 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
       const cellStyleWithEditable = {
         ...cellStyle,
         pointerEvents: editable ? 'none' : 'auto',
+        position: 'relative',
       };
 
-      const colSpan = colSpanInfo[rowIndex] && cellIndex === 1 ? colSpanInfo[rowIndex] : 1; // colSpan이 있으면 적용
+      const colSpan = colSpanInfo[rowIndex] && cellIndex === 1 ? colSpanInfo[rowIndex] : 1; 
 
-      // Find the Part rowSpan for this Division row
+      
       let partRowSpan = 1;
       for (let i = rowIndex; i >= 0; i--) {
         if (tableData[i][0] && tableData[i][0].rowSpan) {
@@ -198,13 +231,20 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
       }
 
       if (cellIndex === 0 || cellIndex === 1) {
-        // Part 및 Division 열에 버튼 추가
         return (
           <TableCell
             key={cellIndex}
             rowSpan={rowSpanInfo[rowIndex]?.[cellIndex === 1 ? 'division' : 'part'] || cell.rowSpan}
-            colSpan={colSpan}  // colSpan 속성 추가
+            colSpan={colSpan}  
             sx={cellStyleWithEditable}
+            onMouseEnter={() => {
+              setHoveredRow(rowIndex); 
+              setHoveredCellIndex(cellIndex); 
+            }}
+            onMouseLeave={() => {
+              setHoveredRow(null); 
+              setHoveredCellIndex(null); 
+            }}
           >
             <IconButton
               onClick={() => toggleRowExpand(rowIndex, cellIndex, cell.rowSpan, partRowSpan)}
@@ -214,12 +254,12 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
               {expandedRows.has(rowIndex) ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </IconButton>
             {cell.value}
+            {renderAddButton(rowIndex, cellIndex)} 
           </TableCell>
         );
       }
 
       if (cellIndex === 4 || cellIndex === 5) {
-        // DatePicker를 사용하는 셀
         return (
           <TableCell
             key={cellIndex}
@@ -234,7 +274,6 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
       }
 
       if (cellIndex === 3) {
-        // SelectField를 사용하는 셀 (Engineer)
         return (
           <TableCell
             key={cellIndex}
@@ -251,7 +290,6 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
       }
 
       if (cellIndex === 6) {
-        // SelectField를 사용하는 셀 (Status)
         return (
           <TableCell
             key={cellIndex}
@@ -267,7 +305,6 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
         );
       }
 
-      // 기본 TextField를 사용하는 셀
       return (
         <TableCell
           key={cellIndex}
