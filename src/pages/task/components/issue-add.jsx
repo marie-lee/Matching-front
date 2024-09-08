@@ -9,26 +9,97 @@ import {
   Typography,
 } from '@mui/material';
 import { Icon } from '@iconify/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { issueAddFormDefaultValues } from '@/pages/task/constants';
+import {
+  issueAddFormDefaultValues,
+  issueAddFormSchema,
+  PRIORITY_LIST,
+} from '@/pages/task/constants';
 import { CustomDialog } from '@/components/custom-dialog';
 import {
   RhfAutocomplete,
+  RhfDropdown,
   RhfFormProvider,
   RhfSelect,
   RhfTextField,
 } from '@/components/hook-form';
 import Required from '@/components/required';
+import { getWbsAllTaskList, postWbsIssue } from '@/services/wbs';
+import { yupResolver } from '@hookform/resolvers/yup';
+import _ from 'lodash';
 
-const IssueAdd = () => {
+// ----------------------------------------------------------------------
+
+const IssueAdd = ({ selectedPjtSn, optionData, fetchDashboard }) => {
   const [open, setOpen] = useState(false);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
 
+  const [taskList, setTaskList] = useState([]);
+
   const issueAddForm = useForm({
     defaultValues: issueAddFormDefaultValues,
+    resolver: yupResolver(issueAddFormSchema),
   });
+
+  const {
+    formState: { dirtyFields },
+  } = issueAddForm;
+
+  // 이슈 등록
+  const fetchAddIssue = async (payload) => {
+    const selectedTaskSn = issueAddForm.watch('ticketSn');
+
+    try {
+      const res = await postWbsIssue(selectedPjtSn, selectedTaskSn, payload);
+      if (res.status === 200) {
+        fetchDashboard();
+        setOpen(false);
+        issueAddForm.reset();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onSubmit = issueAddForm.handleSubmit(async (_payload) => {
+    let payload = _.cloneDeep(_payload);
+
+    let result = _.pickBy(payload, (value, key) => dirtyFields[key]);
+
+    if (result?.MENTIONS?.length > 0) {
+      result['MENTIONS'] = _.map(result['MENTIONS'], 'userSn');
+    }
+
+    delete result['ticketSn'];
+
+    await fetchAddIssue(result);
+  });
+
+  const fetchAllTaskList = async () => {
+    try {
+      const res = await getWbsAllTaskList(selectedPjtSn);
+
+      const newWorkList = res?.data?.workList?.map((item) => {
+        return {
+          text: `${item?.taskNum} / ${item?.title}`,
+          value: item.taskSn,
+        };
+      });
+      setTaskList(newWorkList);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (open) {
+      fetchAllTaskList();
+    }
+  }, [open]);
+
+  // ----------------------------------------------------------------------
 
   return (
     <>
@@ -63,7 +134,7 @@ const IssueAdd = () => {
               <Typography variant={'xl'}>Issue</Typography>
               <Box flexGrow={1} />
               <Stack direction={'row'} spacing={1.5}>
-                <Button>Save</Button>
+                <Button onClick={onSubmit}>Save</Button>
                 <Button
                   variant={'outlined'}
                   onClick={() => setCancelDialogOpen(true)}
@@ -81,7 +152,11 @@ const IssueAdd = () => {
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
-                <RhfSelect name={'workPackage'} options={[]} size={'small'} />
+                <RhfSelect
+                  name={'ticketSn'}
+                  options={taskList}
+                  size={'small'}
+                />
               </Grid>
 
               <Grid item xs={12} sm={3}>
@@ -92,7 +167,7 @@ const IssueAdd = () => {
               </Grid>
               <Grid item xs={12} sm={9}>
                 <RhfTextField
-                  name={'title'}
+                  name={'ISSUE_NM'}
                   variant={'outlined'}
                   size={'small'}
                 />
@@ -101,18 +176,17 @@ const IssueAdd = () => {
               <Grid item xs={12} sm={3}>
                 <Typography textAlign={'right'}>Priority</Typography>
               </Grid>
-              <Grid item xs={12} sm={9}></Grid>
+              <Grid item xs={12} sm={9}>
+                <RhfDropdown name={'PRIORITY'} options={PRIORITY_LIST} />
+              </Grid>
 
               <Grid item xs={12} sm={3}>
                 <Typography textAlign={'right'}>Mention</Typography>
               </Grid>
               <Grid item xs={12} sm={9}>
                 <RhfAutocomplete
-                  name={'mention'}
-                  options={[
-                    { name: '이영현', position: 'back' },
-                    { name: '이세진', position: 'front' },
-                  ]}
+                  name={'MENTIONS'}
+                  options={optionData?.memberList}
                   multiple
                   size={'small'}
                   renderTags={(value, getTagProps) =>
@@ -123,8 +197,8 @@ const IssueAdd = () => {
                           {...tagProps}
                           key={key}
                           size={'small'}
-                          avatar={<Avatar alt={`${option.name} 프로필`} />}
-                          label={`${option.name} / ${option.position}`}
+                          avatar={<Avatar alt={`${option.userNm} 프로필`} />}
+                          label={`${option.userNm}${option.part === null ? '' : ` / ${option.part}`}`}
                         />
                       );
                     })
@@ -135,9 +209,9 @@ const IssueAdd = () => {
                       <Box key={key} component={'li'} {...optionProps}>
                         <Chip
                           size={'small'}
-                          label={`${option.name} / ${option.position}`}
+                          label={`${option.userNm}${option.part === null ? '' : ` / ${option.part}`}`}
                           avatar={
-                            <Avatar alt={`${option.name} 프로필 이미지`} />
+                            <Avatar alt={`${option.userNm} 프로필 이미지`} />
                           }
                         />
                       </Box>
@@ -154,7 +228,7 @@ const IssueAdd = () => {
               </Grid>
               <Grid item xs={12} sm={9}>
                 <RhfTextField
-                  name={'contents'}
+                  name={'CONTENT'}
                   variant={'outlined'}
                   size={'small'}
                   multiline

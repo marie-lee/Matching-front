@@ -1,18 +1,10 @@
-/* eslint-disable no-unused-vars */
-//React Import
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-
-//Mui Import
 import { Button, Stack, Container, Grid, Box } from '@mui/material';
-
-//Data Import
 import { setTableData } from '@/store/wbsSlice';
 import { PATHS } from '@/routes/paths';
 import { selectPjtSn } from '@/store/pjtsn-reducer';
-
-//Components Import
 import StepperComponent from '@/pages/wbs/components/stepper-component';
 import { mergeTableDataByRowSpan } from '@/pages/wbs/components/merge-table-data';
 import WbsFull from '@/pages/wbs/components/wbs-full';
@@ -43,17 +35,33 @@ const WbsInput = () => {
     }
   }, [tableData]);
 
-  const handleCellChange = (rowIndex, cellIndex, newValue) => {
-    setLocalTableData((prevData) => {
-      const updatedTable = [...prevData];
-      updatedTable[rowIndex] = [...updatedTable[rowIndex]];
-      updatedTable[rowIndex][cellIndex] = {
-        ...updatedTable[rowIndex][cellIndex],
-        value: newValue,
-      };
+  const addRow = (rowIndex, cellIndex) => {
+    const updatedTable = [...localTableData.map((row) => [...row])];
 
-      return updatedTable;
+    let partRowSpan = updatedTable[rowIndex][0]?.rowSpan || 1;
+    let divisionRowSpan = updatedTable[rowIndex][1]?.rowSpan || 1;
+
+    const newRow = Array(updatedTable[0].length).fill({
+      value: '',
+      rowSpan: 1,
     });
+
+    // Part, Division의 rowSpan 업데이트
+    updatedTable[rowIndex][0].rowSpan = partRowSpan + 1;
+    updatedTable[rowIndex][1].rowSpan = divisionRowSpan + 1;
+
+    const insertPosition = rowIndex + divisionRowSpan;
+
+    // 새 행 추가 후 Part와 Division이 병합된 경우 null 처리
+    updatedTable.splice(insertPosition, 0, newRow);
+    updatedTable[insertPosition][0] = null;
+    updatedTable[insertPosition][1] = null;
+
+    setLocalTableData(updatedTable);
+  };
+
+  const handleCellChange = (updatedTable) => {
+    setLocalTableData(updatedTable);
   };
 
   const handleSave = () => {
@@ -78,12 +86,13 @@ const WbsInput = () => {
 
     console.log('Final Data:', JSON.stringify(finalData, null, 2));
     try {
-      const postCreateWbs = await postWbs(pjtSn, finalData);
+      await postWbs(pjtSn, finalData);
       navigate(PATHS.task.root);
     } catch (error) {
       console.error('Error posting WBS Data:', error);
     }
   };
+
   return (
     <>
       <Container maxWidth="lg" sx={{ p: 3 }}>
@@ -121,6 +130,7 @@ const WbsInput = () => {
                   <WbsFull
                     tableData={localTableData}
                     handleCellChange={handleCellChange}
+                    addRow={addRow} // WbsFull로 addRow 함수 전달
                     members={memberNames}
                     editable={false}
                   />
@@ -138,10 +148,8 @@ const WbsInput = () => {
                     projectStartDate={ProjectStartDate}
                     projectEndDate={ProjectEndDate}
                   />
-                  ;
                 </Box>
               </Box>
-              ;
             </Box>
           </Grid>
         </Grid>

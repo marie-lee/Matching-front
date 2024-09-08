@@ -124,7 +124,9 @@ const MatchSelectedMember = ({ member }) => {
             alignItems={'center'}
             justifyContent={'space-between'}
           >
-            <Typography variant={'lg'}>{member.profile[0].USER_NM}</Typography>
+            <Typography variant={'lg'}>
+              {member?.profile[0]?.USER_NM}
+            </Typography>
             <Button>요청</Button>
           </Grid>
 

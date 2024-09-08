@@ -12,11 +12,12 @@ import {
   IssueDetail,
 } from '@/pages/task/components';
 import { getWbsDashboard, getWbsTaskAdditionalInfo } from '@/services/wbs';
+import { useSelector } from 'react-redux';
 
 // ----------------------------------------------------------------------
 
 const TaskDashboardPage = () => {
-  const { state } = useLocation();
+  const pjtSn = useSelector((state) => state.pjtSn.pjtSn);
 
   const [isFetching, setIsFetching] = useState(false);
   const [data, setData] = useState({ today: [], task: [], issue: [] });
@@ -26,7 +27,7 @@ const TaskDashboardPage = () => {
     memberList: [],
   });
 
-  const [selectedPjtSn, setSelectedPjtSn] = useState(state?.pjtSn || '');
+  const [selectedPjtSn, setSelectedPjtSn] = useState(pjtSn || '');
   const [selectedTaskSn, setSelectedTaskSn] = useState();
   const [selectedIssueSn, setSelectedIssueSn] = useState();
 
@@ -47,7 +48,6 @@ const TaskDashboardPage = () => {
   const fetchTaskAdditionalInfo = async () => {
     try {
       const { data } = await getWbsTaskAdditionalInfo(selectedPjtSn);
-      console.log(data);
       setOptionData(data);
     } catch (error) {
       console.log(error);
@@ -67,7 +67,6 @@ const TaskDashboardPage = () => {
       });
     } catch (error) {
       console.log(error);
-      // error.data.message = error.message;
     }
   };
 
@@ -93,6 +92,8 @@ const TaskDashboardPage = () => {
               <Typography variant={'lg'}>Today</Typography>
               <Typography>{data?.today?.length}</Typography>
             </Stack>
+
+            {/* 마감일이 오늘인 업무 목록 */}
             {data?.today?.map((item) => (
               <TaskItem
                 key={`dashboard_today_${item.ticketSn}`}
@@ -110,12 +111,23 @@ const TaskDashboardPage = () => {
               <Typography>{data?.task?.length}</Typography>
             </Stack>
 
+            {/* 업무 추가 */}
             <TaskAdd
               selectedPjtSn={selectedPjtSn}
               optionData={optionData}
               fetchDashboard={fetchDashboard}
             />
 
+            {/* 업무 목록 */}
+            {data?.task?.map((item) => (
+              <TaskItem
+                key={`dashboard_task_${item.ticketSn}`}
+                data={item}
+                onClick={handleOpenTask}
+              />
+            ))}
+
+            {/* 업무 목록 item 선택 시, 상세/수정 Dialog */}
             {taskDialogOpen && (
               <TaskDetail
                 open={taskDialogOpen}
@@ -127,14 +139,6 @@ const TaskDashboardPage = () => {
                 handleOpenIssue={handleOpenIssue}
               />
             )}
-
-            {data?.task?.map((item) => (
-              <TaskItem
-                key={`dashboard_task_${item.ticketSn}`}
-                data={item}
-                onClick={handleOpenTask}
-              />
-            ))}
           </Stack>
         </Grid>
 
@@ -144,7 +148,15 @@ const TaskDashboardPage = () => {
               <Typography variant={'lg'}>Issue</Typography>
               <Typography>{data?.issue?.length}</Typography>
             </Stack>
-            <IssueAdd />
+
+            {/* 이슈 추가 */}
+            <IssueAdd
+              selectedPjtSn={selectedPjtSn}
+              optionData={optionData}
+              fetchDashboard={fetchDashboard}
+            />
+
+            {/* 이슈 목록 */}
             {data?.issue?.map((item) => (
               <IssueItem
                 key={`dashboard_issue_${item.issueSn}`}
@@ -153,6 +165,7 @@ const TaskDashboardPage = () => {
               />
             ))}
 
+            {/* 이슈 목록 item 선택 시, 상세/수정 Dialog */}
             {issueDialogOpen && (
               <IssueDetail
                 open={issueDialogOpen}

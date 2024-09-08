@@ -1,21 +1,15 @@
-import {
-  Button,
-  Chip,
-  Grid,
-  IconButton,
-  Stack,
-  Typography,
-} from '@mui/material';
-import { Icon } from '@iconify/react';
+import { Button, Chip, Grid, Stack, Typography } from '@mui/material';
 import { ResponsiveImg } from '@/components/img';
 import { useNavigate } from 'react-router-dom';
-import { PATHS } from '@/routes/paths';
 import { useEffect, useState } from 'react';
+
+import { PATHS } from '@/routes/paths';
 import { instance } from '@/services/config';
 import PortfolioDetail from './portfolio-detail';
+
 // ----------------------------------------------------------------------
 
-const PortfolioList = ({ hasProfile }) => {
+const PortfolioList = ({ profileData }) => {
   const navigate = useNavigate();
   const [selectedPortfolio, setSelectedPortfolio] = useState(null);
 
@@ -123,21 +117,22 @@ const PortfolioList = ({ hasProfile }) => {
     <Stack p={3} rowGap={3} bgcolor={'background.default'}>
       <Stack direction={'row'} justifyContent={'space-between'} spacing={1}>
         <Typography variant={'xl'}>포트폴리오</Typography>
-        <IconButton>
-          <Icon icon={'akar-icons:edit'} fontSize={24} />
-        </IconButton>
       </Stack>
 
       {/* 포트폴리오가 있는 경우 */}
       {portfolio && renderList()}
 
-      {/* 포트폴리오가 없고, 프로필은 있는 경우 */}
-      {!portfolio.length && hasProfile && (
+      {/* 포트폴리오가 없는 경우 */}
+      {!portfolio.length && (
         <Stack spacing={2} p={3} bgcolor={'background.neutral'}>
           <Typography textAlign={'center'}>
             아직 등록한 포트폴리오가 없어요! 🥲
           </Typography>
-          <Button onClick={() => navigate(PATHS.profiles.editPortfolio)}>
+          <Button
+            onClick={() =>
+              navigate(PATHS.profiles.editProfile, { state: { profileData } })
+            }
+          >
             포트폴리오 추가하러 가기
           </Button>
         </Stack>

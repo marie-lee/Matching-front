@@ -11,11 +11,12 @@ import {
 import 'react-datepicker/dist/react-datepicker.css';
 
 const GanttFull = ({
-  tableData,
+  tableData = [], // 기본값 설정
   projectStartDate,
   projectEndDate,
-  ticketDetails,
+  ticketDetails = [], // 기본값 설정
 }) => {
+  // ticketDetails가 비어있지 않다면 dotList를 생성합니다.
   const dotList = ticketDetails.map((item) => {
     const ticketSnIndex = tableData
       .map((row) => row[2]?.ticketSn)
@@ -196,20 +197,19 @@ const GanttFull = ({
                   const taskStartDate =
                     row[4]?.value ? new Date(row[4].value) : null;
                   const taskDueDate =
-                    row[5]?.value ?
-                      new Date(
-                        new Date(row[5].value).setDate(
-                          new Date(row[5].value).getDate() + 1,
-                        ),
-                      )
-                    : null;
+                    row[5]?.value
+                      ? new Date(
+                          new Date(row[5].value).setDate(
+                            new Date(row[5].value).getDate() + 1,
+                          ),
+                        )
+                      : null;
                   const isInRange =
                     taskStartDate &&
                     taskDueDate &&
                     date >= taskStartDate &&
                     date <= taskDueDate;
 
-                  //dot찍을 위치 확인
                   const dotToDisplay = dotList.find(
                     (dot) =>
                       dot[0] === rowIndex &&
