@@ -19,6 +19,7 @@ const PortfolioList = ({ portfolio }) => {
 
   const handleClickPortfolio = (portfolio) => {
     setSelectedPortfolio(portfolio);
+    console.log('selectedPortfolio', selectedPortfolio);
   };
 
   return (
@@ -93,7 +94,7 @@ const PortfolioList = ({ portfolio }) => {
         <PortfolioDetail
           open={!!selectedPortfolio}
           setOpen={() => setSelectedPortfolio(null)}
-          portfolio={selectedPortfolio}
+          portfolioId={selectedPortfolio.PFOL_SN}
         />
       )}
     </Grid>
@@ -124,17 +125,15 @@ const MatchSelectedMember = ({ member }) => {
             alignItems={'center'}
             justifyContent={'space-between'}
           >
-            <Typography variant={'lg'}>
-              {member?.profile[0]?.USER_NM}
-            </Typography>
+            <Typography variant={'lg'}>{member?.profile?.USER_NM}</Typography>
             <Button>요청</Button>
           </Grid>
 
           {/* 한 줄 소개 */}
           <Grid item container mt={1}>
-            <Typography variant={'md'}>{member.profile[0].PF_INTRO}</Typography>
+            <Typography variant={'md'}>{member.profile.PF_INTRO}</Typography>
             <Grid item container spacing={0.5} alignItems={'center'} mt={2}>
-              {member.profile[0].url.map((url, index) => (
+              {member.profile.url.map((url, index) => (
                 <Fragment key={`url_${index}`}>
                   <Grid item xs={12} sm={2}>
                     <Typography fontWeight={'fontWeightMedium'}>
@@ -158,7 +157,7 @@ const MatchSelectedMember = ({ member }) => {
           </Typography>
           <Divider />
           <Grid container spacing={1} pt={1}>
-            {member.profile[0].stack.map((skill, index) => (
+            {member.profile.stack.map((skill, index) => (
               <Grid item key={`stack_${index}`}>
                 <Chip key={`chip_${index}`} label={skill.ST_NM} />
               </Grid>
@@ -172,7 +171,7 @@ const MatchSelectedMember = ({ member }) => {
           </Typography>
           <Divider></Divider>
           <Stack spacing={1} pt={1}>
-            {member.profile[0].carrer?.map((exp, index) => (
+            {member.profile.carrer?.map((exp, index) => (
               <Fragment key={`career_${index}`}>
                 {/* Fragment에 key prop 추가 */}
                 <Stack
