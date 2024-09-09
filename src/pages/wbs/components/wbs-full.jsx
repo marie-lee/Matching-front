@@ -17,85 +17,70 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import AddIcon from '@mui/icons-material/Add';
 
-const WbsFull = ({
-  tableData,
-  handleCellChange,
-  addRow,
-  members,
-  editable,
-}) => {
+const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
   const [expandedRows, setExpandedRows] = useState(new Set());
   const [colSpanInfo, setColSpanInfo] = useState({});
   const [rowSpanInfo, setRowSpanInfo] = useState({});
-  const [hoveredRow, setHoveredRow] = useState(null);
-  const [hoveredCellIndex, setHoveredCellIndex] = useState(null);
-
-  const renderAddButton = (rowIndex, cellIndex, rowSpan) => {
-    if (hoveredRow === rowIndex && hoveredCellIndex === cellIndex) {
-      return (
-        <IconButton
-          size="small"
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            right: '-16px',
-            transform: 'translateY(-50%)',
-            backgroundColor: 'white',
-          }}
-          onClick={() => addRow(rowIndex, cellIndex, rowSpan)} // 부모 컴포넌트의 addRow 호출
-        >
-          <AddIcon fontSize="small" />
-        </IconButton>
-      );
-    }
-    return null;
-  };
 
   const toggleRowExpand = (rowIndex, cellIndex, rowSpan, partRowSpan) => {
     setExpandedRows((prevExpandedRows) => {
       const newExpandedRows = new Set(prevExpandedRows);
-      const newColSpanInfo = { ...colSpanInfo }; // 현재 colSpan 상태 복사
-      const newRowSpanInfo = { ...rowSpanInfo }; // 현재 rowSpan 상태 복사
+      const newColSpanInfo = { ...colSpanInfo };
+      const newRowSpanInfo = { ...rowSpanInfo };
 
       if (newExpandedRows.has(rowIndex)) {
-        // 이미 확장된 상태에서 클릭하면 접음
         newExpandedRows.delete(rowIndex);
-
+        console.log(
+          'newExpandedRows.has(rowIndex)',
+          newExpandedRows.has(rowIndex),
+        );
         for (let i = rowIndex + 1; i < rowIndex + rowSpan; i++) {
           newExpandedRows.delete(i);
         }
 
-        if (cellIndex === 1) {
-          // Division 열을 클릭할 때만 동작
-          delete newColSpanInfo[rowIndex]; // colSpan 정보 삭제
+        if (cellIndex === 0) {
+          delete newColSpanInfo[rowIndex];
 
-          // 현재 rowSpan 값을 rowSpanInfo에 저장
           newRowSpanInfo[rowIndex] = {
-            division: tableData[rowIndex]?.[cellIndex]?.rowSpan,
-            part: partRowSpan, // Part의 rowSpan도 저장
+            part: partRowSpan,
             data: JSON.parse(
               JSON.stringify(tableData.slice(rowIndex + 1, rowIndex + rowSpan)),
-            ), // 현재 데이터를 깊은 복사로 저장
+            ),
           };
 
+          const savedRowSpan = newRowSpanInfo[rowIndex]?.part || rowSpan;
+
           if (tableData[rowIndex] && tableData[rowIndex][cellIndex]) {
-            tableData[rowIndex][cellIndex].rowSpan = 1; // Division의 rowSpan을 1로 설정
+            tableData[rowIndex][cellIndex].rowSpan = savedRowSpan;
+            newColSpanInfo[rowIndex] = 1;
           }
-          if (tableData[rowIndex] && tableData[rowIndex][0]) {
-            tableData[rowIndex][0].rowSpan = 1; // Part의 rowSpan을 1로 설정
+        }
+
+        if (cellIndex === 1) {
+          delete newColSpanInfo[rowIndex];
+
+          newRowSpanInfo[rowIndex] = {
+            division: tableData[rowIndex]?.[cellIndex]?.rowSpan,
+            part: partRowSpan,
+            data: JSON.parse(
+              JSON.stringify(tableData.slice(rowIndex + 1, rowIndex + rowSpan)),
+            ),
+          };
+          const savedRowSpan = newRowSpanInfo[rowIndex]?.division || rowSpan;
+
+          if (tableData[rowIndex] && tableData[rowIndex][cellIndex]) {
+            tableData[rowIndex][cellIndex].rowSpan = savedRowSpan;
+            newColSpanInfo[rowIndex] = 1;
           }
         }
       } else {
-        // 접힌 상태에서 클릭하면 펼침
         newExpandedRows.add(rowIndex);
 
-        if (cellIndex === 1) {
-          // Division 열을 클릭할 때만 동작
-          newColSpanInfo[rowIndex] = 1; // colSpan을 원래대로 설정
+        if (cellIndex === 0) {
+          newColSpanInfo[rowIndex] = 7;
 
-          const savedRowSpan = newRowSpanInfo[rowIndex]?.division || rowSpan;
+          const savedRowSpan = newRowSpanInfo[rowIndex]?.part || rowSpan;
 
           for (let i = rowIndex + 1; i < rowIndex + savedRowSpan; i++) {
             newExpandedRows.add(i);
@@ -103,13 +88,14 @@ const WbsFull = ({
 
           if (tableData[rowIndex] && tableData[rowIndex][cellIndex]) {
             tableData[rowIndex][cellIndex].rowSpan = savedRowSpan;
+            newColSpanInfo[rowIndex] = 7;
           }
+
           if (tableData[rowIndex] && tableData[rowIndex][0]) {
             tableData[rowIndex][0].rowSpan =
               newRowSpanInfo[rowIndex]?.part || partRowSpan;
           }
 
-          // 이전에 저장한 데이터를 완벽하게 다시 띄움
           if (newRowSpanInfo[rowIndex]?.data) {
             tableData.splice(
               rowIndex + 1,
@@ -118,12 +104,44 @@ const WbsFull = ({
             );
           }
 
-          delete newRowSpanInfo[rowIndex]; // 복원 후 rowSpanInfo에서 제거
+          delete newRowSpanInfo[rowIndex];
+        }
+
+        if (cellIndex === 1) {
+          newColSpanInfo[rowIndex] = 1;
+
+          const savedRowSpan = newRowSpanInfo[rowIndex]?.division || rowSpan;
+
+          for (let i = rowIndex + 1; i < rowIndex + savedRowSpan; i++) {
+            newExpandedRows.add(i);
+          }
+
+          if (tableData[rowIndex] && tableData[rowIndex][cellIndex]) {
+            tableData[rowIndex][cellIndex].rowSpan = savedRowSpan; // Division의 rowSpan을 1로 설정\
+
+            newColSpanInfo[rowIndex] = 6;
+          }
+
+          if (tableData[rowIndex] && tableData[rowIndex][0]) {
+            tableData[rowIndex][0].rowSpan =
+              newRowSpanInfo[rowIndex]?.part || partRowSpan;
+          }
+
+          if (newRowSpanInfo[rowIndex]?.data) {
+            tableData.splice(
+              rowIndex + 1,
+              savedRowSpan - 1,
+              ...newRowSpanInfo[rowIndex].data,
+            );
+          }
+
+          delete newRowSpanInfo[rowIndex];
         }
       }
 
-      setColSpanInfo(newColSpanInfo); // 상태 업데이트
-      setRowSpanInfo(newRowSpanInfo); // 상태 업데이트
+      setColSpanInfo(newColSpanInfo);
+      setRowSpanInfo(newRowSpanInfo);
+
       return newExpandedRows;
     });
   };
@@ -211,6 +229,7 @@ const WbsFull = ({
       sx={textFieldStyle}
     />
   );
+  let shouldSetColSpanToZero = false;
 
   const Cell = memo(
     ({ cell, rowIndex, cellIndex, handleCellChange, members, editable }) => {
@@ -222,11 +241,19 @@ const WbsFull = ({
       const cellStyleWithEditable = {
         ...cellStyle,
         pointerEvents: editable ? 'none' : 'auto',
-        position: 'relative',
       };
 
-      const colSpan =
-        colSpanInfo[rowIndex] && cellIndex === 1 ? colSpanInfo[rowIndex] : 1;
+      const colSpan = colSpanInfo[rowIndex] ? colSpanInfo[rowIndex] : 1;
+      const colSpan0 = colSpanInfo[rowIndex] === 7 ? colSpanInfo[rowIndex] : 1;
+
+      let colSpanAdjusted;
+      if (shouldSetColSpanToZero || colSpan0 === 7) {
+        colSpanAdjusted = 0;
+        shouldSetColSpanToZero = true;
+      } else {
+        colSpanAdjusted = colSpan;
+        shouldSetColSpanToZero = false;
+      }
 
       let partRowSpan = 1;
       for (let i = rowIndex; i >= 0; i--) {
@@ -236,23 +263,44 @@ const WbsFull = ({
         }
       }
 
-      if (cellIndex === 0 || cellIndex === 1) {
+      if (cellIndex === 0) {
+        if (colSpan0 === 7) {
+          shouldSetColSpanToZero = true;
+        } else {
+          shouldSetColSpanToZero = false;
+        }
         return (
           <TableCell
             key={cellIndex}
-            rowSpan={
-              rowSpanInfo[rowIndex]?.[cellIndex === 1 ? 'division' : 'part'] ||
-              cell.rowSpan
-            }
-            colSpan={colSpan}
+            rowSpan={cell.rowSpan}
+            colSpan={colSpan0}
             sx={cellStyleWithEditable}
-            onMouseEnter={() => {
-              setHoveredRow(rowIndex);
-              setHoveredCellIndex(cellIndex);
-            }}
-            onMouseLeave={() => {
-              setHoveredRow(null);
-              setHoveredCellIndex(null);
+          >
+            <IconButton
+              onClick={() =>
+                toggleRowExpand(rowIndex, cellIndex, cell.rowSpan, partRowSpan)
+              }
+              size="small"
+              sx={{ padding: '0' }}
+            >
+              {expandedRows.has(rowIndex) ?
+                <ExpandLessIcon />
+              : <ExpandMoreIcon />}
+            </IconButton>
+            {cell.value}
+          </TableCell>
+        );
+      }
+
+      if (cellIndex === 1) {
+        return (
+          <TableCell
+            key={cellIndex}
+            rowSpan={cell.rowSpan}
+            colSpan={colSpanAdjusted}
+            sx={{
+              ...cellStyleWithEditable,
+              display: colSpanAdjusted === 0 ? 'none' : 'table-cell',
             }}
           >
             <IconButton
@@ -267,7 +315,6 @@ const WbsFull = ({
               : <ExpandMoreIcon />}
             </IconButton>
             {cell.value}
-            {renderAddButton(rowIndex, cellIndex, cell.rowSpan)}
           </TableCell>
         );
       }
@@ -312,12 +359,13 @@ const WbsFull = ({
             {renderSelectField(
               cell.value,
               !editable ? handleChange : () => {},
-              ['대기', '진행중', '완료'],
+              ['WAIT', 'IN PROGRESS', 'CLOSE'],
             )}
           </TableCell>
         );
       }
 
+      // 기본 TextField를 사용하는 셀
       return (
         <TableCell
           key={cellIndex}
@@ -333,7 +381,9 @@ const WbsFull = ({
         prevProps.cell.value === nextProps.cell.value &&
         prevProps.cell.rowSpan === nextProps.cell.rowSpan &&
         prevProps.members === nextProps.members &&
-        prevProps.editable === nextProps.editable
+        prevProps.editable === nextProps.editable &&
+        prevProps.rowIndex === nextProps.rowIndex &&
+        prevProps.cellIndex === nextProps.cellIndex
       );
     },
   );
