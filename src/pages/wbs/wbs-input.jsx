@@ -35,7 +35,7 @@ const WbsInput = () => {
     }
   }, [tableData]);
 
-  const addRow = (rowIndex, cellIndex) => {
+  const addRow = (rowIndex) => {
     const updatedTable = [...localTableData.map((row) => [...row])];
 
     let partRowSpan = updatedTable[rowIndex][0]?.rowSpan || 1;
