@@ -55,7 +55,12 @@ const ProfilePopover = () => {
 
   const handleClickItem = (path) => {
     handleClosePopover();
-    navigate(path);
+
+    if (isSignIn) {
+      navigate(path); 
+    } else {
+      navigate(PATHS.auth.signIn); 
+    }
   };
 
   // ----------------------------------------------------------------------

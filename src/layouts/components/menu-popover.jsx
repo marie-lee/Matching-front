@@ -2,6 +2,7 @@ import { IconButton, MenuItem, Stack } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
 import { useCallback, useState } from 'react';
+import { useSelector } from 'react-redux'; 
 
 import { CustomPopover } from '@/components/custom-popover';
 import { useActiveLink } from '@/hooks/use-active-link';
@@ -32,6 +33,7 @@ const Menu = ({ menu, handleClickItem }) => {
 
 const MenuPopover = () => {
   const navigate = useNavigate();
+  const { isSignIn } = useSelector((state) => state.auth); 
 
   const [open, setOpen] = useState(null);
 
@@ -45,7 +47,12 @@ const MenuPopover = () => {
 
   const handleClickItem = (path) => {
     handleClosePopover();
-    navigate(path);
+
+    if (isSignIn) {
+      navigate(path); 
+    } else {
+      navigate(PATHS.auth.login); 
+    }
   };
 
   // ----------------------------------------------------------------------
