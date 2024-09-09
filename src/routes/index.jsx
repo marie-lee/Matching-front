@@ -13,7 +13,6 @@ import task from '@/routes/task';
 import review from '@/routes/review';
 
 import NotFoundPage from '@/pages/error/404';
-import GuestLayout from '@/layouts/guest/guest-layout';
 import MainLayout from '@/layouts/main/main-layout';
 
 // ----------------------------------------------------------------------
@@ -29,11 +28,11 @@ const Router = () => {
 
   const main = {
     path: '/',
-    element: isSignIn ? <MainLayout /> : <GuestLayout />,
+    element: <MainLayout /> ,
     children: [
       {
         index: true,
-        element: isSignIn ? <Home /> : <GuestPage />,
+        element:<Home /> ,
       },
     ],
   };
