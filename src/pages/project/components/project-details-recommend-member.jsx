@@ -75,6 +75,13 @@ const ProjectDetailsRecommendMember = ({ setSelectedMember }) => {
     try {
       const recommendList = await getRecommend(pjtSn);
       setRecommendList(recommendList.data);
+      
+      // 첫 번째 멤버를 자동으로 선택
+      if (recommendList.data.length > 0) {
+        const firstMember = recommendList.data[0];
+        setMember(firstMember);
+        setSelectedMember(firstMember);
+      }
       setIsLoading(false); // 데이터 로드 완료
     } catch (error) {
       console.error(error);
