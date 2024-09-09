@@ -32,7 +32,7 @@ function RatingIcon({ value }) {
     <Box
       sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
     >
-      <StyledBox>
+      {/* <StyledBox>
         <Box className="filled" sx={{ width: `${value * 100}%` }}>
           <PetsIcon fontSize="inherit" style={{ fontSize: '48px' }} />
         </Box>
@@ -42,7 +42,7 @@ function RatingIcon({ value }) {
       </StyledBox>
       <Typography variant="sm" color={'GrayText'}>
         4.6
-      </Typography>
+      </Typography> */}
     </Box>
   );
 }

@@ -18,6 +18,7 @@ import { useEffect, useState } from 'react';
 import { MemberReview } from '@/pages/review/components';
 
 const PortfolioDetail = ({ open, setOpen, portfolioId }) => {
+  console.log('portfolioId', portfolioId);
   const theme = useTheme();
   const [portfolioData, setPortfolioData] = useState(null);
   const [peerReview, setPeerReview] = useState([]);

@@ -75,7 +75,7 @@ const ProjectDetailsRecommendMember = ({ setSelectedMember }) => {
     try {
       const recommendList = await getRecommend(pjtSn);
       setRecommendList(recommendList.data);
-      
+
       // 첫 번째 멤버를 자동으로 선택
       if (recommendList.data.length > 0) {
         const firstMember = recommendList.data[0];
@@ -120,7 +120,7 @@ const ProjectDetailsRecommendMember = ({ setSelectedMember }) => {
       </Grid>
 
       {/* 로딩 중일 때 CircularProgress와 Loading... 메시지 표시 */}
-      {isLoading ? (
+      {isLoading ?
         <Grid item xs={12}>
           <Box
             sx={{
@@ -135,8 +135,7 @@ const ProjectDetailsRecommendMember = ({ setSelectedMember }) => {
             <Typography mt={2}>Loading...</Typography>
           </Box>
         </Grid>
-      ) : (
-        <Grid item xs={12} container spacing={3}>
+      : <Grid item xs={12} container spacing={3}>
           {/* 추천된 멤버 목록 */}
           <Grid item container spacing={2}>
             {recommendList.map((member, index) => (
@@ -148,7 +147,7 @@ const ProjectDetailsRecommendMember = ({ setSelectedMember }) => {
             ))}
           </Grid>
         </Grid>
-      )}
+      }
 
       {/* 선택한 멤버의 프로필/포트폴리오 상세 조회 Dialog */}
       {/* <Dialog
