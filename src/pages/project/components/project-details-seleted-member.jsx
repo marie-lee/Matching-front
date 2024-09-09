@@ -174,7 +174,7 @@ const ProjectDetailsSelectedMember = ({ member, handleClickReq }) => {
             Skills
           </Typography>
           <Grid container spacing={1} pt={1}>
-            {member.profile.stack.split(',').map((skill, index) => (
+            {member.profile.stack?.split(',')?.map((skill, index) => (
               <Grid item key={`stack_${index}`}>
                 <Chip label={skill} />
               </Grid>

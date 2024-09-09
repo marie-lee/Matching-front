@@ -1,13 +1,18 @@
 import * as yup from 'yup';
 
 export const profileEditFormDefaultValues = {
-  NAME: '',
-  INTRO: '',
-  CAREER: [],
-  STACK: [],
-  INTEREST: [],
-  URL: [],
-  PORTFOLIO: [],
+  profile: {
+    USER_NM: '',
+    USER_SN: '',
+    USER_IMG: '',
+    PF_INTRO: '',
+    PF_SN: '',
+    career: [],
+    stack: [],
+    interest: [],
+    url: [],
+  },
+  portfolioInfo: [],
 };
 
 export const profileEditFormSchema = yup.object().shape({

@@ -5,31 +5,41 @@ import { HEADER } from '@/layouts/config-layout';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom'; 
 import { RhfFormProvider } from '@/components/hook-form';
-import { useEffect } from 'react'; 
+import { useEffect, useState } from 'react';
+import { instance } from '@/services/config';
+import { profileEditFormDefaultValues } from './constants';
 
 const ProfileEditPage = () => {
-  const location = useLocation();
+  const [profileData, setProfileData] = useState({});
   const navigate = useNavigate(); 
 
-  const profileData = location.state?.profileData;
+  // const { profileData } = location.state;
+  const fetchProfile = async () => {
+    try {
+      const res = await instance.get('member/profile');
+      setProfileData(res.data);
+      profileEditForm.reset(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
-    if (!profileData) {
-      navigate('/profiles/edit-profile'); 
-    }
-  }, [profileData, navigate]);
-
-  if (!profileData) {
-    return null;
-  }
+    fetchProfile();
+  }, []);
 
   const profileEditForm = useForm({
-    defaultValues: profileData,
+    defaultValues: profileEditFormDefaultValues,
   });
 
   const handlePreviewOpen = () => {
     console.log('Preview Open');
   };
+
+  // fetchProfile() 을 받아오기 전까지 로딩 처리
+  if (!profileData.profile) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <RhfFormProvider form={profileEditForm}>

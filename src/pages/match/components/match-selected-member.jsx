@@ -157,7 +157,7 @@ const MatchSelectedMember = ({ member }) => {
           </Typography>
           <Divider />
           <Grid container spacing={1} pt={1}>
-            {member.profile.stack.map((skill, index) => (
+            {member.profile?.stack?.map((skill, index) => (
               <Grid item key={`stack_${index}`}>
                 <Chip key={`chip_${index}`} label={skill.ST_NM} />
               </Grid>
