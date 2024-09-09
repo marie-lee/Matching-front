@@ -44,7 +44,7 @@ const MemberItem = ({ member, ...other }) => {
               {member.profile.introduction}
             </Typography>
             <Stack direction={'row'} flexWrap={'wrap'} gap={1} mt={1}>
-              {member.profile.stack.split(',').map((skill, index) => (
+              {member.profile.stack?.split(',')?.map((skill, index) => (
                 <Chip
                   key={`member_skill_${index}`}
                   label={skill}
