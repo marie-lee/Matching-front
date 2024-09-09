@@ -14,6 +14,8 @@ import {
 import { useState, useEffect } from 'react';
 import { StepOne, StepTwo, StepThree } from '@/pages/auth/components';
 import { postMemberJoin } from '@/services/member';
+import { signIn } from '@/store/auth-slice'; 
+
 
 // ----------------------------------------------------------------------
 // 회원가입 화면
@@ -82,12 +84,23 @@ const SignUpPage = () => {
         USER_PW: data.password,
         USER_PW_CONFIRM: data.confirmPassword,
       };
-      await postMemberJoin(payload);
-      setCurrentStep(3);
+      const response = await postMemberJoin(payload);
+    
+      if (response?.status === 200 && response.data?.status === 200) {
+        const { accessToken, refreshToken } = response.data;
+    
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        
+        dispatch(signIn({ token: accessToken }));
+  
+        setCurrentStep(3);
+      } else {
+        throw new Error(response.data?.message || '회원가입 중 오류가 발생했습니다');
+      }
     } catch (error) {
-      const errorData =
-        error.response?.data || '회원가입 중 오류가 발생했습니다';
-      setErrorMessage(errorData);
+      const errorMessage = error.response?.data || error.message || '회원가입 중 오류가 발생했습니다';
+      setErrorMessage(errorMessage);
       setErrorModalOpen(true);
     } finally {
       setIsPending(false);
