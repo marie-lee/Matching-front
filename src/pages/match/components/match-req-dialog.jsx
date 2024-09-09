@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FormHelperText, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 
 import { putStatusReq } from '@/services/status';
 import { CustomDialog } from '@/components/custom-dialog';
@@ -8,8 +8,6 @@ import { CustomDialog } from '@/components/custom-dialog';
 
 const MatchReqDialog = ({ open, setOpen, data, fetchStatus }) => {
   const [isPending, setIsPending] = useState(false);
-
-  const [errorMessage, setErrorMessage] = useState('');
 
   const getReqString = () => {
     let str = '';
@@ -47,12 +45,10 @@ const MatchReqDialog = ({ open, setOpen, data, fetchStatus }) => {
       });
       setIsPending(false);
       setOpen(false);
-      setErrorMessage('');
       fetchStatus();
     } catch (error) {
       console.log(error);
       setIsPending(false);
-      setErrorMessage(error.data);
     }
   };
 
@@ -64,11 +60,10 @@ const MatchReqDialog = ({ open, setOpen, data, fetchStatus }) => {
       open={open}
       onClose={() => {
         setOpen(false);
-        setErrorMessage('');
       }}
-      cancelButtonText={errorMessage ? '닫기' : '취소'}
+      cancelButtonText={'취소'}
       confirmLoading={isPending}
-      onConfirm={!errorMessage && onSubmit}
+      onConfirm={onSubmit}
       confirmButtonText={getReqString()}
     >
       <Stack spacing={2}>
@@ -79,12 +74,6 @@ const MatchReqDialog = ({ open, setOpen, data, fetchStatus }) => {
           </Typography>{' '}
           하시겠습니까?
         </Typography>
-
-        {errorMessage && (
-          <FormHelperText error sx={{ textAlign: 'center' }}>
-            {errorMessage}
-          </FormHelperText>
-        )}
       </Stack>
     </CustomDialog>
   );
