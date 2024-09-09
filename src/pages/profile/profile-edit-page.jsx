@@ -1,19 +1,32 @@
 import { AppBar, Grid } from '@mui/material';
-
 import { ProfileEditForm } from '@/pages/profile/components';
 import RemoteControlBox from './components/profile-edit-remote';
 import { HEADER } from '@/layouts/config-layout';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom'; 
 import { RhfFormProvider } from '@/components/hook-form';
+import { useEffect } from 'react'; 
 
 const ProfileEditPage = () => {
   const location = useLocation();
+  const navigate = useNavigate(); 
 
-  const { profileData } = location.state;
+  const profileData = location.state?.profileData;
+
+  useEffect(() => {
+    if (!profileData) {
+      navigate('/profiles/edit-profile'); 
+    }
+  }, [profileData, navigate]);
+
+  if (!profileData) {
+    return null;
+  }
+
   const profileEditForm = useForm({
     defaultValues: profileData,
   });
+
   const handlePreviewOpen = () => {
     console.log('Preview Open');
   };
@@ -28,7 +41,7 @@ const ProfileEditPage = () => {
           <AppBar
             position="sticky"
             color="default"
-            sx={{ top: `${HEADER.H_DESKTOP + 24}px ` }}
+            sx={{ top: `${HEADER.H_DESKTOP + 24}px` }}
           >
             <RemoteControlBox
               profileEditForm={profileEditForm}
