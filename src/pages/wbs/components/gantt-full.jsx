@@ -174,7 +174,6 @@ const GanttFull = ({
         ref={ganttBodyRef}
         sx={{
           width: '100vh',
-          height: '100vh',
           overflowX: 'auto',
           overflowY: 'hidden',
           borderRadius: '0',

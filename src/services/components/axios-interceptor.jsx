@@ -32,12 +32,14 @@ const AxiosInterceptor = () => {
   );
 
   const requestInterceptor = (config) => {
+    const token = localStorage.getItem('accessToken'); 
+    console.log(token)
     if (token) {
       config.headers = {
-        Authorization: `Bearer ${token}`,
+        ...config.headers,
+        Authorization: `Bearer ${token}`, 
       };
     }
-
     return config;
   };
 
@@ -46,8 +48,6 @@ const AxiosInterceptor = () => {
   };
 
   const responseInterceptor = (response) => {
-    console.log('response: ', response);
-
     return response;
   };
 
@@ -67,7 +67,6 @@ const AxiosInterceptor = () => {
           navigate(PATHS.auth.signIn);
           break;
         default:
-          // 그 외의 상태코드인 경우
           showToast(msg, 'error');
           break;
       }
@@ -93,7 +92,8 @@ const AxiosInterceptor = () => {
     };
   }, [token]);
 
-  return <></>;
+  return null;
 };
 
 export default AxiosInterceptor;
+

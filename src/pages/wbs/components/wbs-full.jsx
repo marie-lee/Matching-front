@@ -442,7 +442,7 @@ const WbsFull = ({ tableData, handleCellChange, members, editable }) => {
         sx={{ width: '100%', overflowX: 'hidden', borderRadius: '0' }}
         elevation={0}
       >
-        <Table sx={{ height: '100vh' }}>
+        <Table sx={{ height: '100%' }}>
           <colgroup>
             <col style={{ width: '10%' }} />
             <col style={{ width: '20%' }} />

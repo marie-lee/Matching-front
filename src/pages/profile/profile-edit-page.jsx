@@ -1,22 +1,45 @@
 import { AppBar, Grid } from '@mui/material';
-
 import { ProfileEditForm } from '@/pages/profile/components';
 import RemoteControlBox from './components/profile-edit-remote';
 import { HEADER } from '@/layouts/config-layout';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom'; 
 import { RhfFormProvider } from '@/components/hook-form';
+import { useEffect, useState } from 'react';
+import { instance } from '@/services/config';
+import { profileEditFormDefaultValues } from './constants';
 
 const ProfileEditPage = () => {
-  const location = useLocation();
+  const [profileData, setProfileData] = useState({});
+  const navigate = useNavigate(); 
 
-  const { profileData } = location.state;
+  // const { profileData } = location.state;
+  const fetchProfile = async () => {
+    try {
+      const res = await instance.get('member/profile');
+      setProfileData(res.data);
+      profileEditForm.reset(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
   const profileEditForm = useForm({
-    defaultValues: profileData,
+    defaultValues: profileEditFormDefaultValues,
   });
+
   const handlePreviewOpen = () => {
     console.log('Preview Open');
   };
+
+  // fetchProfile() 을 받아오기 전까지 로딩 처리
+  if (!profileData.profile) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <RhfFormProvider form={profileEditForm}>
@@ -28,7 +51,7 @@ const ProfileEditPage = () => {
           <AppBar
             position="sticky"
             color="default"
-            sx={{ top: `${HEADER.H_DESKTOP + 24}px ` }}
+            sx={{ top: `${HEADER.H_DESKTOP + 24}px` }}
           >
             <RemoteControlBox
               profileEditForm={profileEditForm}

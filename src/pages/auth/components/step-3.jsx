@@ -2,9 +2,15 @@ import React from 'react';
 import { Box, Button, Stack, Typography } from '@mui/material';
 import signUp from '@/assets/sign-up.png';
 import { useTheme } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 
 const StepThree = ({ name }) => {
   const theme = useTheme();
+  const navigate = useNavigate();
+
+  const handleProfileRedirect = () => {
+    navigate('/profiles/edit-profile'); 
+  };
 
   return (
     <Box
@@ -55,6 +61,7 @@ const StepThree = ({ name }) => {
           },
           width: '20%',
         }}
+        onClick={handleProfileRedirect} 
       >
         프로필 입력하러 가기
       </Button>

@@ -44,7 +44,7 @@ const Header = () => {
             underline={'none'}
             fontWeight={'fontWeightMedium'}
           >
-            Project Matching
+            Hoit!
           </Link>
 
           {/*<NavDesktop data={configNavigation} />*/}

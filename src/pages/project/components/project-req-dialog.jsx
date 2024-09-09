@@ -32,7 +32,6 @@ const ProjectReqDialog = ({ open, setOpen, selectedUserSn, selectedPjt }) => {
   };
 
   const onSubmit = reqForm.handleSubmit(async (payload) => {
-    console.log(payload);
     setIsPending(true);
     try {
       const res = await postStatusFirstReq(selectedPjt?.pjtSn, payload);
@@ -40,9 +39,6 @@ const ProjectReqDialog = ({ open, setOpen, selectedUserSn, selectedPjt }) => {
       setIsPending(false);
     } catch (error) {
       setIsPending(false);
-      if (error?.status === 400) {
-        reqForm.setError('pjtRoleSn', { message: error?.data });
-      }
     }
   });
 
