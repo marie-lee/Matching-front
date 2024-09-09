@@ -1,5 +1,4 @@
-//React Import
-import { useState, useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 
 //Mui Import
 import {
@@ -20,23 +19,12 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-//Data Import
-import { useDispatch } from 'react-redux';
-import { setData } from '@/store/wbsSlice';
-
 const permissions = ['member', 'owner'];
 
-const UserAdd = ({ roles, resData }) => {
-  const dispatch = useDispatch();
+const UserAdd = ({ roles, resData, participants, setParticipants }) => {
   const tableEndRef = useRef(null);
 
-  const [participants, setParticipants] = useState([]);
-
   const member = resData.map((member) => member.userNm);
-
-  useEffect(() => {
-    dispatch(setData(participants));
-  }, [participants, dispatch]);
 
   //화면 자동이동 이팩트
   useEffect(() => {

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 //React Import
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -24,6 +25,9 @@ import { wbsData } from '@/pages/wbs/components/constants';
 
 const BasicInfo = () => {
   const navigate = useNavigate();
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [participants, setParticipants] = useState([]); // participants 상태 추가
 
   const pjtMemberData = useSelector((state) => state.wbs.memberData);
   const pjtRoleData = useSelector((state) => state.wbs.participants);
@@ -31,6 +35,23 @@ const BasicInfo = () => {
   const tableData = createMergedTable(wbsData);
 
   const handleInputWbs = () => {
+    if (!startDate || !endDate) {
+      alert('프로젝트 시작일과 종료일을 입력하세요.');
+      return;
+    }
+
+    // 참여자 정보가 충분한지 체크
+    const participantNames = participants.map((p) => p.userNm);
+    const missingMembers = pjtMemberData.filter(
+      (member) => !participantNames.includes(member.userNm),
+    );
+
+    if (missingMembers.length > 0) {
+      alert('참여자 정보에 모든 유저를 추가해 주세요.');
+      return;
+    }
+
+    // 모든 조건을 만족했을 때만 이동
     navigate(PATHS.wbs.wbsInput);
   };
 
@@ -66,7 +87,8 @@ const BasicInfo = () => {
             </Button>
           </Stack>
         </Stack>
-        <ProjectInfo />
+        {/* ProjectInfo에서 startDate와 endDate를 가져옴 */}
+        <ProjectInfo setStartDate={setStartDate} setEndDate={setEndDate} />
         <Stack>
           <Stack direction="row" alignItems="center" mb={5}>
             <Typography variant="h6" mr={6} fontWeight="fontWeightSemiBold">
@@ -101,7 +123,13 @@ const BasicInfo = () => {
           />
         </Stack>
 
-        <UserAdd roles={pjtRoleData} resData={pjtMemberData} />
+        {/* UserAdd 컴포넌트에 participants 상태 전달 */}
+        <UserAdd
+          roles={pjtRoleData}
+          resData={pjtMemberData}
+          participants={participants}
+          setParticipants={setParticipants}
+        />
       </Stack>
     </Container>
   );

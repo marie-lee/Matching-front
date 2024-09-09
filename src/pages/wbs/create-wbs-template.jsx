@@ -23,7 +23,11 @@ const CreateWbsTemplatePage = () => {
   };
 
   const handleCreateWbs = () => {
-    navigate(PATHS.wbs.basicinfo);
+    if (selectedBox === null) {
+      alert('템플릿을 선택해주세요.');
+    } else {
+      navigate(PATHS.wbs.basicinfo);
+    }
   };
   const handleBack = () => {
     navigate(PATHS.wbs.root);
