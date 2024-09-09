@@ -14,11 +14,18 @@ import StarIcon from '@mui/icons-material/Star';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import PersonIcon from '@mui/icons-material/Person';
 import PreparingService from '@/components/custom-popover/preparing-service';
+import { useNavigate } from 'react-router-dom';
+import { PATHS } from '@/routes/paths';
+import { getWbs } from '@/services/wbs';
+import { useSelector } from 'react-redux';
+import { selectPjtSn } from '@/store/pjtsn-reducer';
 
 const drawerWidth = 80;
 
 const Sidebar = () => {
+  const navigate = useNavigate();
   const [isPreparingOpen, setIsPreparingOpen] = useState(false);
+  const pjtSn = useSelector(selectPjtSn);
 
   const handleOpenPreparingService = () => {
     setIsPreparingOpen(true);
@@ -28,6 +35,14 @@ const Sidebar = () => {
     setIsPreparingOpen(false);
   };
 
+  const handleWbs = async () => {
+    const res1 = await getWbs(pjtSn);
+    if (res1.data.wbsData.length == 0) {
+      alert('wbs를 만든 후 이용해주세요.');
+    } else {
+      navigate(PATHS.wbs.view);
+    }
+  };
   return (
     <>
       <Drawer
@@ -56,7 +71,7 @@ const Sidebar = () => {
                 <MenuBookIcon />
               </ListItemIcon>
             </ListItemButton>
-            <ListItemButton href={'/wbs/wbs-view'} sx={{ mt: 3 }}>
+            <ListItemButton onClick={handleWbs} sx={{ mt: 3 }}>
               <ListItemIcon sx={{ justifyContent: 'center' }}>
                 <AccessTimeIcon />
               </ListItemIcon>
@@ -87,7 +102,10 @@ const Sidebar = () => {
         </List>
       </Drawer>
 
-      <PreparingService open={isPreparingOpen} onClose={handleClosePreparingService} />
+      <PreparingService
+        open={isPreparingOpen}
+        onClose={handleClosePreparingService}
+      />
     </>
   );
 };

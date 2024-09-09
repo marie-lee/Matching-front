@@ -79,7 +79,7 @@ const ProjectEmptyRows = () => {
 
 // ----------------------------------------------------------------------
 
-const ProjectList = ({}) => {
+const ProjectList = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
