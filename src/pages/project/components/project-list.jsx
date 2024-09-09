@@ -2,7 +2,7 @@ import { Chip, Stack, Typography, useTheme } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { BasicDataGrid } from '@/components/data-grid';
 import { createMergedTable } from '@/pages/wbs/components/wbs-table';
@@ -10,7 +10,7 @@ import { PATHS } from '@/routes/paths';
 import { getProjectList, getProject } from '@/services/project';
 import { getWbs } from '@/services/wbs';
 import { setPjtSn } from '@/store/pjtsn-reducer';
-
+import { selectName } from '@/store/name-reducer';
 import dayjs from 'dayjs';
 
 // ----------------------------------------------------------------------
@@ -79,12 +79,13 @@ const ProjectEmptyRows = () => {
 
 // ----------------------------------------------------------------------
 
-const ProjectList = ({ name }) => {
+const ProjectList = ({}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [isFetching, setIsFetching] = useState(false);
   const [data, setData] = useState([]);
+  const name = useSelector(selectName);
 
   const fetchProjectList = async () => {
     setIsFetching(true);
@@ -118,6 +119,20 @@ const ProjectList = ({ name }) => {
         }
       } else {
         navigate(PATHS.task.root, { state: { pjtSn } });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const fetchMatchProject = async (pjtSn, row) => {
+    try {
+      const res = await getProject(pjtSn);
+      if (res.data.teamLeader === name) {
+        navigate(`${PATHS.project.details}/${row.PJT_SN}`, {
+          state: { projectData: row },
+        });
+      } else {
+        alert('프로젝트 모집이 끝날때까지 기다려 주세요.');
       }
     } catch (error) {
       console.error(error);
@@ -189,9 +204,7 @@ const ProjectList = ({ name }) => {
             state: { projectData: params.row },
           });
         } else {
-          navigate(`${PATHS.project.details}/${params.row.PJT_SN}`, {
-            state: { projectData: params.row },
-          });
+          await fetchMatchProject(params.row.PJT_SN, params.row);
         }
       }}
     />

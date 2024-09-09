@@ -36,7 +36,7 @@ const ProjectReqDialog = ({ open, setOpen, selectedUserSn, selectedPjt }) => {
     setIsPending(true);
     try {
       const res = await postStatusFirstReq(selectedPjt?.pjtSn, payload);
-      console.log('res: ', res);
+
       setIsPending(false);
     } catch (error) {
       setIsPending(false);

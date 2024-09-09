@@ -197,13 +197,13 @@ const GanttFull = ({
                   const taskStartDate =
                     row[4]?.value ? new Date(row[4].value) : null;
                   const taskDueDate =
-                    row[5]?.value
-                      ? new Date(
-                          new Date(row[5].value).setDate(
-                            new Date(row[5].value).getDate() + 1,
-                          ),
-                        )
-                      : null;
+                    row[5]?.value ?
+                      new Date(
+                        new Date(row[5].value).setDate(
+                          new Date(row[5].value).getDate() + 1,
+                        ),
+                      )
+                    : null;
                   const isInRange =
                     taskStartDate &&
                     taskDueDate &&
