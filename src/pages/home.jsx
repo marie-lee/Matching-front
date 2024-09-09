@@ -3,10 +3,24 @@ import { useTheme } from '@mui/material/styles';
 import MainImg from '@/assets/mainImg.png';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import intro from '@/assets/intro.png';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('lg'));
+  const { isSignIn } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+ 
+  const handleNavigation = (path) => {
+    if (isSignIn) {
+      navigate(path); 
+    } else {
+      navigate('/auth/sign-in'); 
+    }
+  };
+
   return (
     <>
       <Grid container spacing={2}>
@@ -41,28 +55,28 @@ const Home = () => {
               }}
             >
               <Button
-                href={'/match'}
+                onClick={() => handleNavigation('/match')} 
                 variant="contained"
                 sx={{
                   backgroundColor: theme.palette.login.main,
                   '&:hover': { backgroundColor: theme.palette.login.dark },
                   pl: 5,
                   pr: 5,
-                  Pt: 1,
+                  pt: 1,
                   pb: 1,
                 }}
               >
                 MATCHING
               </Button>
               <Button
-                href={'/project'}
+                onClick={() => handleNavigation('/project')} 
                 variant="outlined"
                 sx={{
                   borderColor: theme.palette.login.main,
                   color: theme.palette.login.main,
                   pl: 5.5,
                   pr: 5.5,
-                  Pt: 1,
+                  pt: 1,
                   pb: 1,
                 }}
               >

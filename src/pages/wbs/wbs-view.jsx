@@ -43,6 +43,8 @@ const WbsView = () => {
 
   const [reload, setReload] = useState(false);
 
+  const foldResult = renderTable(localTableData);
+
   const ticketDetails = issue.flatMap((item) =>
     item.TICKETS.map((ticket) => ({
       ticketSn: ticket.TICKET_SN,
@@ -56,7 +58,7 @@ const WbsView = () => {
         const wbsData = await getWbs(pjtSn);
         const ProjectData = await getWbsInfo(pjtSn);
         const tracking = await getWbsIssueTracking(pjtSn);
-        console.log('tracking', tracking);
+
         dispatch(setMemberData(ProjectData.data.members));
 
         const transformedData = transformWbsDataToTableFormat(
@@ -81,18 +83,39 @@ const WbsView = () => {
     else {
       setLocalTableData((prevData) => {
         const updatedTable = [...prevData];
+
         updatedTable[rowIndex] = [...updatedTable[rowIndex]];
 
         updatedTable[rowIndex][cellIndex] = {
           ...updatedTable[rowIndex][cellIndex],
           value: newValue,
         };
-        console.log('asd');
 
         return updatedTable;
       });
     }
   };
+
+  function renderTable(data) {
+    const foldInfo = data.map((row, rowIndex) => {
+      const foldFirstColumn =
+        row[0] !== null &&
+        rowIndex < data.length - 1 &&
+        data[rowIndex + 1][0] === null;
+
+      const foldSecondColumn =
+        row[1] !== null &&
+        rowIndex < data.length - 1 &&
+        data[rowIndex + 1][1] === null;
+
+      return {
+        foldFirstColumn,
+        foldSecondColumn,
+      };
+    });
+
+    return foldInfo;
+  }
 
   const handleSave = async () => {
     setSave((prev) => !prev);
@@ -161,6 +184,7 @@ const WbsView = () => {
               handleCellChange={handleCellChange}
               members={memberNames}
               editable={editable}
+              foldResult={foldResult}
             />
           </Box>
           {tracking && (

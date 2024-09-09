@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Stack,
@@ -94,12 +94,10 @@ const SignInPage = () => {
         }
 
         try {
-          // 회원가입 여부 확인
           const emailCheckResponse = await postMemberEmailCheck({
             email: userEmail,
           });
           if (emailCheckResponse.status === 200) {
-            // 회원가입되지 않은 경우, 회원가입 페이지로 이동
             navigate(PATHS.auth.signUp);
           } else {
             setErrorMessage('이메일 확인 중 오류가 발생했습니다.');
@@ -131,6 +129,19 @@ const SignInPage = () => {
       setIsPending(false);
     }
   };
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Enter') {
+        onSubmit(); 
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onSubmit]);
 
   return (
     <Box

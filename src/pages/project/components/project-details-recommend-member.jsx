@@ -1,19 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Autocomplete,
   Avatar,
   Chip,
-  Dialog,
   Grid,
   Stack,
   TextField,
   Typography,
+  CircularProgress,
+  Box,
 } from '@mui/material';
-import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { STACKS_OPTIONS } from '@/pages/project/constants';
-import { ProjectDetailsMemberProfiles } from '@/pages/project/components';
 import { getRecommend } from '@/services/project';
 import RatingIcon from './profile-rating-icon';
 
@@ -62,6 +61,7 @@ const MemberItem = ({ member, ...other }) => {
     </Grid>
   );
 };
+
 // ----------------------------------------------------------------------
 
 const ProjectDetailsRecommendMember = ({ setSelectedMember }) => {
@@ -69,15 +69,23 @@ const ProjectDetailsRecommendMember = ({ setSelectedMember }) => {
   const [profilesDialogOpen, setProfilesDialogOpen] = useState(false);
   const [recommendList, setRecommendList] = useState([]);
   const [member, setMember] = useState({});
+  const [isLoading, setIsLoading] = useState(true); // 로딩 상태 관리
 
   const fetchProject = async () => {
     try {
       const recommendList = await getRecommend(pjtSn);
       setRecommendList(recommendList.data);
-      console.log('recommendList', recommendList);
-      setSelectedMember(recommendList.data[0]);
+
+      // 첫 번째 멤버를 자동으로 선택
+      if (recommendList.data.length > 0) {
+        const firstMember = recommendList.data[0];
+        setMember(firstMember);
+        setSelectedMember(firstMember);
+      }
+      setIsLoading(false); // 데이터 로드 완료
     } catch (error) {
       console.error(error);
+      setIsLoading(false); // 오류 발생 시에도 로딩 종료
     }
   };
 
@@ -89,7 +97,6 @@ const ProjectDetailsRecommendMember = ({ setSelectedMember }) => {
     setProfilesDialogOpen(true);
     setMember(member);
     setSelectedMember(member);
-    console.log(member);
   };
 
   return (
@@ -111,18 +118,36 @@ const ProjectDetailsRecommendMember = ({ setSelectedMember }) => {
           options={STACKS_OPTIONS}
         />
       </Grid>
-      <Grid item xs={12} container spacing={3}>
-        {/* 추천된 멤버 목록 */}
-        <Grid item container spacing={2}>
-          {recommendList.map((member, index) => (
-            <MemberItem
-              key={`recommend-member-${index}`}
-              member={member}
-              onClick={() => handleClickMember(member)}
-            />
-          ))}
+
+      {/* 로딩 중일 때 CircularProgress와 Loading... 메시지 표시 */}
+      {isLoading ?
+        <Grid item xs={12}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '300px',
+            }}
+          >
+            <CircularProgress />
+            <Typography mt={2}>Loading...</Typography>
+          </Box>
         </Grid>
-      </Grid>
+      : <Grid item xs={12} container spacing={3}>
+          {/* 추천된 멤버 목록 */}
+          <Grid item container spacing={2}>
+            {recommendList.map((member, index) => (
+              <MemberItem
+                key={`recommend-member-${index}`}
+                member={member}
+                onClick={() => handleClickMember(member)}
+              />
+            ))}
+          </Grid>
+        </Grid>
+      }
 
       {/* 선택한 멤버의 프로필/포트폴리오 상세 조회 Dialog */}
       {/* <Dialog

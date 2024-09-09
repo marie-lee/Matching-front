@@ -1,4 +1,3 @@
-//React Import
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DatePicker from 'react-datepicker';
@@ -12,7 +11,7 @@ import { selectName } from '@/store/name-reducer';
 //Api Import
 import 'react-datepicker/dist/react-datepicker.css';
 
-const ProjectInfo = () => {
+const ProjectInfo = ({ setStartDate, setEndDate }) => {
   const dispatch = useDispatch();
   const userName = useSelector(selectName);
 
@@ -27,24 +26,32 @@ const ProjectInfo = () => {
     .replace(/-\s/g, '-')
     .slice(0, -1);
 
-  const [startDate, setStartDate] = useState(
+  const [localStartDate, setLocalStartDate] = useState(
     new Date(pjtData.startDt || nowData),
   );
-  const [endDate, setEndDate] = useState(new Date(pjtData.endDt || nowData));
+  const [localEndDate, setLocalEndDate] = useState(
+    new Date(pjtData.endDt || nowData),
+  );
 
   useEffect(() => {
-    setStartDate(new Date(pjtData.startDt || nowData));
-    setEndDate(new Date(pjtData.endDt || nowData));
+    setLocalStartDate(new Date(pjtData.startDt || nowData));
+    setLocalEndDate(new Date(pjtData.endDt || nowData));
   }, [pjtData, nowData]);
 
+  useEffect(() => {
+    // 부모 컴포넌트로 startDate와 endDate 전달
+    setStartDate(localStartDate);
+    setEndDate(localEndDate);
+  }, [localStartDate, localEndDate, setStartDate, setEndDate]);
+
   const handleStartDateChange = (date) => {
-    setStartDate(date);
-    updatePjtData(date, endDate);
+    setLocalStartDate(date);
+    updatePjtData(date, localEndDate);
   };
 
   const handleEndDateChange = (date) => {
-    setEndDate(date);
-    updatePjtData(startDate, date);
+    setLocalEndDate(date);
+    updatePjtData(localStartDate, date);
   };
 
   const updatePjtData = (start, end) => {
@@ -100,7 +107,7 @@ const ProjectInfo = () => {
           <Grid container alignItems="center" p={2} spacing={3}>
             <Grid mr={3}>
               <DatePicker
-                selected={startDate}
+                selected={localStartDate}
                 onChange={handleStartDateChange}
                 dateFormat="yyyy-MM-dd"
                 customInput={
@@ -108,7 +115,7 @@ const ProjectInfo = () => {
                     label="시작일"
                     variant="outlined"
                     fullWidth
-                    InputProps={{ sx: { height: 40 } }}
+                    InputProps={{}}
                   />
                 }
               />
@@ -116,16 +123,11 @@ const ProjectInfo = () => {
 
             <Grid>
               <DatePicker
-                selected={endDate}
+                selected={localEndDate}
                 onChange={handleEndDateChange}
                 dateFormat="yyyy-MM-dd"
                 customInput={
-                  <TextField
-                    label="종료일"
-                    variant="outlined"
-                    fullWidth
-                    InputProps={{ sx: { height: 40 } }}
-                  />
+                  <TextField label="종료일" variant="outlined" fullWidth />
                 }
               />
             </Grid>

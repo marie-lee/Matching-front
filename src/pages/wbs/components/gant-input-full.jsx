@@ -10,22 +10,7 @@ import {
 } from '@mui/material';
 import 'react-datepicker/dist/react-datepicker.css';
 
-const GanttFull = ({
-  tableData = [], // 기본값 설정
-  projectStartDate,
-  projectEndDate,
-  ticketDetails = [], // 기본값 설정
-}) => {
-  // ticketDetails가 비어있지 않다면 dotList를 생성합니다.
-  const dotList = ticketDetails.map((item) => {
-    const ticketSnIndex = tableData
-      .map((row) => row[2]?.ticketSn)
-      .filter(Boolean)
-      .indexOf(item.ticketSn);
-
-    return [ticketSnIndex, item.day];
-  });
-
+const GanttInputFull = ({ tableData, projectStartDate, projectEndDate }) => {
   const cellStyle = {
     border: '1px solid #000',
     padding: '2px 4px',
@@ -197,25 +182,18 @@ const GanttFull = ({
                   const taskStartDate =
                     row[4]?.value ? new Date(row[4].value) : null;
                   const taskDueDate =
-                    row[5]?.value
-                      ? new Date(
-                          new Date(row[5].value).setDate(
-                            new Date(row[5].value).getDate() + 1,
-                          ),
-                        )
-                      : null;
+                    row[5]?.value ?
+                      new Date(
+                        new Date(row[5].value).setDate(
+                          new Date(row[5].value).getDate() + 1,
+                        ),
+                      )
+                    : null;
                   const isInRange =
                     taskStartDate &&
                     taskDueDate &&
                     date >= taskStartDate &&
                     date <= taskDueDate;
-
-                  const dotToDisplay = dotList.find(
-                    (dot) =>
-                      dot[0] === rowIndex &&
-                      new Date(dot[1]).setHours(0, 0, 0, 0) ===
-                        date.setHours(0, 0, 0, 0),
-                  );
 
                   return (
                     <TableCell
@@ -228,22 +206,7 @@ const GanttFull = ({
                         height: '30px',
                         position: 'relative',
                       }}
-                    >
-                      {dotToDisplay && (
-                        <div
-                          style={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            width: '10px',
-                            height: '10px',
-                            backgroundColor: 'red',
-                            borderRadius: '50%',
-                          }}
-                        />
-                      )}
-                    </TableCell>
+                    ></TableCell>
                   );
                 })}
               </TableRow>
@@ -255,4 +218,4 @@ const GanttFull = ({
   );
 };
 
-export default GanttFull;
+export default GanttInputFull;

@@ -8,7 +8,9 @@ import { selectPjtSn } from '@/store/pjtsn-reducer';
 import StepperComponent from '@/pages/wbs/components/stepper-component';
 import { mergeTableDataByRowSpan } from '@/pages/wbs/components/merge-table-data';
 import WbsFull from '@/pages/wbs/components/wbs-full';
-import GanttFull from '@/pages/wbs/components/gantt-full';
+import GanttInputFull from '@/pages/wbs/components/gant-input-full';
+
+//Api Import
 import { postWbs } from '@/services/wbs';
 
 const WbsInput = () => {
@@ -33,26 +35,29 @@ const WbsInput = () => {
     }
   }, [tableData]);
 
-  const addRow = (rowIndex, cellIndex) => {
-    const updatedTable = [...localTableData.map(row => [...row])];
+  const addRow = (rowIndex) => {
+    const updatedTable = [...localTableData.map((row) => [...row])];
 
     let partRowSpan = updatedTable[rowIndex][0]?.rowSpan || 1;
     let divisionRowSpan = updatedTable[rowIndex][1]?.rowSpan || 1;
 
-    const newRow = Array(updatedTable[0].length).fill({ value: '', rowSpan: 1 });
+    const newRow = Array(updatedTable[0].length).fill({
+      value: '',
+      rowSpan: 1,
+    });
 
     // Part, Division의 rowSpan 업데이트
     updatedTable[rowIndex][0].rowSpan = partRowSpan + 1;
     updatedTable[rowIndex][1].rowSpan = divisionRowSpan + 1;
 
     const insertPosition = rowIndex + divisionRowSpan;
-    
+
     // 새 행 추가 후 Part와 Division이 병합된 경우 null 처리
     updatedTable.splice(insertPosition, 0, newRow);
     updatedTable[insertPosition][0] = null;
     updatedTable[insertPosition][1] = null;
 
-    setLocalTableData(updatedTable);  
+    setLocalTableData(updatedTable);
   };
 
   const handleCellChange = (updatedTable) => {
@@ -91,13 +96,25 @@ const WbsInput = () => {
   return (
     <>
       <Container maxWidth="lg" sx={{ p: 3 }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="start">
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="start"
+        >
           <StepperComponent activeStep={2} />
           <Stack direction="row" spacing={1}>
-            <Button color="greyButton" sx={{ width: '100px' }} onClick={handleBack}>
+            <Button
+              color="greyButton"
+              sx={{ width: '100px' }}
+              onClick={handleBack}
+            >
               BACK
             </Button>
-            <Button color="basicButton" sx={{ width: '100px' }} onClick={handleNext}>
+            <Button
+              color="basicButton"
+              sx={{ width: '100px' }}
+              onClick={handleNext}
+            >
               SAVE
             </Button>
           </Stack>
@@ -113,13 +130,20 @@ const WbsInput = () => {
                   <WbsFull
                     tableData={localTableData}
                     handleCellChange={handleCellChange}
-                    addRow={addRow}  // WbsFull로 addRow 함수 전달
+                    addRow={addRow} // WbsFull로 addRow 함수 전달
                     members={memberNames}
                     editable={false}
                   />
                 </Box>
-                <Box sx={{ display: 'flex', flexDirection: 'column', overflowX: 'auto', flex: 3 }}>
-                  <GanttFull
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflowX: 'auto',
+                    flex: 3,
+                  }}
+                >
+                  <GanttInputFull
                     tableData={localTableData}
                     projectStartDate={ProjectStartDate}
                     projectEndDate={ProjectEndDate}
