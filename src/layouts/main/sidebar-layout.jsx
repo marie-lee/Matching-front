@@ -1,95 +1,28 @@
-import React, { useState } from 'react';  
-import {
-  Drawer,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Box,
-} from '@mui/material';
-import MenuBookIcon from '@mui/icons-material/MenuBook';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import GroupIcon from '@mui/icons-material/Group';
-import StarIcon from '@mui/icons-material/Star';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import PersonIcon from '@mui/icons-material/Person';
-import PreparingService from '@/components/custom-popover/preparing-service';
+import { Box } from '@mui/material';
+import { Outlet } from 'react-router-dom';
+import { Suspense } from 'react';
+import Sidebar from '@/layouts/main/components/sidebar';
 
-const drawerWidth = 80;
-
-const Sidebar = () => {
-  const [isPreparingOpen, setIsPreparingOpen] = useState(false);
-
-  const handleOpenPreparingService = () => {
-    setIsPreparingOpen(true);
-  };
-
-  const handleClosePreparingService = () => {
-    setIsPreparingOpen(false); 
-  };
-
+const SidebarLayout = () => {
   return (
-    <>
-      <Drawer
-        variant="permanent"
-        sx={{
-          width: drawerWidth,
-          '& .MuiDrawer-paper': {
-            width: drawerWidth,
-          },
-        }}
+    <Box
+      sx={{
+        display: 'flex',
+        minHeight: '100vh',
+        backgroundColor: (theme) => theme.palette.background.default,
+      }}
+    >
+      <Sidebar />
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, p: 3, backgroundColor: '#f5f5f5', padding: 0 }}
       >
-        <List
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            height: '100%',
-          }}
-        >
-          <Box>
-            <ListItemButton href={'/'}>
-              <ListItemText primary="Hoit!" sx={{ textAlign: 'center' }} />
-            </ListItemButton>
-            <ListItemButton href={'/task'} sx={{ mt: 7 }}>
-              <ListItemIcon sx={{ justifyContent: 'center' }}>
-                <MenuBookIcon />
-              </ListItemIcon>
-            </ListItemButton>
-            <ListItemButton onClick={handleOpenPreparingService} sx={{ mt: 3 }}>
-              <ListItemIcon sx={{ justifyContent: 'center' }}>
-                <AccessTimeIcon />
-              </ListItemIcon>
-            </ListItemButton>
-            <ListItemButton onClick={handleOpenPreparingService} sx={{ mt: 3 }}>
-              <ListItemIcon sx={{ justifyContent: 'center' }}>
-                <GroupIcon />
-              </ListItemIcon>
-            </ListItemButton>
-            <ListItemButton onClick={handleOpenPreparingService} sx={{ mt: 3 }}>
-              <ListItemIcon sx={{ justifyContent: 'center' }}>
-                <StarIcon />
-              </ListItemIcon>
-            </ListItemButton>
-          </Box>
-          <Box>
-            <ListItemButton onClick={handleOpenPreparingService} sx={{ mt: 3 }}>
-              <ListItemIcon sx={{ justifyContent: 'center' }}>
-                <NotificationsIcon />
-              </ListItemIcon>
-            </ListItemButton>
-            <ListItemButton href={'/profiles'} sx={{ mb: 3 }}>
-              <ListItemIcon sx={{ justifyContent: 'center' }}>
-                <PersonIcon />
-              </ListItemIcon>
-            </ListItemButton>
-          </Box>
-        </List>
-      </Drawer>
-
-      <PreparingService open={isPreparingOpen} onClose={handleClosePreparingService} />
-    </>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Outlet />
+        </Suspense>
+      </Box>
+    </Box>
   );
 };
 
-export default Sidebar;
+export default SidebarLayout;
