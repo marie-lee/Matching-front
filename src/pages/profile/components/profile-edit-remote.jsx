@@ -17,7 +17,6 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
 
   const getPayload = (_payload) => {
     let payload = _.cloneDeep(_payload);
-    console.log('payload', payload);
     const profile = {
       PF_INTRO: payload.profile.PF_INTRO,
       USER_IMG: payload.profile.USER_IMG,
@@ -127,7 +126,6 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
     formData.append('profile', JSON.stringify(payload.profile));
     // 프로필 사진이 존재하면 추가
     if (payload.USER_IMG !== undefined && payload.USER_IMG !== null) {
-      console.log('payload.USER_IMG', payload.USER_IMG);
       formData.append('profile[USER_IMG]', payload.USER_IMG);
     }
     // 포트폴리오가 존재하면 추가
