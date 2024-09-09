@@ -142,10 +142,6 @@ const ProjectList = ({ name }) => {
       width: 400,
     },
     {
-      field: 'PERIOD',
-      headerName: '인원 수 ',
-    },
-    {
       field: 'START_DT',
       headerName: '기간',
       sortable: false,
