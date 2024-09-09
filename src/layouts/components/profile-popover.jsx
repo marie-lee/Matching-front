@@ -4,7 +4,7 @@ import { Divider, IconButton, MenuItem, Stack } from '@mui/material';
 
 import { CustomPopover } from '@/components/custom-popover';
 import { Icon } from '@iconify/react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux'; 
 import { PATHS } from '@/routes/paths';
 import { signOut } from '@/store/auth-slice';
 import { useActiveLink } from '@/hooks/use-active-link';
@@ -32,6 +32,8 @@ const ProfilePopover = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const { isSignIn } = useSelector((state) => state.auth); 
+
   const [open, setOpen] = useState(null);
 
   const handleOpenPopover = useCallback((event) => {
@@ -45,6 +47,10 @@ const ProfilePopover = () => {
   const handleLogout = () => {
     dispatch(signOut());
     navigate(PATHS.root);
+  };
+
+  const handleLogin = () => {
+    navigate(PATHS.auth.signIn);
   };
 
   const handleClickItem = (path) => {
@@ -77,12 +83,21 @@ const ProfilePopover = () => {
 
         <Divider sx={{ borderStyle: 'dashed ' }} />
 
-        <MenuItem
-          onClick={handleLogout}
-          sx={{ m: 1, fontWeight: 'fontWeightBold', color: 'error.main' }}
-        >
-          로그아웃
-        </MenuItem>
+        {isSignIn ? (
+          <MenuItem
+            onClick={handleLogout}
+            sx={{ m: 1, fontWeight: 'fontWeightBold', color: 'error.main' }}
+          >
+            로그아웃
+          </MenuItem>
+        ) : (
+          <MenuItem
+            onClick={handleLogin}
+            sx={{ m: 1, fontWeight: 'fontWeightBold', color: 'success.main' }} 
+          >
+            로그인
+          </MenuItem>
+        )}
       </CustomPopover>
     </>
   );
