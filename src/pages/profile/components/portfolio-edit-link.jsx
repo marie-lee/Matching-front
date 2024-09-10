@@ -1,5 +1,5 @@
 import { RhfTextField } from '@/components/hook-form';
-import { Box, Button, IconButton, Stack } from '@mui/material';
+import { Box, Button, IconButton, Stack, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useEffect, useState } from 'react';
 import { useTheme } from '@emotion/react';
@@ -27,12 +27,25 @@ export const PortfolioLink = ({ index }) => {
   return (
     <Box
       sx={{
+        position: 'relative',
         p: 2,
         border: '1px solid',
         borderColor: 'divider',
         borderRadius: '4px',
       }}
     >
+      <Typography
+        variant="caption"
+        sx={{
+          position: 'absolute',
+          top: '-10px',
+          left: '10px',
+          backgroundColor: 'background.default',
+          padding: '0 4px',
+        }}
+      >
+        URL
+      </Typography>
       <Stack spacing={1}>
         {fields.map((field, linkIndex) => (
           <Stack

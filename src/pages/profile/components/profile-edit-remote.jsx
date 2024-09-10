@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Stack } from '@mui/material';
 import ProfilePreview from './profile-edit-preview';
 import { postProfile } from '@/services/member';
 import _ from 'lodash';
+import { useNavigate } from 'react-router-dom';
+import LoadingPopup from './loading';
 
 const RemoteControlBox = ({ profileEditForm, onOpen }) => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const calculateMonths = (startDate, endDate) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -83,7 +87,7 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
             // 만약에 IMG 가 URL, MAIN_YN 만 가지고 있다면 { URL: URL, MAIN_YN: MAIN_YN } 으로 만들어줌
             // 만약에 DEL_YN을 가지고 있으면 { URL: URL, MAIN_YN: MAIN_YN, DEL_YN: DEL_YN } 으로 만들어줌
             // MAIN_YN 이 true 면 1 false 면 0
-            MEDIA: portfolio.IMG.map((img) => {
+            MEDIA: portfolio.IMG?.map((img) => {
               console.log('img', img);
               if (img.file && img.MAIN_YN !== undefined) {
                 return {
@@ -122,6 +126,7 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
   };
 
   const onSubmit = profileEditForm.handleSubmit(async (_payload) => {
+    setIsLoading(true); // 요청 시작 시 로딩 상태를 true로 설정
     const payload = getPayload(_payload);
 
     const formData = new FormData();
@@ -135,7 +140,7 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
     // 포트폴리오 이미지가 존재하면 추가
     if (payload.portfolios_images) {
       payload.portfolios_images.forEach((images, pindex) => {
-        images.forEach((image) => {
+        images?.forEach((image) => {
           // pindex에 대한 카운터가 없으면 초기화
           if (!pindexCounters[pindex]) {
             pindexCounters[pindex] = 0;
@@ -177,15 +182,18 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
       const res = await postProfile(formData);
       if (res?.status === 200) {
         // setPreviewOpen(false);
-        // navigate(-1);
       }
     } catch (error) {
       console.log('error', error);
+    } finally {
+      setIsLoading(false); // 요청 종료 시 로딩 상태를 false로 설정
+      navigate(-1);
     }
   });
 
   return (
     <Stack p={2} spacing={4} bgcolor={'background.default'}>
+      {isLoading && <LoadingPopup />}
       <Stack spacing={1}>
         <Button variant="outlined" color="primary" sx={{ borderRadius: '4px' }}>
           경력
