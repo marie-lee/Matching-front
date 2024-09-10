@@ -47,8 +47,10 @@ const ProjectReqDialog = ({ open, setOpen, selectedUserSn, selectedPjt }) => {
       }
     } catch (error) {
       setIsPending(false);
+      const errorMessage = error?.response?.data?.message || '요청에 실패했습니다. 다시 시도해주세요.';
+      console.error('참여 요청 실패:', errerrorMessageor); 
       toast.show({
-        msg: '요청에 실패했습니다. 다시 시도해주세요.',  
+        msg: errorMessage, 
         type: 'error',
       });
     }

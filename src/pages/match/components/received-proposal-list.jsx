@@ -190,11 +190,10 @@ const ReceivedProposalList = ({ data, setSelectedProject, handleClickReq }) => {
 
       <Section
         title={'거절'}
-        data={_.filter(data.REQ_LIST, (value) => {
-          if (value.REQ_STTS === 'CANCEL' || value.REQ_STTS === 'REJECT') {
-            return value;
-          }
-        })}
+        data={_.filter(
+          data,
+          (value) => value.REQ_STTS === 'CANCEL' || value.REQ_STTS === 'REJECT',
+        )}
         keyName={'cancel'}
         disabled={true}
         handleClickReq={handleClickReq}
