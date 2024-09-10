@@ -50,7 +50,14 @@ const ProjectSection = ({ data, handleClickUser, handleClickReq }) => {
 
               <Section
                 title={'거절'}
-                data={_.filter(data.REQ_LIST, { REQ_STTS: 'REJECT' })}
+                data={_.filter(data.REQ_LIST, (value) => {
+                  if (
+                    value.REQ_STTS === 'CANCEL' ||
+                    value.REQ_STTS === 'REJECT'
+                  ) {
+                    return value;
+                  }
+                })}
                 handleClickReq={handleClickReq}
                 disabled
                 pjtSn={data.PJT_SN}
