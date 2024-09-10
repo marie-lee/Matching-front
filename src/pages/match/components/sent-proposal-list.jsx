@@ -49,6 +49,15 @@ const ProjectSection = ({ data, handleClickUser, handleClickReq }) => {
               />
 
               <Section
+                title={'최종 참여'}
+                data={_.filter(data.REQ_LIST, { REQ_STTS: 'CONFIRM' })}
+                disabled
+                handleClickUser={handleClickUser}
+                handleClickReq={handleClickReq}
+                pjtSn={data.PJT_SN}
+              />
+
+              <Section
                 title={'거절'}
                 data={_.filter(data.REQ_LIST, (value) => {
                   if (
