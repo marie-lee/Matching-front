@@ -36,5 +36,5 @@ export const postStatusFirstReq = (pjtSn, payload) => {
 // 개발자에게 참여 요청 상태 수정
 // export const URL_PUT_STATUS_REQ = '/status/{pjtSn}/req/{reqSn}';
 export const putStatusReq = (pjtSn, reqSn, payload) => {
-  return instance.put(`/status/${pjtSn}/req/${reqSn}}`, payload);
+  return instance.put(`/status/${pjtSn}/req/${reqSn}`, payload);
 };
