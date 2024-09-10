@@ -14,7 +14,7 @@ import PortfolioDetail from '@/pages/profile/components/portfolio-detail';
 
 // ----------------------------------------------------------------------
 
-const PortfolioList = ({ portfolio }) => {
+export const GetPortfolioList = ({ portfolio }) => {
   console.log('portfolio', portfolio);
   const [selectedPortfolio, setSelectedPortfolio] = useState(null);
 
@@ -94,6 +94,7 @@ const PortfolioList = ({ portfolio }) => {
 // ----------------------------------------------------------------------
 
 const MatchSelectedMember = ({ member }) => {
+  console.log('member', member);
   return (
     <Stack>
       <Grid
@@ -183,7 +184,7 @@ const MatchSelectedMember = ({ member }) => {
       </Grid>
       {/* 포트폴리오 */}
       <Grid item xs={12} mt={2}>
-        <PortfolioList portfolio={member.portfolioInfo} />
+        <GetPortfolioList portfolio={member.portfolioInfo} />
       </Grid>
     </Stack>
   );
