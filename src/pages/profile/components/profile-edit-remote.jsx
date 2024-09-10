@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Stack } from '@mui/material';
 import ProfilePreview from './profile-edit-preview';
 import { postProfile } from '@/services/member';
 import _ from 'lodash';
+import { useNavigate } from 'react-router-dom';
+import LoadingPopup from './loading';
 
 const RemoteControlBox = ({ profileEditForm, onOpen }) => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const calculateMonths = (startDate, endDate) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -122,6 +126,7 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
   };
 
   const onSubmit = profileEditForm.handleSubmit(async (_payload) => {
+    setIsLoading(true); // 요청 시작 시 로딩 상태를 true로 설정
     const payload = getPayload(_payload);
 
     const formData = new FormData();
@@ -177,15 +182,18 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
       const res = await postProfile(formData);
       if (res?.status === 200) {
         // setPreviewOpen(false);
-        // navigate(-1);
       }
     } catch (error) {
       console.log('error', error);
+    } finally {
+      setIsLoading(false); // 요청 종료 시 로딩 상태를 false로 설정
+      navigate(-1);
     }
   });
 
   return (
     <Stack p={2} spacing={4} bgcolor={'background.default'}>
+      {isLoading && <LoadingPopup />}
       <Stack spacing={1}>
         <Button variant="outlined" color="primary" sx={{ borderRadius: '4px' }}>
           경력
