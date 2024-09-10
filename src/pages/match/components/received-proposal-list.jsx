@@ -178,6 +178,7 @@ const ReceivedProposalList = ({ data, setSelectedProject, handleClickReq }) => {
         handleClickReq={handleClickReq}
       />
 
+      {/* 프로젝트 상태가 모집중(RECRUIT)이면서, 참여 완료(CONFIRM)인 경우에만 조회 가능 */}
       <Section
         title={'최종 참여'}
         data={_.filter(data, { REQ_STTS: 'CONFIRM' })}
