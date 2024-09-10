@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Box,
   Button,
   Chip,
   Divider,
@@ -78,18 +79,7 @@ const PortfolioList = ({ portfolio }) => {
             </Stack>
           </Grid>
         ))
-      : <Typography
-          container
-          columnSpacing={2}
-          rowSpacing={3}
-          pt={1}
-          component={'p'}
-          variant={'sm'}
-          color={'text.secondary'}
-        >
-          포트폴리오가 없습니다.
-        </Typography>
-      }
+      : <Box>{/* 포트폴리오가 없을때 */}</Box>}
       {selectedPortfolio && (
         <PortfolioDetail
           open={!!selectedPortfolio}
@@ -133,7 +123,7 @@ const MatchSelectedMember = ({ member }) => {
           <Grid item container mt={1}>
             <Typography variant={'md'}>{member.profile.PF_INTRO}</Typography>
             <Grid item container spacing={0.5} alignItems={'center'} mt={2}>
-              {member.profile.url.map((url, index) => (
+              {member.profile.url?.map((url, index) => (
                 <Fragment key={`url_${index}`}>
                   <Grid item xs={12} sm={2}>
                     <Typography fontWeight={'fontWeightMedium'}>
