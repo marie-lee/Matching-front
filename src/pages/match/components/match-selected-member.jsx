@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Box,
   Button,
   Chip,
   Divider,
@@ -13,7 +14,7 @@ import PortfolioDetail from '@/pages/profile/components/portfolio-detail';
 
 // ----------------------------------------------------------------------
 
-const PortfolioList = ({ portfolio }) => {
+export const GetPortfolioList = ({ portfolio }) => {
   console.log('portfolio', portfolio);
   const [selectedPortfolio, setSelectedPortfolio] = useState(null);
 
@@ -78,18 +79,7 @@ const PortfolioList = ({ portfolio }) => {
             </Stack>
           </Grid>
         ))
-      : <Typography
-          container
-          columnSpacing={2}
-          rowSpacing={3}
-          pt={1}
-          component={'p'}
-          variant={'sm'}
-          color={'text.secondary'}
-        >
-          포트폴리오가 없습니다.
-        </Typography>
-      }
+      : <Box>{/* 포트폴리오가 없을때 */}</Box>}
       {selectedPortfolio && (
         <PortfolioDetail
           open={!!selectedPortfolio}
@@ -104,6 +94,7 @@ const PortfolioList = ({ portfolio }) => {
 // ----------------------------------------------------------------------
 
 const MatchSelectedMember = ({ member }) => {
+  console.log('member', member);
   return (
     <Stack>
       <Grid
@@ -133,7 +124,7 @@ const MatchSelectedMember = ({ member }) => {
           <Grid item container mt={1}>
             <Typography variant={'md'}>{member.profile.PF_INTRO}</Typography>
             <Grid item container spacing={0.5} alignItems={'center'} mt={2}>
-              {member.profile.url.map((url, index) => (
+              {member.profile.url?.map((url, index) => (
                 <Fragment key={`url_${index}`}>
                   <Grid item xs={12} sm={2}>
                     <Typography fontWeight={'fontWeightMedium'}>
@@ -193,7 +184,7 @@ const MatchSelectedMember = ({ member }) => {
       </Grid>
       {/* 포트폴리오 */}
       <Grid item xs={12} mt={2}>
-        <PortfolioList portfolio={member.portfolioInfo} />
+        <GetPortfolioList portfolio={member.portfolioInfo} />
       </Grid>
     </Stack>
   );

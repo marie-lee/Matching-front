@@ -32,6 +32,12 @@ export const postProfile = (payload) => {
   return instance.post(URL_POST_PROFILE, payload);
 };
 
+// 특정 프로필, 포트폴리오 조회
+export const URL_GET_PROFILE = '/member/user';
+export const getProfile = (userSn) => {
+  return instance.get(`${URL_GET_PROFILE}/${userSn}`);
+};
+
 // 이메일 인증
 export const URL_POST_EMAIL_CERTIFICATION =
   '/member/registration/certification';
