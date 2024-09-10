@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Box,
   Button,
   Chip,
   Divider,
@@ -83,18 +84,7 @@ const PortfolioList = (member) => {
             </Stack>
           </Grid>
         ))
-      : <Typography
-          container
-          columnSpacing={2}
-          rowSpacing={3}
-          pt={1}
-          component={'p'}
-          variant={'sm'}
-          color={'text.secondary'}
-        >
-          포트폴리오가 없습니다.
-        </Typography>
-      }
+      : <Box>{/* 포트폴리오가 없을때 */}</Box>}
       {selectedPortfolio && (
         <PortfolioDetail
           open={!!selectedPortfolio}
