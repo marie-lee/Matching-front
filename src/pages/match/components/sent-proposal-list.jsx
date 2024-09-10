@@ -167,7 +167,7 @@ const Item = ({
                     fullWidth
                     size={'small'}
                     onClick={() =>
-                      handleClickReq(pjtSn, value?.REQ_SN, 'FINAL_REQ')
+                      handleClickReq(pjtSn, value?.REQ_SN, 'CONFIRM')
                     }
                   >
                     수락

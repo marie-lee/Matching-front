@@ -170,7 +170,7 @@ const ReceivedProposalList = ({ data, setSelectedProject, handleClickReq }) => {
       />
 
       <Section
-        title={'최종 확인'}
+        title={'승인 대기'}
         data={_.filter(data, { REQ_STTS: 'AGREE' })}
         keyName={'success'}
         confirmDisabled
