@@ -1,4 +1,5 @@
 import { Box } from '@mui/material';
+import defaultImage from './default.png';
 
 const ResponsiveImg = ({ src, alt, height, width, style }) => {
   return (
@@ -11,7 +12,7 @@ const ResponsiveImg = ({ src, alt, height, width, style }) => {
       }}
     >
       <img
-        src={src}
+        src={src || defaultImage}
         alt={alt}
         style={{
           position: 'absolute',
