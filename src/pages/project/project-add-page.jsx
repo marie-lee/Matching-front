@@ -65,9 +65,6 @@ const ProjectAddPage = () => {
       } else if (key === 'ROLES') {
         // 프로젝트 관련 경험
         formData.append('ROLES', JSON.stringify(payload['ROLES']));
-      } else if (key === 'PJT_OPEN_YN') {
-        // 프로젝트 상세 공개 여부
-        formData.append('PJT_OPEN_YN', payload['PJT_OPEN_YN'] === 'true');
       } else {
         formData.append(key, payload[key]);
       }
