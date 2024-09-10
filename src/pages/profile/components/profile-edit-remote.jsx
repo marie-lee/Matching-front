@@ -44,66 +44,68 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
     };
 
     const portfolios = payload.portfolioInfo.map(
-      (portfolio, index) => (
-        console.log('portfolio', portfolio),
-        {
-          PFOL_SN: portfolio.PFOL_SN,
-          PFOL_NM: portfolio.PFOL_NM,
-          INTRO: portfolio.INTRO,
-          // 시작일 종료일 기간
-          PERIOD: calculateMonths(portfolio.START_DT, portfolio.END_DT),
-          START_DT: portfolio.START_DT,
-          END_DT: portfolio.END_DT,
-          MEM_CNT: portfolio.MEM_CNT,
-          CONTRIBUTION: portfolio.CONTRIBUTION,
+      (portfolio, index) =>
+        (
+          // console.log('portfolio', portfolio),
+          console.log('portfolio', portfolio.url),
+          {
+            PFOL_SN: portfolio.PFOL_SN,
+            PFOL_NM: portfolio.PFOL_NM,
+            INTRO: portfolio.INTRO,
+            // 시작일 종료일 기간
+            PERIOD: calculateMonths(portfolio.START_DT, portfolio.END_DT),
+            START_DT: portfolio.START_DT,
+            END_DT: portfolio.END_DT,
+            MEM_CNT: portfolio.MEM_CNT,
+            CONTRIBUTION: portfolio.CONTRIBUTION,
 
-          SERVICE_STTS: statusMapping[portfolio.SERVICE_STTS],
-          RESULT: portfolio.RESULT,
-          STACK: portfolio.stack.map((stack) => {
-            return stack;
-          }),
-          // 만약 ROLE이 null이면 빈 배열로 만들어줌
-          ROLE:
-            portfolio.role === undefined ?
-              []
-            : portfolio.role.map((role) => {
-                return role.ROLE_NM;
-              }),
-          URL: portfolio.url.map((url) => {
-            return {
-              URL: url.URL,
-              URL_INTRO: url.URL_INTRO,
-              RELEASE_YN: 0,
-              OS: 'WINDOWS',
-            };
-          }),
-          // 만약에 IMG 가 file, MAIN_YN 만 가지고 있다면 { MAIN_YN: MAIN_YN } 으로 만들어줌
-          // 만약에 IMG 가 URL, MAIN_YN 만 가지고 있다면 { URL: URL, MAIN_YN: MAIN_YN } 으로 만들어줌
-          // 만약에 DEL_YN을 가지고 있으면 { URL: URL, MAIN_YN: MAIN_YN, DEL_YN: DEL_YN } 으로 만들어줌
-          // MAIN_YN 이 true 면 1 false 면 0
-          MEDIA: portfolio.IMG.map((img) => {
-            console.log('img', img);
-            if (img.file && img.MAIN_YN !== undefined) {
+            SERVICE_STTS: statusMapping[portfolio.SERVICE_STTS],
+            RESULT: portfolio.RESULT,
+            STACK: portfolio.stack.map((stack) => {
+              return stack;
+            }),
+            // 만약 ROLE이 null이면 빈 배열로 만들어줌
+            ROLE:
+              portfolio.role === null ?
+                []
+              : portfolio.role.map((role) => {
+                  return role.ROLE_NM;
+                }),
+            URL: portfolio.url.map((url) => {
               return {
-                MAIN_YN: img.MAIN_YN ? 1 : 0,
+                URL: url.URL,
+                URL_INTRO: url.URL_INTRO,
+                RELEASE_YN: 0,
+                OS: 'WINDOWS',
               };
-            } else if (img.URL && img.MAIN_YN !== undefined) {
-              const result = {
-                URL: img.URL,
-                MAIN_YN: img.MAIN_YN ? 1 : 0,
-              };
-              if (img.DEL_YN !== undefined) {
-                result.DEL_YN = img.DEL_YN;
+            }),
+            // 만약에 IMG 가 file, MAIN_YN 만 가지고 있다면 { MAIN_YN: MAIN_YN } 으로 만들어줌
+            // 만약에 IMG 가 URL, MAIN_YN 만 가지고 있다면 { URL: URL, MAIN_YN: MAIN_YN } 으로 만들어줌
+            // 만약에 DEL_YN을 가지고 있으면 { URL: URL, MAIN_YN: MAIN_YN, DEL_YN: DEL_YN } 으로 만들어줌
+            // MAIN_YN 이 true 면 1 false 면 0
+            MEDIA: portfolio.IMG.map((img) => {
+              console.log('img', img);
+              if (img.file && img.MAIN_YN !== undefined) {
+                return {
+                  MAIN_YN: img.MAIN_YN ? 1 : 0,
+                };
+              } else if (img.URL && img.MAIN_YN !== undefined) {
+                const result = {
+                  URL: img.URL,
+                  MAIN_YN: img.MAIN_YN ? 1 : 0,
+                };
+                if (img.DEL_YN !== undefined) {
+                  result.DEL_YN = img.DEL_YN;
+                }
+                return result;
+              } else {
+                // 기본적으로 처리할 수 없는 경우 빈 객체 반환
+                return {};
               }
-              return result;
-            } else {
-              // 기본적으로 처리할 수 없는 경우 빈 객체 반환
-              return {};
-            }
-          }),
-          VIDEO: portfolio.VIDEO,
-        }
-      ),
+            }),
+            VIDEO: portfolio.VIDEO,
+          }
+        ),
     );
     return {
       profile: profile,
