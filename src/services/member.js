@@ -33,7 +33,7 @@ export const postProfile = (payload) => {
 };
 
 // 특정 프로필, 포트폴리오 조회
-export const URL_GET_PROFILE = '/member/profile';
+export const URL_GET_PROFILE = '/member/user';
 export const getProfile = (userSn) => {
   return instance.get(`${URL_GET_PROFILE}/${userSn}`);
 };
