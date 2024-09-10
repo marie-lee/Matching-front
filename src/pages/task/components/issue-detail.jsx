@@ -244,6 +244,7 @@ const IssueDetail = ({
                   options={optionData?.memberList}
                   multiple
                   size={'small'}
+                  duplicationKeyName={'userSn'}
                   renderTags={(value, getTagProps) =>
                     value.map((option, index) => {
                       const { key, ...tagProps } = getTagProps({ index });
