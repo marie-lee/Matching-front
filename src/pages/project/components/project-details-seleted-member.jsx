@@ -23,6 +23,11 @@ const PortfolioList = (member) => {
     setSelectedPortfolio(portfolio);
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
+
   return (
     <Grid container columnSpacing={2} rowSpacing={3} pt={1}>
       {member.member.portfolio?.length > 0 ?
@@ -67,7 +72,7 @@ const PortfolioList = (member) => {
                   variant={'sm'}
                   color={'text.secondary'}
                 >
-                  {`${pfol.startDt} ~ ${pfol.endDt}`}
+                  {`${formatDate(pfol.startDt)} ~ ${formatDate(pfol.endDt)}`}
                 </Typography>
 
                 {/* 사용 스킬 */}
