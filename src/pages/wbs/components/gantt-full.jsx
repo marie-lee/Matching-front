@@ -16,6 +16,9 @@ const GanttFull = ({
   projectEndDate,
   ticketDetails = [], // 기본값 설정
 }) => {
+  console.log('projectStartDate', projectStartDate);
+  console.log('projectEndDate', projectEndDate);
+
   // ticketDetails가 비어있지 않다면 dotList를 생성합니다.
   const dotList = ticketDetails.map((item) => {
     const ticketSnIndex = tableData
@@ -203,6 +206,7 @@ const GanttFull = ({
                         ),
                       )
                     : null;
+
                   const isInRange =
                     taskStartDate &&
                     taskDueDate &&

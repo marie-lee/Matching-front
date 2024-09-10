@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Stack, Container, Grid, Box } from '@mui/material';
@@ -7,9 +7,9 @@ import { PATHS } from '@/routes/paths';
 import { selectPjtSn } from '@/store/pjtsn-reducer';
 import StepperComponent from '@/pages/wbs/components/stepper-component';
 import { mergeTableDataByRowSpan } from '@/pages/wbs/components/merge-table-data';
-import WbsFull from '@/pages/wbs/components/wbs-full';
-import GanttInputFull from '@/pages/wbs/components/gant-input-full';
 
+import GanttInputFull from '@/pages/wbs/components/gant-input-full';
+import WbsFull from './components/wbs-full';
 //Api Import
 import { postWbs } from '@/services/wbs';
 
@@ -19,7 +19,8 @@ const WbsInput = () => {
 
   const tableData = useSelector((state) => state.wbs.tableData);
   const pjtData = useSelector((state) => state.wbs.pjtData);
-  const datas = useSelector((state) => state.wbs.data);
+  const datas = useSelector((state) => state.wbs.memberData);
+
   const pjtSn = useSelector(selectPjtSn);
 
   const memberNames = datas.map((member) => member.userNm);
@@ -60,8 +61,17 @@ const WbsInput = () => {
     setLocalTableData(updatedTable);
   };
 
-  const handleCellChange = (updatedTable) => {
-    setLocalTableData(updatedTable);
+  const handleCellChange = (rowIndex, cellIndex, newValue) => {
+    setLocalTableData((prevData) => {
+      const updatedTable = [...prevData];
+      updatedTable[rowIndex] = [...updatedTable[rowIndex]];
+      updatedTable[rowIndex][cellIndex] = {
+        ...updatedTable[rowIndex][cellIndex],
+        value: newValue,
+      };
+
+      return updatedTable;
+    });
   };
 
   const handleSave = () => {
@@ -130,7 +140,7 @@ const WbsInput = () => {
                   <WbsFull
                     tableData={localTableData}
                     handleCellChange={handleCellChange}
-                    addRow={addRow} // WbsFull로 addRow 함수 전달
+                    addRow={addRow}
                     members={memberNames}
                     editable={false}
                   />
