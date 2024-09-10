@@ -5,7 +5,6 @@ export const projectAddFormDefaultValues = {
   PJT_NM: '',
   PJT_IMG: null,
   PJT_INTRO: '',
-  PJT_OPEN_YN: null,
   CONSTRUCTOR_ROLE: null,
   SELECTED_DT_YN: null,
   START_DT: null,
@@ -20,10 +19,7 @@ export const projectAddFormDefaultValues = {
 export const projectAddFormSchema = yup.object().shape({
   PJT_NM: yup.string().required('프로젝트 제목을 입력해주세요'),
   PJT_INTRO: yup.string().required('프로젝트 간단 소개를 입력해주세요'),
-  PJT_OPEN_YN: yup.mixed().required('본인의 역할을 작성해주세요'),
-  CONSTRUCTOR_ROLE: yup
-    .mixed()
-    .required('프로젝트 상세 공개 여부를 선택해주세요'),
+  CONSTRUCTOR_ROLE: yup.mixed().required('본인의 역할을 작성해주세요'),
   SELECTED_DT_YN: yup.mixed().required('예상 프로젝트 시작일을 선택해주세요'),
   START_DT: yup
     .mixed()
@@ -56,11 +52,6 @@ export const projectAddFormSchema = yup.object().shape({
     }),
   ),
 });
-
-export const OPEN_OPTIONS = [
-  { label: '상세 공개', value: 'false' },
-  { label: '일부 공개', value: 'true' },
-];
 
 export const SELECTED_DT_OPTIONS = [
   { label: '팀 모집 후 바로 시작', value: 'false' },

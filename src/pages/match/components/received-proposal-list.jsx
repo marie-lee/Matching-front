@@ -164,24 +164,37 @@ const ReceivedProposalList = ({ data, setSelectedProject, handleClickReq }) => {
       <Section
         title={'요청 온 제안'}
         data={_.filter(data, { REQ_STTS: 'REQ' })}
-        keyName={'wait'}
+        keyName={'req'}
         handleClickProject={handleClickProject}
         handleClickReq={handleClickReq}
       />
 
       <Section
-        title={'최종 확인'}
+        title={'승인 대기'}
         data={_.filter(data, { REQ_STTS: 'AGREE' })}
-        keyName={'success'}
+        keyName={'agree'}
         confirmDisabled
         handleClickProject={handleClickProject}
         handleClickReq={handleClickReq}
       />
 
       <Section
+        title={'최종 참여'}
+        data={_.filter(data, { REQ_STTS: 'CONFIRM' })}
+        keyName={'confirm'}
+        disabled={true}
+        handleClickProject={handleClickProject}
+        handleClickReq={handleClickReq}
+      />
+
+      <Section
         title={'거절'}
-        data={_.filter(data, { REQ_STTS: 'REJECT' })}
-        keyName={'deny'}
+        data={_.filter(data.REQ_LIST, (value) => {
+          if (value.REQ_STTS === 'CANCEL' || value.REQ_STTS === 'REJECT') {
+            return value;
+          }
+        })}
+        keyName={'cancel'}
         disabled={true}
         handleClickReq={handleClickReq}
       />

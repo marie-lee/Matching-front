@@ -3,7 +3,7 @@ import _ from 'lodash';
 import dayjs from 'dayjs';
 import { LoadingButton } from '@mui/lab';
 
-import { DURATION_UNIT_OPTIONS, OPEN_OPTIONS } from '@/pages/project/constants';
+import { DURATION_UNIT_OPTIONS } from '@/pages/project/constants';
 
 // ----------------------------------------------------------------------
 
@@ -126,20 +126,6 @@ const ProjectAddPreview = ({
               <Chip key={exp} label={exp} size={'small'} />
             ))}
           </Stack>
-        </Grid>
-
-        <Grid item xs={3}>
-          <Typography fontWeight={'fontWeightMedium'}>
-            프로젝트 상세 공개 여부
-          </Typography>
-        </Grid>
-        <Grid item xs={9}>
-          <Typography>
-            {
-              _.find(OPEN_OPTIONS, { value: projectAddFormValues.PJT_OPEN_YN })
-                ?.label
-            }
-          </Typography>
         </Grid>
 
         <Grid item xs={12}>
