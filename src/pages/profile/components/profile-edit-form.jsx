@@ -29,6 +29,7 @@ import { LinkForm } from './profile-edit-link-form';
 import { useTheme } from '@emotion/react';
 import PortfolioImageList from './portfolio-edit-image';
 import PortfolioVideo from './portfolio-edit-video';
+import { PortfolioLink } from './portfolio-edit-link';
 
 const FormGroup = ({ title, children }) => {
   return (
@@ -60,31 +61,20 @@ const names = ['백엔드', '프론트엔드', '기획', '디자인'];
 
 const PortfolioForm = ({ profileEditForm }) => {
   console.log('render PortfolioForm');
-  const theme = useTheme();
   const { control, setValue } = useFormContext();
   const [stackName, setStackName] = useState('');
-  const [mainImage, setMainImage] = useState(null);
-
-  // 이미지 클릭 이벤트 핸들러
-  const handleImageClick = (image) => {
-    setMainImage(image);
-  };
 
   // 프로필 포트폴리오
   const portfolioFieldArray = useFieldArray({
     control,
     name: 'portfolioInfo',
   });
-  // 링크 초기값 설정
-  const initialLinks = portfolioFieldArray.fields.map(
-    (field) => field.url || [],
-  );
+
   // 스택 초기값 설정
   const initialStacks = portfolioFieldArray.fields.map(
     (field) => field.stack || [],
   );
 
-  const [links, setLinks] = useState(initialLinks);
   const [stacks, setStacks] = useState(initialStacks);
 
   const handleAppendPortfolio = () => {
@@ -105,19 +95,12 @@ const PortfolioForm = ({ profileEditForm }) => {
       IMG: [],
       VIDEO: '',
     });
-
-    setLinks([...links, []]);
     setStacks([...stacks, []]);
   };
 
   const handleAppendStack = (pindex) => {
     setStacks([...stacks, stacks[pindex].push({ ST_NM: stackName })]);
     portfolioFieldArray.fields[pindex].stack.push({ ST_NM: stackName });
-  };
-
-  const handleAppendLink = (index) => {
-    setLinks([...links, { URL: '', DESCRIPTION: '' }]);
-    portfolioFieldArray.fields[index].URL.push({ URL: '', DESCRIPTION: '' });
   };
 
   const handleRemoveImage = (portfolioIndex, imageIndex) => {
@@ -305,58 +288,7 @@ const PortfolioForm = ({ profileEditForm }) => {
               })}
             </Stack>
           </Stack>
-          <Box
-            sx={{
-              p: 2,
-              border: '1px solid',
-              borderColor: 'divider',
-              borderRadius: '4px',
-            }}
-          >
-            <Stack spacing={1}>
-              {links[index].map((link, linkindex) => (
-                <Stack
-                  key={`link_${linkindex}`}
-                  direction={'row'}
-                  spacing={1}
-                  alignItems={'center'}
-                >
-                  <Box>
-                    <RhfTextField
-                      name={`portfolioInfo[${index}].url[${linkindex}].URL`}
-                      label={'URL'}
-                      size={'medium'}
-                      variant={'outlined'}
-                    />
-                  </Box>
-                  <Box sx={{ flexGrow: 1 }}>
-                    <RhfTextField
-                      name={`portfolioInfo[${index}].url[${linkindex}].URL_INTRO`}
-                      label={'URL'}
-                      size={'medium'}
-                      variant={'outlined'}
-                    />
-                  </Box>
-                  <Box>
-                    <IconButton>
-                      <AddIcon />
-                    </IconButton>
-                  </Box>
-                </Stack>
-              ))}
-            </Stack>
-            <Button
-              color="primary"
-              variant={'outlined'}
-              fullWidth
-              startIcon={
-                <AddIcon sx={{ color: theme.palette.text.primary }}></AddIcon>
-              }
-              onClick={() => handleAppendLink(index)}
-            >
-              추가하기
-            </Button>
-          </Box>
+          <PortfolioLink index={index}></PortfolioLink>
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">서비스 상태</InputLabel>
             <Controller

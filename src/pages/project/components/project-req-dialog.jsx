@@ -7,10 +7,12 @@ import { reqFormDefaultValues, reqFormSchema } from '@/pages/project/constants';
 import { CustomDialog } from '@/components/custom-dialog';
 import { RhfFormProvider, RhfSelect } from '@/components/hook-form';
 import { postStatusFirstReq } from '@/services/status';
+import { useToast } from '@/contexts/toast-provider';
 
 // ----------------------------------------------------------------------
 
 const ProjectReqDialog = ({ open, setOpen, selectedUserSn, selectedPjt }) => {
+  const toast = useToast();
   const reqForm = useForm({
     defaultValues: reqFormDefaultValues,
     resolver: yupResolver(reqFormSchema),
@@ -35,10 +37,20 @@ const ProjectReqDialog = ({ open, setOpen, selectedUserSn, selectedPjt }) => {
     setIsPending(true);
     try {
       const res = await postStatusFirstReq(selectedPjt?.pjtSn, payload);
-
       setIsPending(false);
+      if (res?.data?.message) {
+        closeDialog();
+        toast.show({
+          msg: '참여 요청을 보냈습니다', 
+          type: 'success',
+        });
+      }
     } catch (error) {
       setIsPending(false);
+      toast.show({
+        msg: '요청에 실패했습니다. 다시 시도해주세요.',  
+        type: 'error',
+      });
     }
   });
 

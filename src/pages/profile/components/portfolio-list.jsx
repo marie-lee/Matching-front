@@ -17,6 +17,11 @@ const PortfolioList = ({ profileData }) => {
     setSelectedPortfolio(portfolio);
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
+
   const [portfolio, setPortfolio] = useState([]);
 
   useEffect(() => {
@@ -83,7 +88,7 @@ const PortfolioList = ({ profileData }) => {
                   variant={'sm'}
                   color={'text.secondary'}
                 >
-                  {`${pfol.startDt} ~ ${pfol.endDt}`}
+                  {`${formatDate(pfol.startDt)} ~ ${formatDate(pfol.endDt)}`}
                 </Typography>
 
                 {/* 사용 스킬 */}

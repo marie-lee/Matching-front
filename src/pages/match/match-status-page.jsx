@@ -27,17 +27,16 @@ const MatchStatusPage = () => {
   const [selectedView, setSelectedView] = useState('보낸 제안');
   const [selectedMember, setSelectedMember] = useState(null);
   const [selectedProject, setSelectedProject] = useState('');
-  const [sentProject, setSentProject] = useState('');
   const [selectedProjectSN, setSelectedProjectSN] = useState('');
-  const [projectReqList, setProjectReqList] = useState([]);
 
   const [openReqDialog, setOpenReqDialog] = useState(false);
   const [reqDialogData, setReqDialogData] = useState({});
 
   const [isFetching, setIsFetching] = useState(false);
 
-  // const [projectReqList, setProjectReqList] = useState([]);
+  const [projectReqList, setProjectReqList] = useState([]);
   const [myReqList, setMyReqList] = useState([]);
+
   const fetchStatus = async () => {
     setIsFetching(true);
     try {
@@ -45,6 +44,10 @@ const MatchStatusPage = () => {
       setIsFetching(false);
       setMyReqList(res?.data?.myReqList);
       setProjectReqList(res?.data?.projectReqList);
+
+      if (res?.data?.projectReqList && res?.data?.projectReqList.length > 0) {
+        setSelectedProjectSN(res?.data?.projectReqList[0].PJT_SN);
+      }
     } catch (error) {
       setIsFetching(false);
     }
@@ -55,11 +58,7 @@ const MatchStatusPage = () => {
   }, [selectedView]);
 
   const handleChangeProject = (event) => {
-    const selectedProjectReqList = projectReqList.find(
-      (item) => item.PJT_SN === event.target.value,
-    );
     setSelectedMember(null);
-    setSentProject(selectedProjectReqList);
     setSelectedProjectSN(event.target.value);
   };
 
@@ -128,7 +127,9 @@ const MatchStatusPage = () => {
 
         {selectedView === '보낸 제안' && (
           <SentProposalList
-            data={sentProject}
+            data={projectReqList.find(
+              (item) => item.PJT_SN === selectedProjectSN,
+            )}
             setSelectedMember={setSelectedMember}
             handleClickReq={handleClickReq}
           />

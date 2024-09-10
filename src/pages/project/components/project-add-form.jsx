@@ -1,4 +1,4 @@
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { Controller, useFieldArray } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
 import {
   Box,
@@ -9,7 +9,6 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { Icon } from '@iconify/react';
 import { useTheme } from '@mui/material/styles';
 import { useRef } from 'react';
@@ -25,10 +24,7 @@ import {
 import {
   DURATION_UNIT_OPTIONS,
   EXPERIENCE_OPTIONS,
-  OPEN_OPTIONS,
   PART_OPTIONS,
-  projectAddFormDefaultValues,
-  projectAddFormSchema,
   SELECTED_DT_OPTIONS,
   STACK_OPTIONS,
 } from '@/pages/project/constants';
@@ -195,10 +191,6 @@ const ProjectAddForm = ({ projectAddForm, handleOpenPreview }) => {
             variant={'outlined'}
             helperText={'전체 공개용 프로젝트 소개 내용을 간단히 작성해주세요'}
           />
-        </Section>
-
-        <Section title={'프로젝트 상세 공개 여부'}>
-          <RhfRadioGroup name={'PJT_OPEN_YN'} options={OPEN_OPTIONS} />
         </Section>
 
         <Section title={'프로젝트 등록자 역할'}>

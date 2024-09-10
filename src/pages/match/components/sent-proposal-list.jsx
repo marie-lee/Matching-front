@@ -49,8 +49,24 @@ const ProjectSection = ({ data, handleClickUser, handleClickReq }) => {
               />
 
               <Section
+                title={'최종 참여'}
+                data={_.filter(data.REQ_LIST, { REQ_STTS: 'CONFIRM' })}
+                disabled
+                handleClickUser={handleClickUser}
+                handleClickReq={handleClickReq}
+                pjtSn={data.PJT_SN}
+              />
+
+              <Section
                 title={'거절'}
-                data={_.filter(data.REQ_LIST, { REQ_STTS: 'REJECT' })}
+                data={_.filter(data.REQ_LIST, (value) => {
+                  if (
+                    value.REQ_STTS === 'CANCEL' ||
+                    value.REQ_STTS === 'REJECT'
+                  ) {
+                    return value;
+                  }
+                })}
                 handleClickReq={handleClickReq}
                 disabled
                 pjtSn={data.PJT_SN}
@@ -167,7 +183,7 @@ const Item = ({
                     fullWidth
                     size={'small'}
                     onClick={() =>
-                      handleClickReq(pjtSn, value?.REQ_SN, 'FINAL_REQ')
+                      handleClickReq(pjtSn, value?.REQ_SN, 'CONFIRM')
                     }
                   >
                     수락
