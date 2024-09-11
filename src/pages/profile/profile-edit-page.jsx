@@ -5,7 +5,7 @@ import { HEADER } from '@/layouts/config-layout';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { RhfFormProvider } from '@/components/hook-form';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { instance } from '@/services/config';
 import {
   profileEditFormDefaultValues,
@@ -49,6 +49,16 @@ const ProfileEditPage = () => {
     console.log('Preview Open');
   };
 
+  // 각 섹션에 대한 참조 생성
+  const refs = {
+    profileRef: useRef(null),
+    careerRef: useRef(null),
+    skillRef: useRef(null),
+    interestRef: useRef(null),
+    linkRef: useRef(null),
+    portfolioRef: useRef(null),
+  };
+
   // fetchProfile() 을 받아오기 전까지 로딩 처리
   if (!profileData.profile) {
     return <div>Loading...</div>;
@@ -58,7 +68,7 @@ const ProfileEditPage = () => {
     <RhfFormProvider form={profileEditForm}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={9}>
-          <ProfileEditForm profileEditForm={profileEditForm} />
+          <ProfileEditForm profileEditForm={profileEditForm} refs={refs} />
         </Grid>
         <Grid item xs={12} md={3}>
           <AppBar
@@ -69,6 +79,7 @@ const ProfileEditPage = () => {
             <RemoteControlBox
               profileEditForm={profileEditForm}
               onOpen={handlePreviewOpen}
+              refs={refs}
             />
           </AppBar>
         </Grid>

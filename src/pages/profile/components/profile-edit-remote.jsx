@@ -9,7 +9,7 @@ import { useFormContext } from 'react-hook-form';
 import { set } from 'date-fns';
 import { ErrorDialog } from './error';
 
-const RemoteControlBox = ({ profileEditForm, onOpen }) => {
+const RemoteControlBox = ({ profileEditForm, onOpen, refs }) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
@@ -26,6 +26,21 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
     const monthsDifference = end.getMonth() - start.getMonth();
 
     return yearsDifference * 12 + monthsDifference;
+  };
+
+  const scrollToRef = (ref) => {
+    if (ref && ref.current) {
+      const headerOffset = 78; // 헤더의 높이 (픽셀 단위로 조정)
+      const elementPosition = ref.current.getBoundingClientRect().top;
+      const offsetPosition =
+        elementPosition + window.pageYOffset - headerOffset;
+
+      // 스크롤 거리가 작더라도 강제로 스크롤
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth',
+      });
+    }
   };
 
   const getPayload = (_payload) => {
@@ -216,19 +231,44 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
     <Stack p={2} spacing={4} bgcolor={'background.default'}>
       {isLoading && <LoadingPopup />}
       <Stack spacing={1}>
-        <Button variant="outlined" color="primary" sx={{ borderRadius: '4px' }}>
+        <Button
+          variant="outlined"
+          color="primary"
+          sx={{ borderRadius: '4px' }}
+          onClick={() => scrollToRef(refs.careerRef)}
+        >
           경력
         </Button>
-        <Button variant="outlined" color="primary" sx={{ borderRadius: '4px' }}>
+        <Button
+          variant="outlined"
+          color="primary"
+          sx={{ borderRadius: '4px' }}
+          onClick={() => scrollToRef(refs.skillRef)}
+        >
           주요 스킬
         </Button>
-        <Button variant="outlined" color="primary" sx={{ borderRadius: '4px' }}>
+        <Button
+          variant="outlined"
+          color="primary"
+          sx={{ borderRadius: '4px' }}
+          onClick={() => scrollToRef(refs.interestRef)}
+        >
           관심분야
         </Button>
-        <Button variant="outlined" color="primary" sx={{ borderRadius: '4px' }}>
+        <Button
+          variant="outlined"
+          color="primary"
+          sx={{ borderRadius: '4px' }}
+          onClick={() => scrollToRef(refs.linkRef)}
+        >
           링크
         </Button>
-        <Button variant="outlined" color="primary" sx={{ borderRadius: '4px' }}>
+        <Button
+          variant="outlined"
+          color="primary"
+          sx={{ borderRadius: '4px' }}
+          onClick={() => scrollToRef(refs.portfolioRef)}
+        >
           포트폴리오
         </Button>
       </Stack>
