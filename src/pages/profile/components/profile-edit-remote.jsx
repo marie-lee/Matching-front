@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Stack } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 import ProfilePreview from './profile-edit-preview';
 import { postProfile } from '@/services/member';
 import _ from 'lodash';
@@ -7,11 +7,17 @@ import { useNavigate } from 'react-router-dom';
 import LoadingPopup from './loading';
 import { useFormContext } from 'react-hook-form';
 import { set } from 'date-fns';
+import { ErrorDialog } from './error';
 
 const RemoteControlBox = ({ profileEditForm, onOpen }) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const { getValues } = useFormContext();
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessages, setErrorMessages] = useState([]);
+  const {
+    getValues,
+    formState: { errors },
+  } = useFormContext();
   const calculateMonths = (startDate, endDate) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -33,7 +39,7 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
         // QUIT_DT 가 true면 현재 재직중
         QUIT_DT: career.QUIT_DT === true ? null : career.QUIT_DT,
       })),
-      STACK: payload.profile.stack.map((stack) => ({
+      STACK: payload.profile.stack?.map((stack) => ({
         ST_NM: stack.ST_NM,
         LEVEL: stack.ST_LEVEL,
       })),
@@ -63,12 +69,12 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
             PERIOD: calculateMonths(portfolio.START_DT, portfolio.END_DT),
             START_DT: portfolio.START_DT,
             END_DT: portfolio.END_DT,
-            MEM_CNT: portfolio.MEM_CNT,
+            MEM_CNT: portfolio.MEM_CNT ? portfolio.MEM_CNT : 1,
             CONTRIBUTION: portfolio.CONTRIBUTION,
 
             SERVICE_STTS: statusMapping[portfolio.SERVICE_STTS],
             RESULT: portfolio.RESULT,
-            STACK: portfolio.stack.map((stack) => {
+            STACK: portfolio.stack?.map((stack) => {
               return stack;
             }),
             // 만약 ROLE이 null이면 빈 배열로 만들어줌
@@ -128,82 +134,83 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
     };
   };
 
-  const onSubmit = profileEditForm.handleSubmit(async (_payload) => {
-    const values = getValues();
-    const careers = values.profile.career;
+  const onSubmit = profileEditForm.handleSubmit(
+    async (_payload) => {
+      console.log('onSubmit');
+      const values = getValues();
 
-    for (const career of careers) {
-      if (!career.CAREER_NM || !career.ENTERING_DT) {
-        alert('모든 경력 항목을 입력해주세요.');
-        setIsLoading(false);
-        return;
+      const payload = getPayload(_payload);
+
+      const formData = new FormData();
+      formData.append('profile', JSON.stringify(payload.profile));
+      // 프로필 사진이 존재하면 추가
+      if (payload.USER_IMG !== undefined && payload.USER_IMG !== null) {
+        formData.append('profile[USER_IMG]', payload.USER_IMG);
       }
-    }
-
-    const payload = getPayload(_payload);
-
-    const formData = new FormData();
-    formData.append('profile', JSON.stringify(payload.profile));
-    // 프로필 사진이 존재하면 추가
-    if (payload.USER_IMG !== undefined && payload.USER_IMG !== null) {
-      formData.append('profile[USER_IMG]', payload.USER_IMG);
-    }
-    // 포트폴리오가 존재하면 추가
-    const pindexCounters = {};
-    // 포트폴리오 이미지가 존재하면 추가
-    if (payload.portfolios_images) {
-      payload.portfolios_images.forEach((images, pindex) => {
-        images?.forEach((image) => {
-          // pindex에 대한 카운터가 없으면 초기화
-          if (!pindexCounters[pindex]) {
-            pindexCounters[pindex] = 0;
-          }
-          // image.file이 존재하지 않으면 formData에 추가하지 않음
-          if (image.file === undefined) {
+      // 포트폴리오가 존재하면 추가
+      const pindexCounters = {};
+      // 포트폴리오 이미지가 존재하면 추가
+      if (payload.portfolios_images) {
+        payload.portfolios_images.forEach((images, pindex) => {
+          images?.forEach((image) => {
+            // pindex에 대한 카운터가 없으면 초기화
+            if (!pindexCounters[pindex]) {
+              pindexCounters[pindex] = 0;
+            }
+            // image.file이 존재하지 않으면 formData에 추가하지 않음
+            if (image.file === undefined) {
+              pindexCounters[pindex]++;
+              return;
+            }
+            // 현재 pindex의 카운터 값을 사용하여 formData에 추가
+            formData.append(
+              `portfolios[${pindex}][MEDIA][${pindexCounters[pindex]}][file]`,
+              image.file,
+            );
+            // pindex의 카운터를 증가
             pindexCounters[pindex]++;
+          });
+        });
+      }
+      formData.append('portfolios', JSON.stringify(payload.portfolios));
+
+      // 비디오 업로드가 존재하면 추가
+      if (payload.PORTFOLIO_VIDEO) {
+        payload.PORTFOLIO_VIDEO.forEach((video) => {
+          console.log('video', video);
+          if (video === undefined) {
             return;
           }
-          // 현재 pindex의 카운터 값을 사용하여 formData에 추가
           formData.append(
-            `portfolios[${pindex}][MEDIA][${pindexCounters[pindex]}][file]`,
-            image.file,
+            `portfolios[${video.pindex}][VIDEO][file]`,
+            video.file,
           );
-          // pindex의 카운터를 증가
-          pindexCounters[pindex]++;
         });
-      });
-    }
-    formData.append('portfolios', JSON.stringify(payload.portfolios));
-
-    // 비디오 업로드가 존재하면 추가
-    if (payload.PORTFOLIO_VIDEO) {
-      payload.PORTFOLIO_VIDEO.forEach((video) => {
-        console.log('video', video);
-        if (video === undefined) {
-          return;
-        }
-        formData.append(`portfolios[${video.pindex}][VIDEO][file]`, video.file);
-      });
-    }
-
-    // 폼 데이터에 들어가는 값 확인 보기 편하게 가공
-    for (var pair of formData.entries()) {
-      console.log(pair[0] + ', ' + pair[1]);
-    }
-
-    try {
-      setIsLoading(true); // 요청 시작 시 로딩 상태를 true로 설정
-      const res = await postProfile(formData);
-      if (res?.status === 200) {
-        // setPreviewOpen(false);
       }
-    } catch (error) {
+
+      // 폼 데이터에 들어가는 값 확인 보기 편하게 가공
+      for (var pair of formData.entries()) {
+        console.log(pair[0] + ', ' + pair[1]);
+      }
+
+      try {
+        setIsLoading(true); // 요청 시작 시 로딩 상태를 true로 설정
+        const res = await postProfile(formData);
+        if (res?.status === 200) {
+          // setPreviewOpen(false);
+        }
+      } catch (error) {
+        console.log('error', error);
+      } finally {
+        navigate('/');
+        setIsLoading(false); // 요청 종료 시 로딩 상태를 false로 설정
+      }
+    },
+    (error) => {
       console.log('error', error);
-    } finally {
-      setIsLoading(false); // 요청 종료 시 로딩 상태를 false로 설정
-      navigate('/');
-    }
-  });
+      alert('입력값을 확인해주세요');
+    },
+  );
 
   return (
     <Stack p={2} spacing={4} bgcolor={'background.default'}>

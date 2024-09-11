@@ -16,7 +16,32 @@ export const profileEditFormDefaultValues = {
 };
 
 export const profileEditFormSchema = yup.object().shape({
-  USER_NM: yup.string().required('이름을 입력해주세요'),
+  profile: yup.object().shape({
+    USER_NM: yup.string().required('이름을 입력해주세요'),
+    PF_INTRO: yup.string().required('자기소개를 입력해주세요'),
+    career: yup.array().of(
+      yup.object().shape({
+        CAREER_NM: yup.string().required('회사명을 입력해주세요'),
+        ENTERING_DT: yup.date().required('입사일을 입력해주세요'),
+      }),
+    ),
+  }),
+  portfolioInfo: yup.array().of(
+    yup.object().shape({
+      PFOL_NM: yup.string().required('포트폴리오명을 입력해주세요'),
+      INTRO: yup.string().required('포트폴리오 설명을 입력해주세요'),
+      START_DT: yup.date().required('시작일을 입력해주세요'),
+      END_DT: yup.date().required('종료일을 입력해주세요'),
+      MEM_CNT: yup.string().required('프로젝트 인원을 입력해주세요'),
+      CONTRIBUTION: yup.string().required('기여도를 입력해주세요'),
+      url: yup.array().of(
+        yup.object().shape({
+          URL: yup.string().required('URL을 입력해주세요'),
+          URL_INTRO: yup.string().required('URL 설명을 입력해주세요'),
+        }),
+      ),
+    }),
+  ),
 });
 
 export const CAREERS = [
