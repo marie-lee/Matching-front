@@ -70,7 +70,7 @@ const Intrst = ({ data }) => {
           {data.length}개
         </Typography>
       </Stack>
-      <Stack flexWrap direction={'row'} spacing={0.5}>
+      <Stack direction={'row'} useFlexGap flexWrap={'wrap'} gap={0.7}>
         {data.length === 0 ?
           <Typography variant={'sm'} color={'text.secondary'}>
             등록된 스킬이 없습니다.
