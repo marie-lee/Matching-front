@@ -10,7 +10,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { getProject } from '@/services/project';
 import { ResponsiveImg } from '@/components/img';
 import { useLocation } from 'react-router-dom';
@@ -110,19 +110,19 @@ const TeamLeaderDialog = ({ open, setOpen, member }) => {
               {/* 한 줄 소개 */}
               <Grid item container mt={1}>
                 <Typography variant={'md'}>
-                  {member.profile.PF_INTRO}
+                  {member?.profile?.PF_INTRO}
                 </Typography>
                 <Grid item container spacing={0.5} alignItems={'center'} mt={2}>
-                  {member.profile.url?.map((url, index) => (
+                  {member?.profile.url?.map((url, index) => (
                     <Fragment key={`url_${index}`}>
                       <Grid item xs={12} sm={2}>
                         <Typography fontWeight={'fontWeightMedium'}>
-                          {url.URL_INTRO}
+                          {url?.URL_INTRO}
                         </Typography>
                       </Grid>
                       <Grid item xs={12} md={10}>
                         <Typography size={'sm'} color={'text.secondary'}>
-                          {url.URL_ADDR}
+                          {url?.URL_ADDR}
                         </Typography>
                       </Grid>
                     </Fragment>
@@ -137,9 +137,9 @@ const TeamLeaderDialog = ({ open, setOpen, member }) => {
               </Typography>
               <Divider />
               <Grid container spacing={1} pt={1}>
-                {member.profile?.stack?.map((skill, index) => (
+                {member?.profile?.stack?.map((skill, index) => (
                   <Grid item key={`stack_${index}`}>
-                    <Chip key={`chip_${index}`} label={skill.ST_NM} />
+                    <Chip key={`chip_${index}`} label={skill?.ST_NM} />
                   </Grid>
                 ))}
               </Grid>
@@ -151,7 +151,7 @@ const TeamLeaderDialog = ({ open, setOpen, member }) => {
               </Typography>
               <Divider></Divider>
               <Stack spacing={1} pt={1}>
-                {member.profile.carrer?.map((exp, index) => (
+                {member?.profile?.carrer?.map((exp, index) => (
                   <Fragment key={`career_${index}`}>
                     {/* Fragment에 key prop 추가 */}
                     <Stack
@@ -160,9 +160,9 @@ const TeamLeaderDialog = ({ open, setOpen, member }) => {
                       spacing={2}
                       alignItems={'center'}
                     >
-                      <Typography>{exp.CARRER_NM}</Typography>
+                      <Typography>{exp?.CARRER_NM}</Typography>
                       <Typography variant={'sm'} color={'text.secondary'}>
-                        {exp.ENTERING_DT} ~ {exp.QUIT_DT}
+                        {exp?.ENTERING_DT} ~ {exp?.QUIT_DT}
                       </Typography>
                     </Stack>
                     <Divider></Divider>
@@ -173,7 +173,7 @@ const TeamLeaderDialog = ({ open, setOpen, member }) => {
           </Grid>
           {/* 포트폴리오 */}
           <Grid item xs={12} mt={2}>
-            <GetPortfolioList portfolio={member.portfolioInfo} />
+            <GetPortfolioList portfolio={member?.portfolioInfo} />
           </Grid>
         </Stack>
       </DialogContent>
@@ -202,13 +202,13 @@ const MatchSelectedProject = ({ data }) => {
   };
 
   const handleClickLeader = () => {
-    fetchUserDetail(data.createdUserSn);
+    fetchUserDetail(data?.createdUserSn);
   };
 
   return (
     <Stack>
       {leader && (
-        <TeamLeaderDialog open={open} setOpen={setOpen} member={leader.data} />
+        <TeamLeaderDialog open={open} setOpen={setOpen} member={leader?.data} />
       )}
       <Grid item container p={2} bgcolor={'background.default'}>
         <Grid item container spacing={4}>
@@ -232,10 +232,8 @@ const MatchSelectedProject = ({ data }) => {
                   <Chip
                     label={data.teamLeader}
                     size="small"
-                    onClick={() => {
-                      handleClickLeader();
-                    }}
-                  ></Chip>
+                    // onClick={handleClickLeader}
+                  />
                 </Stack>
                 <Stack direction={'row'} spacing={1}>
                   <Typography variant="sm">프로젝트 시작일</Typography>
