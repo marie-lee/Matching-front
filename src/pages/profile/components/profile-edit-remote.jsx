@@ -202,7 +202,7 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
       } catch (error) {
         console.log('error', error);
       } finally {
-        navigate(-1);
+        navigate('/');
         setIsLoading(false); // 요청 종료 시 로딩 상태를 false로 설정
       }
     },
