@@ -16,9 +16,6 @@ const GanttFull = ({
   projectEndDate,
   ticketDetails = [], // 기본값 설정
 }) => {
-  console.log('projectStartDate', projectStartDate);
-  console.log('projectEndDate', projectEndDate);
-
   // ticketDetails가 비어있지 않다면 dotList를 생성합니다.
   const dotList = ticketDetails.map((item) => {
     const ticketSnIndex = tableData
@@ -31,7 +28,7 @@ const GanttFull = ({
 
   const cellStyle = {
     border: '1px solid #000',
-    padding: '2px 4px',
+    padding: '2px 3px',
   };
 
   // 날짜 범위 생성 함수
@@ -118,6 +115,7 @@ const GanttFull = ({
           width: '100vh',
           overflowX: 'auto',
           overflowY: 'hidden',
+
           borderRadius: '0',
           '&::-webkit-scrollbar': { display: 'none' },
           '-ms-overflow-style': 'none',
@@ -186,7 +184,12 @@ const GanttFull = ({
         }}
         elevation={0}
       >
-        <Table sx={{ tableLayout: 'fixed', height: '100%' }}>
+        <Table
+          sx={{
+            tableLayout: 'fixed',
+            height: '100%',
+          }}
+        >
           <colgroup>
             {dateRange.map((_, index) => (
               <col key={index} style={{ width: '20px' }} />
@@ -228,8 +231,9 @@ const GanttFull = ({
                         backgroundColor: isInRange ? '#3f51b5' : 'transparent',
                         width: '20px',
                         minWidth: '20px',
-                        height: '30px',
+                        height: '28.3px',
                         position: 'relative',
+                        padding: '0px',
                       }}
                     >
                       {dotToDisplay && (
