@@ -35,11 +35,9 @@ const wbsSlice = createSlice({
     setParticipants: (state, action) => {
       state.participants = action.payload;
     },
-    //날짜 정보
     setPjtData: (state, action) => {
       state.pjtData = action.payload;
     },
-    //팀원
     setMemberData: (state, action) => {
       state.memberData = action.payload;
     },

@@ -79,13 +79,11 @@ const WbsView = () => {
   const wbsDatas = mergeTableDataByRowSpan(updatedTableData, memberDatas);
 
   const handleCellChange = (rowIndex, cellIndex, newValue) => {
-    if (editable) return;
-    else {
+    if (!editable) {
       setLocalTableData((prevData) => {
         const updatedTable = [...prevData];
 
         updatedTable[rowIndex] = [...updatedTable[rowIndex]];
-
         updatedTable[rowIndex][cellIndex] = {
           ...updatedTable[rowIndex][cellIndex],
           value: newValue,

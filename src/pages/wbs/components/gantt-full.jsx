@@ -231,7 +231,7 @@ const GanttFull = ({
                         backgroundColor: isInRange ? '#3f51b5' : 'transparent',
                         width: '20px',
                         minWidth: '20px',
-                        height: '28.3px',
+                        height: '27.9px',
                         position: 'relative',
                         padding: '0px',
                       }}
