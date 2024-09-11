@@ -44,8 +44,8 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
         LEVEL: stack.ST_LEVEL,
       })),
       USER_NM: payload.profile.USER_NM,
-      INTRST: payload.profile.interest.map((interest) => interest.INTEREST_NM),
-      URL: payload.profile.url.map((url) => ({
+      INTRST: payload.profile.interest?.map((interest) => interest.INTEREST_NM),
+      URL: payload.profile.url?.map((url) => ({
         URL: url.URL_ADDR,
         URL_INTRO: url.URL_INTRO,
       })),

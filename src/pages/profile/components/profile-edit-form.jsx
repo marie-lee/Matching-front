@@ -30,6 +30,7 @@ import { useTheme } from '@emotion/react';
 import PortfolioImageList from './portfolio-edit-image';
 import PortfolioVideo from './portfolio-edit-video';
 import { PortfolioLink } from './portfolio-edit-link';
+import { PortfolioEditStack } from './portfolio-edit-stack';
 
 const FormGroup = ({ title, children }) => {
   return (
@@ -62,20 +63,12 @@ const names = ['백엔드', '프론트엔드', '기획', '디자인'];
 const PortfolioForm = ({ profileEditForm }) => {
   console.log('render PortfolioForm');
   const { control, setValue } = useFormContext();
-  const [stackName, setStackName] = useState('');
 
   // 프로필 포트폴리오
   const portfolioFieldArray = useFieldArray({
     control,
     name: 'portfolioInfo',
   });
-
-  // 스택 초기값 설정
-  const initialStacks = portfolioFieldArray.fields.map(
-    (field) => field.stack || [],
-  );
-
-  const [stacks, setStacks] = useState(initialStacks);
 
   const handleAppendPortfolio = () => {
     portfolioFieldArray.append({
@@ -95,12 +88,6 @@ const PortfolioForm = ({ profileEditForm }) => {
       IMG: [],
       VIDEO: '',
     });
-    setStacks([...stacks, []]);
-  };
-
-  const handleAppendStack = (pindex) => {
-    setStacks([...stacks, stacks[pindex].push({ ST_NM: stackName })]);
-    portfolioFieldArray.fields[pindex].stack.push({ ST_NM: stackName });
   };
 
   const handleRemoveImage = (portfolioIndex, imageIndex) => {
@@ -116,12 +103,6 @@ const PortfolioForm = ({ profileEditForm }) => {
 
   const handleRemovePortfolio = (index) => {
     portfolioFieldArray.remove(index);
-  };
-
-  const handleDeleteStack = (portfolioIndex, stackIndex) => {
-    const updatedStacks = stacks.filter((_, idx) => idx !== stackIndex);
-    setValue(`portfolioInfo[${portfolioIndex}].stack`, updatedStacks);
-    setStacks(updatedStacks);
   };
 
   return (
@@ -249,45 +230,7 @@ const PortfolioForm = ({ profileEditForm }) => {
               variant={'outlined'}
             />
           </Stack>
-          <Stack direction={'row'} spacing={1} alignItems={'center'}>
-            <Autocomplete
-              disablePortal
-              id="combo-box-demo"
-              options={['JS', 'Node.js']}
-              sx={{ flexGrow: 1 }}
-              renderInput={(params) => (
-                <TextField {...params} label="기술스택" />
-              )}
-              fullWidth
-              onInputChange={(event, newValue) => {
-                setStackName(newValue);
-              }}
-              isOptionEqualToValue={(option, value) => option === value}
-            />
-            <IconButton onClick={() => handleAppendStack(index)}>
-              <AddIcon />
-            </IconButton>
-          </Stack>
-          <Stack spacing={2} p={3} bgcolor={'background.neutral'}>
-            <Typography variant="lg" fontWeight={'fontWeightBold'}>
-              현재 선택한 스택
-            </Typography>
-            <Stack flexWrap={'wrap'} direction={'row'} useFlexGap spacing={0.5}>
-              {stacks[index].map((stack, sindex) => {
-                if (stack.length === 0) {
-                  return null;
-                }
-                return (
-                  <Chip
-                    key={`stack_${sindex}`}
-                    label={stack.ST_NM}
-                    size={'small'}
-                    onDelete={() => handleDeleteStack(index, sindex)}
-                  />
-                );
-              })}
-            </Stack>
-          </Stack>
+          <PortfolioEditStack index={index}></PortfolioEditStack>
           <PortfolioLink index={index}></PortfolioLink>
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">서비스 상태</InputLabel>

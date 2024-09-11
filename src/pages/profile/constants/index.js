@@ -30,8 +30,8 @@ export const profileEditFormSchema = yup.object().shape({
     yup.object().shape({
       PFOL_NM: yup.string().required('포트폴리오명을 입력해주세요'),
       INTRO: yup.string().required('포트폴리오 설명을 입력해주세요'),
-      START_DT: yup.date().required('시작일을 입력해주세요'),
-      END_DT: yup.date().required('종료일을 입력해주세요'),
+      START_DT: yup.string().required('시작일을 입력해주세요'),
+      END_DT: yup.string().required('종료일을 입력해주세요'),
       MEM_CNT: yup.string().required('프로젝트 인원을 입력해주세요'),
       CONTRIBUTION: yup.string().required('기여도를 입력해주세요'),
       url: yup.array().of(
