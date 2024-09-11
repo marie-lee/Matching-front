@@ -18,9 +18,9 @@ export const PortfolioLink = ({ index }) => {
     append({ URL: '', URL_INTRO: '' });
   };
 
-  const handleRemovePortfolioLink = () => {
+  const handleRemovePortfolioLink = (linkIndex) => {
     // 필드 값을 초기화하고 삭제
-    remove(fields.length - 1);
+    remove(linkIndex);
   };
 
   useEffect(() => {
@@ -78,7 +78,7 @@ export const PortfolioLink = ({ index }) => {
               />
             </Box>
             <Box>
-              <IconButton onClick={() => handleRemovePortfolioLink()}>
+              <IconButton onClick={() => handleRemovePortfolioLink(linkIndex)}>
                 <CloseIcon />
               </IconButton>
             </Box>
