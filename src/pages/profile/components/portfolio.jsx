@@ -9,44 +9,53 @@ const PortfolioListPreview = ({ profileEditForm }) => {
   const renderList = () => {
     return (
       <Grid container columnSpacing={2} rowSpacing={3}>
-        {portfolio.map((pfol) => (
-          <Grid item xs={12} md={4} key={pfol.PFOL_NM}>
-            <Stack spacing={0.5} sx={{ cursor: 'pointer' }}>
-              {/* 대표 이미지 */}
-              <ResponsiveImg
-                src={pfol.IMG}
-                alt={`${pfol.PFOL_NM}`}
-                width={230}
-                height={150}
-              />
+        {portfolio.map((pfol) => {
+          const mainImage = pfol?.IMG?.find((img) => img.MAIN_YN === true);
 
-              {/* 포트폴리오 제목 */}
-              <Typography component={'p'} variant={'lg'}>
-                {pfol.PFOL_NM}
-              </Typography>
+          // mainImage가 파일 객체인지 URL 문자열인지 확인
+          const imageUrl =
+            mainImage?.file instanceof File ?
+              URL.createObjectURL(mainImage.file)
+            : mainImage?.URL;
+          return (
+            <Grid item xs={12} md={4} key={pfol.PFOL_NM}>
+              <Stack spacing={0.5} sx={{ cursor: 'pointer' }}>
+                {/* 대표 이미지 */}
+                <ResponsiveImg
+                  src={imageUrl}
+                  alt={`${pfol.PFOL_NM}`}
+                  width={230}
+                  height={150}
+                />
 
-              {/* 프로젝트 기간 */}
-              <Typography
-                component={'p'}
-                variant={'sm'}
-                color={'text.secondary'}
-              >
-                {`${pfol.START_DT} ~ ${pfol.END_DT}`}
-              </Typography>
+                {/* 포트폴리오 제목 */}
+                <Typography component={'p'} variant={'lg'}>
+                  {pfol.PFOL_NM}
+                </Typography>
 
-              {/* 사용 스킬 */}
-              <Stack useFlexGap flexWrap={'wrap'} direction={'row'} gap={0.7}>
-                {pfol.stack.map((stack, index) => (
-                  <Chip
-                    key={`${pfol.PFOL_NM}_stack_${index}`}
-                    label={stack.ST_NM}
-                    size={'small'}
-                  />
-                ))}
+                {/* 프로젝트 기간 */}
+                <Typography
+                  component={'p'}
+                  variant={'sm'}
+                  color={'text.secondary'}
+                >
+                  {`${pfol.START_DT} ~ ${pfol.END_DT}`}
+                </Typography>
+
+                {/* 사용 스킬 */}
+                <Stack useFlexGap flexWrap={'wrap'} direction={'row'} gap={0.7}>
+                  {pfol.stack.map((stack, index) => (
+                    <Chip
+                      key={`${pfol.PFOL_NM}_stack_${index}`}
+                      label={stack.ST_NM}
+                      size={'small'}
+                    />
+                  ))}
+                </Stack>
               </Stack>
-            </Stack>
-          </Grid>
-        ))}
+            </Grid>
+          );
+        })}
       </Grid>
     );
   };
