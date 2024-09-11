@@ -3,15 +3,19 @@ import { ProfileEditForm } from '@/pages/profile/components';
 import RemoteControlBox from './components/profile-edit-remote';
 import { HEADER } from '@/layouts/config-layout';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useLocation, useNavigate } from 'react-router-dom'; 
+import { useLocation, useNavigate } from 'react-router-dom';
 import { RhfFormProvider } from '@/components/hook-form';
 import { useEffect, useState } from 'react';
 import { instance } from '@/services/config';
-import { profileEditFormDefaultValues } from './constants';
+import {
+  profileEditFormDefaultValues,
+  profileEditFormSchema,
+} from './constants';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 const ProfileEditPage = () => {
   const [profileData, setProfileData] = useState({});
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   // const { profileData } = location.state;
   const fetchProfile = async () => {
@@ -30,7 +34,16 @@ const ProfileEditPage = () => {
 
   const profileEditForm = useForm({
     defaultValues: profileEditFormDefaultValues,
+    resolver: yupResolver(profileEditFormSchema),
   });
+
+  const {
+    formState: { errors },
+  } = profileEditForm;
+
+  useEffect(() => {
+    console.log('errors', errors);
+  }, [errors]);
 
   const handlePreviewOpen = () => {
     console.log('Preview Open');

@@ -4,17 +4,23 @@ import AddIcon from '@mui/icons-material/Add';
 import { useEffect, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
+import CloseIcon from '@mui/icons-material/Close';
 
 export const PortfolioLink = ({ index }) => {
   const theme = useTheme();
   const { control, register } = useFormContext();
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: `portfolioInfo[${index}].url`,
   });
 
   const handleAppendLink = () => {
     append({ URL: '', URL_INTRO: '' });
+  };
+
+  const handleRemovePortfolioLink = () => {
+    // 필드 값을 초기화하고 삭제
+    remove(fields.length - 1);
   };
 
   useEffect(() => {
@@ -46,13 +52,14 @@ export const PortfolioLink = ({ index }) => {
       >
         URL
       </Typography>
-      <Stack spacing={1}>
+      <Stack>
         {fields.map((field, linkIndex) => (
           <Stack
             key={field.id}
             direction={'row'}
             spacing={1}
             alignItems={'center'}
+            pb={1}
           >
             <Box>
               <RhfTextField
@@ -71,8 +78,8 @@ export const PortfolioLink = ({ index }) => {
               />
             </Box>
             <Box>
-              <IconButton>
-                <AddIcon />
+              <IconButton onClick={() => handleRemovePortfolioLink()}>
+                <CloseIcon />
               </IconButton>
             </Box>
           </Stack>
