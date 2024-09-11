@@ -44,7 +44,7 @@ const PortfolioList = ({ profileData }) => {
             pfolNm: item.PFOL_NM,
             startDt: item.START_DT,
             endDt: item.END_DT,
-            stacks: item.stack.map((stackItem) => ({ stNm: stackItem.ST_NM })),
+            stacks: item.stack?.map((stackItem) => ({ stNm: stackItem.ST_NM })),
             img: mainImage ? mainImage.URL : '', // 대표 이미지 설정
           };
         });
@@ -93,7 +93,7 @@ const PortfolioList = ({ profileData }) => {
 
                 {/* 사용 스킬 */}
                 <Stack useFlexGap flexWrap={'wrap'} direction={'row'} gap={0.7}>
-                  {pfol.stacks.map((stack, index) => (
+                  {pfol.stacks?.map((stack, index) => (
                     <Chip
                       key={`${pfol.pfolNm}_stack_${index}`}
                       label={stack.stNm}
