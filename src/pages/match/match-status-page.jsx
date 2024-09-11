@@ -145,7 +145,7 @@ const MatchStatusPage = () => {
       </Grid>
       <Grid item container xs={6}>
         {selectedMember && <MatchSelectedMember member={selectedMember} />}
-        <MatchSelectedProject data={selectedProject}></MatchSelectedProject>
+        <MatchSelectedProject data={selectedProject} />
       </Grid>
 
       <MatchReqDialog

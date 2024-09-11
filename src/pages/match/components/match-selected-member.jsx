@@ -15,12 +15,10 @@ import PortfolioDetail from '@/pages/profile/components/portfolio-detail';
 // ----------------------------------------------------------------------
 
 export const GetPortfolioList = ({ portfolio }) => {
-  console.log('portfolio', portfolio);
   const [selectedPortfolio, setSelectedPortfolio] = useState(null);
 
   const handleClickPortfolio = (portfolio) => {
     setSelectedPortfolio(portfolio);
-    console.log('selectedPortfolio', selectedPortfolio);
   };
 
   return (
@@ -53,7 +51,7 @@ export const GetPortfolioList = ({ portfolio }) => {
               <Stack p={2}>
                 {/* 포트폴리오 제목 */}
                 <Typography component={'p'} variant={'lg'}>
-                  {pfol.PFOL_NM}
+                  {pfol?.PFOL_NM}
                 </Typography>
 
                 {/* 프로젝트 기간 */}
@@ -62,15 +60,15 @@ export const GetPortfolioList = ({ portfolio }) => {
                   variant={'sm'}
                   color={'text.secondary'}
                 >
-                  {`${pfol.START_DT} ~ ${pfol.END_DT}`}
+                  {`${pfol?.START_DT} ~ ${pfol?.END_DT}`}
                 </Typography>
 
                 {/* 사용 스킬 */}
                 <Stack useFlexGap flexWrap={'wrap'} direction={'row'} gap={0.7}>
-                  {pfol.stack?.map((stack, index) => (
+                  {pfol?.stack?.map((stack, index) => (
                     <Chip
-                      key={`${pfol.PFOL_NM}_stack_${index}`}
-                      label={stack.ST_NM}
+                      key={`${pfol?.PFOL_NM}_stack_${index}`}
+                      label={stack?.ST_NM}
                       size={'small'}
                     />
                   ))}
@@ -94,7 +92,6 @@ export const GetPortfolioList = ({ portfolio }) => {
 // ----------------------------------------------------------------------
 
 const MatchSelectedMember = ({ member }) => {
-  console.log('member', member);
   return (
     <Stack>
       <Grid
@@ -122,7 +119,7 @@ const MatchSelectedMember = ({ member }) => {
 
           {/* 한 줄 소개 */}
           <Grid item container mt={1}>
-            <Typography variant={'md'}>{member.profile.PF_INTRO}</Typography>
+            <Typography variant={'md'}>{member?.profile?.PF_INTRO}</Typography>
             <Grid item container spacing={0.5} alignItems={'center'} mt={2}>
               {member.profile.url?.map((url, index) => (
                 <Fragment key={`url_${index}`}>
