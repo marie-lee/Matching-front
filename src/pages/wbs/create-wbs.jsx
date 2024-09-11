@@ -77,6 +77,7 @@ const CreateWbsPage = () => {
         );
         dispatch(setMemberData(wbsDataInfo.data.members));
         dispatch(setPjtSn(pjtSn));
+
         dispatch(
           setParticipants(projectData.data.role.map((role) => role.part)),
         );

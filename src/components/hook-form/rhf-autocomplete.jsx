@@ -6,6 +6,7 @@ const RhfAutocomplete = ({
   label,
   helperText,
   placeholder,
+  duplicationKeyName,
   ...other
 }) => {
   const { control, setValue } = useFormContext();
@@ -19,12 +20,32 @@ const RhfAutocomplete = ({
           <Autocomplete
             {...field}
             id={`autocomplete-${name}`}
-            onChange={(event, newValue) =>
-              setValue(name, newValue, {
-                shouldValidate: true,
-                shouldDirty: true,
-              })
-            }
+            onChange={(event, newValue) => {
+              if (field?.multiple && duplicationKeyName) {
+                const value = newValue.reduce((acc, current) => {
+                  const exists = acc.some(
+                    (item) =>
+                      item[duplicationKeyName] === current[duplicationKeyName],
+                  );
+
+                  if (!exists) {
+                    acc.push(current);
+                  }
+
+                  return acc;
+                }, []);
+
+                setValue(name, value, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                });
+              } else {
+                setValue(name, newValue, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                });
+              }
+            }}
             getOptionLabel={(option) => option}
             renderOption={(props, option) => (
               <li {...props} key={option}>
