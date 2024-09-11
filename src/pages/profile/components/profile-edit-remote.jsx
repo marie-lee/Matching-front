@@ -69,7 +69,7 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
             PERIOD: calculateMonths(portfolio.START_DT, portfolio.END_DT),
             START_DT: portfolio.START_DT,
             END_DT: portfolio.END_DT,
-            MEM_CNT: portfolio.MEM_CNT,
+            MEM_CNT: portfolio.MEM_CNT ? portfolio.MEM_CNT : 1,
             CONTRIBUTION: portfolio.CONTRIBUTION,
 
             SERVICE_STTS: statusMapping[portfolio.SERVICE_STTS],
