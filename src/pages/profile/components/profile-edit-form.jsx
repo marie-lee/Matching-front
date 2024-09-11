@@ -32,20 +32,14 @@ import PortfolioVideo from './portfolio-edit-video';
 import { PortfolioLink } from './portfolio-edit-link';
 import { PortfolioEditStack } from './portfolio-edit-stack';
 
-const FormGroup = ({ title, children }) => {
-  return (
-    <Stack p={2} spacing={2} bgcolor={'background.default'}>
-      <Typography
-        component={'p'}
-        variant={'xl'}
-        fontWeight={'fontWeightMedium'}
-      >
-        {title}
-      </Typography>
-      {children}
-    </Stack>
-  );
-};
+const FormGroup = React.forwardRef(({ title, children }, ref) => (
+  <Stack p={2} spacing={2} bgcolor={'background.default'} ref={ref}>
+    <Typography component={'p'} variant={'xl'} fontWeight={'fontWeightMedium'}>
+      {title}
+    </Typography>
+    {children}
+  </Stack>
+));
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -295,25 +289,25 @@ const MemoizedInterestForm = React.memo(InterestForm);
 const MemoizedLinkForm = React.memo(LinkForm);
 const MemoizedPortfolioForm = React.memo(PortfolioForm);
 
-const ProfileEditForm = ({ profileEditForm }) => {
+const ProfileEditForm = ({ profileEditForm, refs }) => {
   return (
     <Stack spacing={4}>
-      <FormGroup title={'프로필'}>
+      <FormGroup title={'프로필'} ref={refs.profileRef}>
         <MemoizedProfileForm profileEditForm={profileEditForm} />
       </FormGroup>
-      <FormGroup title={'경력'}>
+      <FormGroup title={'경력'} ref={refs.careerRef}>
         <MemoizedCareerForm />
       </FormGroup>
-      <FormGroup title={'주요 스킬'}>
+      <FormGroup title={'주요 스킬'} ref={refs.skillRef}>
         <MemoizedSkillForm />
       </FormGroup>
-      <FormGroup title={'관심분야'}>
+      <FormGroup title={'관심분야'} ref={refs.interestRef}>
         <MemoizedInterestForm />
       </FormGroup>
-      <FormGroup title={'링크'}>
+      <FormGroup title={'링크'} ref={refs.linkRef}>
         <MemoizedLinkForm />
       </FormGroup>
-      <FormGroup title={'포트폴리오'}>
+      <FormGroup title={'포트폴리오'} ref={refs.portfolioRef}>
         <MemoizedPortfolioForm profileEditForm={profileEditForm} />
       </FormGroup>
     </Stack>
