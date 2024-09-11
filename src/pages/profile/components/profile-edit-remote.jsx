@@ -5,10 +5,13 @@ import { postProfile } from '@/services/member';
 import _ from 'lodash';
 import { useNavigate } from 'react-router-dom';
 import LoadingPopup from './loading';
+import { useFormContext } from 'react-hook-form';
+import { set } from 'date-fns';
 
 const RemoteControlBox = ({ profileEditForm, onOpen }) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const { getValues } = useFormContext();
   const calculateMonths = (startDate, endDate) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -126,7 +129,17 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
   };
 
   const onSubmit = profileEditForm.handleSubmit(async (_payload) => {
-    setIsLoading(true); // 요청 시작 시 로딩 상태를 true로 설정
+    const values = getValues();
+    const careers = values.profile.career;
+
+    for (const career of careers) {
+      if (!career.CAREER_NM || !career.ENTERING_DT) {
+        alert('모든 경력 항목을 입력해주세요.');
+        setIsLoading(false);
+        return;
+      }
+    }
+
     const payload = getPayload(_payload);
 
     const formData = new FormData();
@@ -179,6 +192,7 @@ const RemoteControlBox = ({ profileEditForm, onOpen }) => {
     }
 
     try {
+      setIsLoading(true); // 요청 시작 시 로딩 상태를 true로 설정
       const res = await postProfile(formData);
       if (res?.status === 200) {
         // setPreviewOpen(false);

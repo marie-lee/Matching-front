@@ -13,7 +13,7 @@ const RhfSwitch = ({ name, label, onChange, ...other }) => {
           control={
             <Switch
               {...field}
-              checked={field.value}
+              checked={field.value ? field.value : true}
               onChange={(e) => {
                 field.onChange(e.target.checked);
                 if (onChange) {

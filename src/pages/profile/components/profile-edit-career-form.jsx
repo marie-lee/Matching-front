@@ -10,15 +10,15 @@ export const CareerForm = () => {
   const { control, setValue } = useFormContext();
   console.log('render CareerForm');
   // 프로필 커리어
-  const careerFieldArray = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     control,
-    name: 'profile.career',
+    name: `profile.career`,
   });
 
   const handleAppendCareer = () => {
-    careerFieldArray.append({
-      CARRER_NM: '',
-      ENTERING_DT: new Date(),
+    append({
+      CAREER_NM: '',
+      ENTERING_DT: null,
       QUIT_DT: true,
     });
   };
@@ -26,15 +26,26 @@ export const CareerForm = () => {
   const handleSwitchChange = (index, value) => {
     // 재렌더링
     console.log('handleSwitchChange', index, value);
-    careerFieldArray.update(index, {
-      ...careerFieldArray.fields[index],
-      QUIT_DT: new Date(),
+    update(index, {
+      ...fields[index],
+      QUIT_DT: value ? null : new Date(),
     });
   };
 
+  const handleRemoveCareer = (index) => {
+    // 필드 값을 초기화하고 삭제
+    setValue(`profile.career[${index}].CAREER_NM`, '');
+    setValue(`profile.career[${index}].ENTERING_DT`, null);
+    setValue(`profile.career[${index}].QUIT_DT`, true);
+
+    remove(index);
+  };
+
+  console.log('fields', fields);
+
   return (
     <Stack spacing={2}>
-      {careerFieldArray.fields.map((entry, index) => (
+      {fields.map((entry, index) => (
         <Stack
           key={entry.id}
           direction={'row'}
@@ -59,7 +70,7 @@ export const CareerForm = () => {
             />
           </Box>
           {/* 재직 중인 경우에만 종료일을 보여줌 */}
-          {entry.QUIT_DT === true ?
+          {entry.QUIT_DT === true || entry.QUIT_DT === null ?
             <Box>
               <RhfSwitch
                 name={`profile.career[${index}].QUIT_DT`}
@@ -77,7 +88,7 @@ export const CareerForm = () => {
               />
             </Box>
           }
-          <IconButton onClick={() => careerFieldArray.remove(index)}>
+          <IconButton onClick={() => handleRemoveCareer(index)}>
             <CloseIcon />
           </IconButton>
         </Stack>
