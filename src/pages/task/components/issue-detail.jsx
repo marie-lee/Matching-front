@@ -43,6 +43,8 @@ const IssueDetail = ({
   fetchDashboard,
 }) => {
   const dialogRef = useRef(null);
+  const commentRef = useRef(null);
+
   const [data, setData] = useState();
 
   const getMentionsValue =
@@ -55,6 +57,13 @@ const IssueDetail = ({
       id: userSn,
       display: userNm,
     })) || [];
+
+  // 덧글 추가될 경우, 덧글 영역 스크롤 하단으로 위치시키기 위함
+  useEffect(() => {
+    if (commentRef.current) {
+      commentRef.current.scrollTop = commentRef.current.scrollHeight;
+    }
+  }, [data]);
 
   const issueEditForm = useForm({
     defaultValues: issueEditFormDefaultValues,
@@ -133,38 +142,45 @@ const IssueDetail = ({
 
   // ----------------------------------------------------------------------
 
+  const [isPending, setIsPending] = useState(false);
+
   const commentAddForm = useForm({
     defaultValues: commentAddFormDefaultValues,
   });
 
   const fetchAddComment = async (payload) => {
+    setIsPending(true);
     try {
       const res = await postWbsIssueComment(
         selectedPjtSn,
         selectedIssueSn,
         payload,
       );
+      setIsPending(false);
       if (res?.status === 200) {
         fetchIssue();
         commentAddForm.reset();
       }
     } catch (error) {
+      setIsPending(false);
       console.log(error);
     }
   };
 
   const onSubmitComment = commentAddForm.handleSubmit(async (_payload) => {
-    let payload = {};
+    if (!isPending) {
+      let payload = {};
 
-    const regExp = /\@\[(.+?)\]\(\d+\)/g;
+      const regExp = /\@\[(.+?)\]\(\d+\)/g;
 
-    payload['TEXT'] = _payload['TEXT'].replace(regExp, '@$1');
+      payload['TEXT'] = _payload['TEXT'].replace(regExp, '@$1');
 
-    payload['MENTIONS'] = [
-      ..._payload['TEXT'].matchAll(/\@\[(.+?)\]\((\d+)\)/g),
-    ].map((match) => Number(match[2]));
+      payload['MENTIONS'] = [
+        ..._payload['TEXT'].matchAll(/\@\[(.+?)\]\((\d+)\)/g),
+      ].map((match) => Number(match[2]));
 
-    await fetchAddComment(payload);
+      await fetchAddComment(payload);
+    }
   });
 
   // ----------------------------------------------------------------------
@@ -244,6 +260,7 @@ const IssueDetail = ({
                   options={optionData?.memberList}
                   multiple
                   size={'small'}
+                  duplicationKeyName={'userSn'}
                   renderTags={(value, getTagProps) =>
                     value.map((option, index) => {
                       const { key, ...tagProps } = getTagProps({ index });
@@ -305,7 +322,11 @@ const IssueDetail = ({
 
           <Divider flexItem />
 
-          <Stack spacing={2}>
+          <Stack
+            ref={commentRef}
+            spacing={2}
+            sx={{ height: '20rem', overflowY: 'auto' }}
+          >
             {data?.COMMENTS?.map((comment) => (
               <Stack
                 direction={'row'}
@@ -329,36 +350,39 @@ const IssueDetail = ({
                 </Stack>
               </Stack>
             ))}
-
-            <RhfFormProvider form={commentAddForm}>
-              <Stack direction={'row'} spacing={1.5} pt={1}>
-                <Avatar />
-                <Stack width={1}>
-                  <RhfMentions
-                    name={'TEXT'}
-                    placeholder={'덧글 추가'}
-                    sx={{ pt: 1 }}
-                    containerRef={dialogRef}
-                    data={getCommentMentionList}
-                    handleKeyDown={onSubmitComment}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end" sx={{ mb: 1 }}>
-                          <IconButton disableRipple onClick={onSubmitComment}>
-                            <Icon
-                              icon={'clarity:circle-arrow-solid'}
-                              color={'#000'}
-                              fontSize={24}
-                            />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Stack>
-              </Stack>
-            </RhfFormProvider>
           </Stack>
+          <RhfFormProvider form={commentAddForm}>
+            <Stack direction={'row'} spacing={1.5} pt={1}>
+              <Avatar />
+              <Stack width={1}>
+                <RhfMentions
+                  name={'TEXT'}
+                  placeholder={'덧글 추가'}
+                  sx={{ pt: 1 }}
+                  containerRef={dialogRef}
+                  data={getCommentMentionList}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      onSubmitComment();
+                    }
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end" sx={{ mb: 1 }}>
+                        <IconButton disableRipple onClick={onSubmitComment}>
+                          <Icon
+                            icon={'clarity:circle-arrow-solid'}
+                            color={'#000'}
+                            fontSize={24}
+                          />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Stack>
+            </Stack>
+          </RhfFormProvider>
         </Stack>
       </Stack>
     </Dialog>

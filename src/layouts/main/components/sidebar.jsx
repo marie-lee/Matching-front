@@ -40,7 +40,7 @@ const Sidebar = () => {
     if (res1.data.wbsData.length == 0) {
       alert('wbs를 만든 후 이용해주세요.');
     } else {
-      navigate(PATHS.wbs.view);
+      navigate(PATHS.wbs.wbsView);
     }
   };
   return (
