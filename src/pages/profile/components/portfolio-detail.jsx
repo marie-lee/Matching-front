@@ -235,16 +235,15 @@ const PortfolioDetail = ({ open, setOpen, portfolioId }) => {
             {portfolioData.media
               .filter((media) => media.TYPE === 'VIDEO')
               .map((media, index) => (
-                <iframe
+                <video
                   key={`${portfolioData.PFOL_NM}_video_${index}`}
                   width="100%"
                   height="400"
-                  src={media.URL}
-                  title="YouTube video player"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
+                  controls
+                >
+                  <source src={media.URL} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
               ))}
           </Box>
           <Divider />
