@@ -10,10 +10,25 @@ import {
 } from '@mui/material';
 import 'react-datepicker/dist/react-datepicker.css';
 
-const GanttInputFull = ({ tableData, projectStartDate, projectEndDate }) => {
+const GanttFull = ({
+  tableData = [], // 기본값 설정
+  projectStartDate,
+  projectEndDate,
+  ticketDetails = [], // 기본값 설정
+}) => {
+  // ticketDetails가 비어있지 않다면 dotList를 생성합니다.
+  const dotList = ticketDetails.map((item) => {
+    const ticketSnIndex = tableData
+      .map((row) => row[2]?.ticketSn)
+      .filter(Boolean)
+      .indexOf(item.ticketSn);
+
+    return [ticketSnIndex, item.day];
+  });
+
   const cellStyle = {
     border: '1px solid #000',
-    padding: '2px 4px',
+    padding: '2px 3px',
   };
 
   // 날짜 범위 생성 함수
@@ -90,6 +105,8 @@ const GanttInputFull = ({ tableData, projectStartDate, projectEndDate }) => {
     }
   }, []);
 
+  const tableWidth = dateRange.length > 20 ? '100vh' : '100%';
+
   return (
     <>
       {/* 간트 차트 헤더 */}
@@ -97,9 +114,10 @@ const GanttInputFull = ({ tableData, projectStartDate, projectEndDate }) => {
         component={Paper}
         ref={ganttHeaderRef}
         sx={{
-          width: '100vh',
+          width: tableWidth,
           overflowX: 'auto',
           overflowY: 'hidden',
+
           borderRadius: '0',
           '&::-webkit-scrollbar': { display: 'none' },
           '-ms-overflow-style': 'none',
@@ -158,8 +176,7 @@ const GanttInputFull = ({ tableData, projectStartDate, projectEndDate }) => {
         component={Paper}
         ref={ganttBodyRef}
         sx={{
-          width: '100vh',
-          height: '100vh',
+          width: tableWidth,
           overflowX: 'auto',
           overflowY: 'hidden',
           borderRadius: '0',
@@ -169,7 +186,12 @@ const GanttInputFull = ({ tableData, projectStartDate, projectEndDate }) => {
         }}
         elevation={0}
       >
-        <Table sx={{ tableLayout: 'fixed', height: '100%' }}>
+        <Table
+          sx={{
+            tableLayout: 'fixed',
+            height: '100%',
+          }}
+        >
           <colgroup>
             {dateRange.map((_, index) => (
               <col key={index} style={{ width: '20px' }} />
@@ -189,11 +211,19 @@ const GanttInputFull = ({ tableData, projectStartDate, projectEndDate }) => {
                         ),
                       )
                     : null;
+
                   const isInRange =
                     taskStartDate &&
                     taskDueDate &&
                     date >= taskStartDate &&
                     date <= taskDueDate;
+
+                  const dotToDisplay = dotList.find(
+                    (dot) =>
+                      dot[0] === rowIndex &&
+                      new Date(dot[1]).setHours(0, 0, 0, 0) ===
+                        date.setHours(0, 0, 0, 0),
+                  );
 
                   return (
                     <TableCell
@@ -203,10 +233,26 @@ const GanttInputFull = ({ tableData, projectStartDate, projectEndDate }) => {
                         backgroundColor: isInRange ? '#3f51b5' : 'transparent',
                         width: '20px',
                         minWidth: '20px',
-                        height: '30px',
+                        height: '27.9px',
                         position: 'relative',
+                        padding: '0px',
                       }}
-                    ></TableCell>
+                    >
+                      {dotToDisplay && (
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: '10px',
+                            height: '10px',
+                            backgroundColor: 'red',
+                            borderRadius: '50%',
+                          }}
+                        />
+                      )}
+                    </TableCell>
                   );
                 })}
               </TableRow>
@@ -218,4 +264,4 @@ const GanttInputFull = ({ tableData, projectStartDate, projectEndDate }) => {
   );
 };
 
-export default GanttInputFull;
+export default GanttFull;
