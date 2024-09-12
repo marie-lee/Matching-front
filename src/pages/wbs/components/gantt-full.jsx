@@ -105,6 +105,8 @@ const GanttFull = ({
     }
   }, []);
 
+  const tableWidth = dateRange.length > 20 ? '100vh' : '100%';
+
   return (
     <>
       {/* 간트 차트 헤더 */}
@@ -112,7 +114,7 @@ const GanttFull = ({
         component={Paper}
         ref={ganttHeaderRef}
         sx={{
-          width: '100vh',
+          width: tableWidth,
           overflowX: 'auto',
           overflowY: 'hidden',
 
@@ -174,7 +176,7 @@ const GanttFull = ({
         component={Paper}
         ref={ganttBodyRef}
         sx={{
-          width: '100vh',
+          width: tableWidth,
           overflowX: 'auto',
           overflowY: 'hidden',
           borderRadius: '0',

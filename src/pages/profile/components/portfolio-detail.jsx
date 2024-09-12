@@ -94,7 +94,9 @@ const PortfolioDetail = ({ open, setOpen, portfolioId }) => {
                     <Typography
                       variant="sm"
                       color={theme.palette.text.secondary}
-                    >{`${portfolioData.START_DT} ~ ${portfolioData.END_DT}`}</Typography>
+                    >
+                      {`${new Date(portfolioData.START_DT).toISOString().split('T')[0]} ~ ${new Date(portfolioData.END_DT).toISOString().split('T')[0]}`}
+                    </Typography>
                   </Grid>
                   {/* 역할 */}
                   <Grid
