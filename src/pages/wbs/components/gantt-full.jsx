@@ -17,6 +17,7 @@ const GanttFull = ({
   ticketDetails = [], // 기본값 설정
 }) => {
   // ticketDetails가 비어있지 않다면 dotList를 생성합니다.
+
   const dotList = ticketDetails.map((item) => {
     const ticketSnIndex = tableData
       .map((row) => row[2]?.ticketSn)

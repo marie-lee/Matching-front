@@ -26,7 +26,6 @@ const CellComponent = memo(
     tableData,
   }) => {
     const [shouldSetColSpanToZero, setShouldSetColSpanToZero] = useState(false);
-    console.log('colSpanInfo', colSpanInfo);
 
     const cellStyle = {
       border: '1px solid #000',

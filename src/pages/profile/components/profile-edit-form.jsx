@@ -52,7 +52,15 @@ const MenuProps = {
   },
 };
 
-const names = ['백엔드', '프론트엔드', '기획', '디자인'];
+const names = [
+  '백엔드',
+  '프론트엔드',
+  '기획',
+  '디자인',
+  '개발',
+  '검증',
+  '솔루션',
+];
 
 const PortfolioForm = ({ profileEditForm }) => {
   console.log('render PortfolioForm');
