@@ -66,7 +66,13 @@ const GanttFull = ({
     });
 
     if (currentMonthDates.length) {
-      groupedDates.push({ month: currentMonth, dates: currentMonthDates });
+      groupedDates.push({
+        month:
+          currentMonthDates.length ?
+            currentMonthDates[0].toLocaleDateString('en-US', { month: 'short' })
+          : '',
+        dates: currentMonthDates,
+      });
     }
 
     return groupedDates;
