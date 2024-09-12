@@ -106,6 +106,15 @@ const ProfilePreviewDetail = ({ profileEditForm }) => {
   const PreviewData = profileEditForm.getValues();
   const profile = PreviewData.profile;
 
+  let userImage;
+
+  if (PreviewData.USER_IMG) {
+    // 파일 객체를 URL로 변환
+    userImage = URL.createObjectURL(PreviewData.USER_IMG);
+  } else {
+    userImage = profile.USER_IMG;
+  }
+
   return (
     <Stack spacing={3} p={3} bgcolor={'background.default'}>
       <Typography variant={'xl'}>프로필</Typography>
@@ -113,7 +122,7 @@ const ProfilePreviewDetail = ({ profileEditForm }) => {
         <Avatar
           alt={'프로필 이미지'}
           sx={{ width: 100, height: 100 }}
-          src={profile.USER_IMG}
+          src={userImage}
         />
       </Stack>
       <Stack
