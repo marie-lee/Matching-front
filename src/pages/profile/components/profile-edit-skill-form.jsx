@@ -13,6 +13,7 @@ import {
 import { useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import AddIcon from '@mui/icons-material/Add';
+import { stackOptions } from '../constants/stack-option';
 
 //색상 매핑
 const levelColorMapping = {
@@ -24,6 +25,7 @@ const levelColorMapping = {
 export const SkillForm = () => {
   console.log('render SkillForm');
   const [stackName, setStackName] = useState('');
+  const [inputValue, setInputValue] = useState(''); // Autocomplete 입력값
   const [level, setLevel] = useState('');
   const { control } = useFormContext();
   // 프로필 스택
@@ -41,6 +43,7 @@ export const SkillForm = () => {
       // 스택 추가 후 상태 초기화
       setStackName('');
       setLevel('');
+      setInputValue(''); // Autocomplete 입력값 초기화
     }
   };
 
@@ -51,11 +54,14 @@ export const SkillForm = () => {
           disablePortal
           id="combo-box-demo"
           sx={{ flexGrow: 1 }}
-          options={['js', 'node.js']}
+          options={stackOptions}
           renderInput={(params) => <TextField {...params} label="기술스택" />}
           fullWidth
+          freeSolo
+          inputValue={inputValue} // Autocomplete 입력값 상태 연결
           onInputChange={(event, newValue) => {
             setStackName(newValue);
+            setInputValue(newValue); // 입력값 상태 업데이트
           }}
           isOptionEqualToValue={(option, value) => option === value}
         />
