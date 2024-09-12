@@ -2,16 +2,17 @@ import { useEffect, useState } from 'react';
 import { RhfTextField } from '@/components/hook-form';
 import { Avatar, Stack, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { useController } from 'react-hook-form';
+import { useController, useFormContext } from 'react-hook-form';
 
 export const ProfileForm = ({ profileEditForm }) => {
+  const { control } = useFormContext(); // useFormContext를 사용하여 control 가져오기
   const [showEditIcon, setShowEditIcon] = useState(false);
   const [avatar, setAvatar] = useState(null);
 
   const {
     field: { onChange, value },
   } = useController({
-    name: 'profile.USER_IMG',
+    name: 'USER_IMG',
     control,
   });
 

@@ -211,31 +211,41 @@ const PortfolioDetail = ({ open, setOpen, portfolioId }) => {
           <Divider />
           {/* 포트폴리오 이미지 3장 */}
           <Grid container>
-            {portfolioData.media.map((media, index) => (
-              <Grid item key={`${portfolioData.PFOL_NM}_media_${index}`} xs={4}>
-                <ResponsiveImg
-                  src={media.URL}
-                  alt={media.URL}
-                  width={230}
-                  height={150}
-                />
-              </Grid>
-            ))}
+            {portfolioData.media
+              .filter((media) => media.TYPE === 'IMAGE')
+              .map((media, index) => (
+                <Grid
+                  item
+                  key={`${portfolioData.PFOL_NM}_media_${index}`}
+                  xs={4}
+                >
+                  <ResponsiveImg
+                    src={media.URL}
+                    alt={media.URL}
+                    width={230}
+                    height={150}
+                  />
+                </Grid>
+              ))}
           </Grid>
           <Divider />
           <Box>
             {/* 영상 */}
             <Typography variant="lg">영상</Typography>
-            {/* 영상이 없어 새로 받아야 댐 */}
-            <iframe
-              width="100%"
-              height="400"
-              src="https://www.youtube.com/embed/4J0d59dd-qM"
-              title="YouTube video player"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
+            {portfolioData.media
+              .filter((media) => media.TYPE === 'VIDEO')
+              .map((media, index) => (
+                <iframe
+                  key={`${portfolioData.PFOL_NM}_video_${index}`}
+                  width="100%"
+                  height="400"
+                  src={media.URL}
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ))}
           </Box>
           <Divider />
           <MemberReview review={peerReview}></MemberReview>
