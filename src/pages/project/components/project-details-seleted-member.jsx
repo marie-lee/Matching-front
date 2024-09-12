@@ -31,64 +31,73 @@ const PortfolioList = (member) => {
   return (
     <Grid container columnSpacing={2} rowSpacing={3} pt={1}>
       {member.member.portfolio?.length > 0 ?
-        member.member.portfolio.map((pfol) => (
-          <Grid
-            item
-            xs={12}
-            md={6}
-            key={pfol.name}
-            onClick={() => handleClickPortfolio(pfol)}
-          >
-            <Stack
-              spacing={0.5}
-              sx={{ cursor: 'pointer' }}
-              bgcolor={'background.default'}
-              border={1}
-              borderColor={'divider'}
-              borderRadius={1}
+        member.member.portfolio.map((pfol) => {
+          const mainImage = pfol?.media?.split(',')[0];
+
+          return (
+            <Grid
+              item
+              xs={12}
+              md={6}
+              key={pfol.name}
+              onClick={() => handleClickPortfolio(pfol)}
             >
-              {/* 대표 이미지 */}
-              <ResponsiveImg
-                src={pfol.media}
-                alt={`${pfol.name}`}
-                width={200}
-                height={120}
-                style={{ borderRadius: '8px' }}
-              />
-              <Stack p={2}>
-                {/* 포트폴리오 제목 */}
-                <Typography component={'p'} variant={'lg'}>
-                  {pfol.name}
-                </Typography>
+              <Stack
+                spacing={0.5}
+                sx={{ cursor: 'pointer' }}
+                bgcolor={'background.default'}
+                border={1}
+                borderColor={'divider'}
+                borderRadius={1}
+              >
+                {/* 대표 이미지 */}
+                <ResponsiveImg
+                  src={mainImage}
+                  alt={`${pfol.name}`}
+                  width={200}
+                  height={120}
+                  style={{ borderRadius: '8px' }}
+                />
+                <Stack p={2}>
+                  {/* 포트폴리오 제목 */}
+                  <Typography component={'p'} variant={'lg'}>
+                    {pfol.name}
+                  </Typography>
 
-                {/* 포트폴리오 제목 */}
-                <Typography component={'p'} variant={'sm'}>
-                  {pfol.introduction}
-                </Typography>
+                  {/* 포트폴리오 제목 */}
+                  <Typography component={'p'} variant={'sm'}>
+                    {pfol.introduction}
+                  </Typography>
 
-                {/* 프로젝트 기간 */}
-                <Typography
-                  component={'p'}
-                  variant={'sm'}
-                  color={'text.secondary'}
-                >
-                  {`${formatDate(pfol.startDt)} ~ ${formatDate(pfol.endDt)}`}
-                </Typography>
+                  {/* 프로젝트 기간 */}
+                  <Typography
+                    component={'p'}
+                    variant={'sm'}
+                    color={'text.secondary'}
+                  >
+                    {`${formatDate(pfol.startDt)} ~ ${formatDate(pfol.endDt)}`}
+                  </Typography>
 
-                {/* 사용 스킬 */}
-                <Stack useFlexGap flexWrap={'wrap'} direction={'row'} gap={0.7}>
-                  {pfol.stack?.split(',').map((stack, index) => (
-                    <Chip
-                      key={`${pfol.name}_stack_${index}`}
-                      label={stack}
-                      size={'small'}
-                    />
-                  ))}
+                  {/* 사용 스킬 */}
+                  <Stack
+                    useFlexGap
+                    flexWrap={'wrap'}
+                    direction={'row'}
+                    gap={0.7}
+                  >
+                    {pfol.stack?.split(',').map((stack, index) => (
+                      <Chip
+                        key={`${pfol.name}_stack_${index}`}
+                        label={stack}
+                        size={'small'}
+                      />
+                    ))}
+                  </Stack>
                 </Stack>
               </Stack>
-            </Stack>
-          </Grid>
-        ))
+            </Grid>
+          );
+        })
       : <Box>{/* 포트폴리오가 없을때 */}</Box>}
       {selectedPortfolio && (
         <PortfolioDetail
