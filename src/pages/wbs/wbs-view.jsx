@@ -8,7 +8,7 @@ import { Stack, Container, Box } from '@mui/material';
 
 //Data Import
 import { selectPjtSn } from '@/store/pjtsn-reducer';
-import { setMemberData } from '@/store/wbsSlice';
+import { setMemberData, setPjtData } from '@/store/wbsSlice';
 import { issue } from './components/constants';
 //Component Import
 import TopBar from '@/pages/wbs/components/top-bar';
@@ -59,6 +59,12 @@ const WbsView = () => {
         const ProjectData = await getWbsInfo(pjtSn);
         const tracking = await getWbsIssueTracking(pjtSn);
 
+        dispatch(
+          setPjtData({
+            startDt: ProjectData.data.startDt,
+            endDt: ProjectData.data.endDt,
+          }),
+        );
         dispatch(setMemberData(ProjectData.data.members));
 
         const transformedData = transformWbsDataToTableFormat(

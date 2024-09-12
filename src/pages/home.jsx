@@ -12,12 +12,11 @@ const Home = () => {
   const { isSignIn } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
- 
   const handleNavigation = (path) => {
     if (isSignIn) {
-      navigate(path); 
+      navigate(path);
     } else {
-      navigate('/auth/sign-in'); 
+      navigate('/auth/sign-in');
     }
   };
 
@@ -55,7 +54,7 @@ const Home = () => {
               }}
             >
               <Button
-                onClick={() => handleNavigation('/match')} 
+                onClick={() => handleNavigation('/match')}
                 variant="contained"
                 sx={{
                   backgroundColor: theme.palette.login.main,
@@ -69,7 +68,7 @@ const Home = () => {
                 MATCHING
               </Button>
               <Button
-                onClick={() => handleNavigation('/project')} 
+                onClick={() => handleNavigation('/project')}
                 variant="outlined"
                 sx={{
                   borderColor: theme.palette.login.main,
@@ -95,15 +94,21 @@ const Home = () => {
               ml: 5,
             }}
           >
-            <img
-              src={MainImg}
-              alt="Main None Image"
+            <video
+              autoPlay
+              loop
+              muted
+              controls={false}
               style={{
-                width: isSmallScreen ? '50%' : '100%',
+                width: isSmallScreen ? '50%' : '130%',
                 height: 'auto',
                 marginTop: isSmallScreen ? '3%' : '30%',
+                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
               }}
-            />
+            >
+              <source src="main.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
           </Box>
         </Grid>
       </Grid>

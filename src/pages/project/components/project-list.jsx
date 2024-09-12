@@ -7,7 +7,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { BasicDataGrid } from '@/components/data-grid';
 import { createMergedTable } from '@/pages/wbs/components/wbs-table';
 import { PATHS } from '@/routes/paths';
-import { getProjectList, getProject } from '@/services/project';
+import {
+  getProjectList,
+  getProject,
+  getProjectMember,
+} from '@/services/project';
 import { getWbs } from '@/services/wbs';
 import { setPjtSn } from '@/store/pjtsn-reducer';
 import { selectName } from '@/store/name-reducer';
@@ -92,6 +96,7 @@ const ProjectList = () => {
     try {
       const res = await getProjectList();
       setIsFetching(false);
+      console.log('res', res);
 
       // TODO: 응답데이터 형식 바뀔 경우 수정 필요함
       // 데이터가 없을 경우 빈 배열이 아닌, 0번째 인덱스에 값 null로 내려와서 다음과 같이 처리
@@ -109,6 +114,8 @@ const ProjectList = () => {
       const res = await getProject(pjtSn);
       const res1 = await getWbs(pjtSn);
       const pjtName = res.data.pjtNm;
+      const member = await getProjectMember(pjtSn);
+      console.log('member', member);
 
       dispatch(setPjtSn(pjtSn));
       if (res1.data.wbsData.length == 0) {

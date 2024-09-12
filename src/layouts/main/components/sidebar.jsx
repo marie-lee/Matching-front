@@ -37,6 +37,7 @@ const Sidebar = () => {
 
   const handleWbs = async () => {
     const res1 = await getWbs(pjtSn);
+
     if (res1.data.wbsData.length == 0) {
       alert('wbs를 만든 후 이용해주세요.');
     } else {
