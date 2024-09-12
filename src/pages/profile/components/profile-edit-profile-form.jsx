@@ -8,6 +8,13 @@ export const ProfileForm = ({ profileEditForm }) => {
   const [showEditIcon, setShowEditIcon] = useState(false);
   const [avatar, setAvatar] = useState(null);
 
+  const {
+    field: { onChange, value },
+  } = useController({
+    name: 'profile.USER_IMG',
+    control,
+  });
+
   const handleMouseEnter = () => {
     setShowEditIcon(true);
   };
@@ -25,7 +32,7 @@ export const ProfileForm = ({ profileEditForm }) => {
         setAvatar(e.target.result);
       };
       reader.readAsDataURL(file);
-      profileEditForm.setValue('USER_IMG', file);
+      onChange(file);
     }
   };
 

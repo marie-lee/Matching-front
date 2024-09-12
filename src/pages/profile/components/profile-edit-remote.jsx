@@ -47,7 +47,6 @@ const RemoteControlBox = ({ profileEditForm, onOpen, refs }) => {
     let payload = _.cloneDeep(_payload);
     const profile = {
       PF_INTRO: payload.profile.PF_INTRO,
-      USER_IMG: payload.profile.USER_IMG,
       CAREER: payload.profile.career.map((career) => ({
         CAREER_NM: career.CAREER_NM,
         ENTERING_DT: career.ENTERING_DT,
