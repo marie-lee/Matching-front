@@ -124,7 +124,11 @@ const ProjectDetailsSelectedMember = ({ member, handleClickReq }) => {
         bgcolor={'background.default'}
       >
         <Grid item container xs={12} md={'auto'} alignContent={'center'}>
-          <Avatar alt={'프로필 이미지'} sx={{ width: 130, height: 130 }} />
+          <Avatar
+            alt={'프로필 이미지'}
+            sx={{ width: 130, height: 130 }}
+            src={member.profile?.img}
+          />
         </Grid>
         <Grid item container xs md={true} pl={2}>
           {/* 이름 및 요청 버튼 */}

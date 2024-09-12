@@ -34,7 +34,11 @@ const MemberItem = ({ member, ...other }) => {
       <Grid container sx={{ ...memberItemStyles }}>
         <Grid container alignItems={'center'} spacing={3}>
           <Grid item xs={'auto'}>
-            <Avatar alt={'프로필 이미지'} sx={{ width: 70, height: 70 }} />
+            <Avatar
+              alt={'프로필 이미지'}
+              sx={{ width: 70, height: 70 }}
+              src={member.profile?.img}
+            />
           </Grid>
           <Grid item xs>
             <Typography component={'p'} fontWeight={'fontWeightMedium'}>
