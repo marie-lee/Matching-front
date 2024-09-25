@@ -3,10 +3,10 @@ name: Deploy to Raspberry Pi
 on:
   push:
     branches:
-      - develop
+      - beta-coconut
   pull_request:
     branches:
-      - develop
+      - beta-coconut
     types:
       - closed
 
@@ -47,6 +47,16 @@ jobs:
           script: |
             sudo mv /tmp/* /var/www/html/
             sudo chmod -R 775 /var/www/html/
+
+      - name: Clear target directory on Raspberry Pi
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.RASPBERRY_PI_HOST }}
+          username: ${{ secrets.RASPBERRY_PI_USERNAME }}
+          key: ${{ secrets.RASPBERRY_PI_KEY }}
+          script: |
+            rm -rf /var/www/html/dist
+            rm -rf /var/www/html/v8-compile-cache-0
 
       - name: Restart Nginx on Raspberry Pi
         if: github.event.pull_request.merged == true || github.event_name == 'push'
