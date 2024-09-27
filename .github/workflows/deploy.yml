@@ -61,3 +61,4 @@ jobs:
           script: |
             echo "SSH connection successful"
             sudo systemctl restart nginx
+            echo "Nginx restarted successfully"
