@@ -29,8 +29,15 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Verify build output
-        run: ls -la dist
+      - name: Copy build files to Raspberry Pi
+        if: github.event.pull_request.merged == true || github.event_name == 'push'
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.RASPBERRY_PI_HOST }}
+          username: ${{ secrets.RASPBERRY_PI_USERNAME }}
+          key: ${{ secrets.RASPBERRY_PI_KEY }}
+          source: 'dist/*'
+          target: '/home/${{ secrets.RASPBERRY_PI_USERNAME }}/Deploy/' # 임시 디렉토리로 전송
 
       - name: Deploy to Raspberry Pi
         if: github.event.pull_request.merged == true || github.event_name == 'push'
@@ -41,7 +48,7 @@ jobs:
           key: ${{ secrets.RASPBERRY_PI_KEY }}
           script: |
             echo "SSH connection successful"
-            sudo cp -r dist/* /var/www/html
+            sudo cp -r Deploy/* /var/www/html
             echo "Files copied successfully"
 
       - name: Restart Nginx on Raspberry Pi
