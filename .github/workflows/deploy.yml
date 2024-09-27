@@ -29,6 +29,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Verify build output
+        run: ls -la dist
+
       - name: Deploy to Raspberry Pi
         if: github.event.pull_request.merged == true || github.event_name == 'push'
         uses: appleboy/ssh-action@master
@@ -38,7 +41,7 @@ jobs:
           key: ${{ secrets.RASPBERRY_PI_KEY }}
           script: |
             echo "SSH connection successful"
-            sudo cp -r dist/* ${{ secrets.RASPBERRY_PI_USERNAME }}@${{ secrets.RASPBERRY_PI_HOST }}:/var/www/html
+            sudo cp -r dist/* /var/www/html
             echo "Files copied successfully"
 
       - name: Restart Nginx on Raspberry Pi
