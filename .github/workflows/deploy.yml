@@ -29,34 +29,17 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Copy build artifacts to Raspberry Pi
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.RASPBERRY_PI_HOST }}
-          username: ${{ secrets.RASPBERRY_PI_USERNAME }}
-          key: ${{ secrets.RASPBERRY_PI_KEY }}
-          source: 'dist/*'
-          target: '/tmp/' # 임시 디렉토리에 복사
-
-      - name: Move files to target directory and set permissions
+      - name: Deploy to Raspberry Pi
+        if: github.event.pull_request.merged == true || github.event_name == 'push'
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.RASPBERRY_PI_HOST }}
           username: ${{ secrets.RASPBERRY_PI_USERNAME }}
           key: ${{ secrets.RASPBERRY_PI_KEY }}
           script: |
-            sudo mv /tmp/* /var/www/html/
-            sudo chmod -R 775 /var/www/html/
-
-      - name: Clear target directory on Raspberry Pi
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.RASPBERRY_PI_HOST }}
-          username: ${{ secrets.RASPBERRY_PI_USERNAME }}
-          key: ${{ secrets.RASPBERRY_PI_KEY }}
-          script: |
-            rm -rf /var/www/html/dist
-            rm -rf /var/www/html/v8-compile-cache-0
+            echo "SSH connection successful"
+            sudo cp -r dist/* ${{ secrets.RASPBERRY_PI_USERNAME }}@${{ secrets.RASPBERRY_PI_HOST }}:/var/www/html
+            echo "Files copied successfully"
 
       - name: Restart Nginx on Raspberry Pi
         if: github.event.pull_request.merged == true || github.event_name == 'push'
