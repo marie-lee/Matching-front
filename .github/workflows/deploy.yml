@@ -48,7 +48,7 @@ jobs:
           key: ${{ secrets.RASPBERRY_PI_KEY }}
           script: |
             echo "SSH connection successful"
-            sudo cp -r Deploy/* /var/www/html
+            sudo cp -r Deploy/dist/* /var/www/html
             echo "Files copied successfully"
 
       - name: Restart Nginx on Raspberry Pi
