@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const API_BASE_URL = 'http://218.232.137.30:20080/api';
+export const API_BASE_URL = 'https://218.232.137.30.nip.io/api';
 
 export const instance = axios.create({
   baseURL: API_BASE_URL,
