@@ -104,25 +104,7 @@ const ProjectDetailsRecommendMember = ({ setSelectedMember }) => {
   };
 
   return (
-    <Grid container>
-      {/* 검색 */}
-      <Grid item xs={12} py={3}>
-        <Autocomplete
-          multiple
-          limitTags={10}
-          id={'search-stack-tags'}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label={'조건을 추가해 주세요'}
-              placeholder="희망하는 항목을 선택"
-            />
-          )}
-          getOptionLabel={(option) => option.title}
-          options={STACKS_OPTIONS}
-        />
-      </Grid>
-
+    <Grid container pt={2}>
       {/* 로딩 중일 때 CircularProgress와 Loading... 메시지 표시 */}
       {isLoading ?
         <Grid item xs={12}>
