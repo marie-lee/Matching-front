@@ -3,10 +3,10 @@ name: Deploy to Raspberry Pi
 on:
   push:
     branches:
-      - beta-coconut
+      - coconut-release
   pull_request:
     branches:
-      - beta-coconut
+      - coconut-release
     types:
       - closed
 
