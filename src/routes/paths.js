@@ -38,4 +38,5 @@ export const PATHS = {
     wbsView: '/wbs/wbs-view',
   },
   task: { root: '/task' },
+  group: { root: '/group' },
 };

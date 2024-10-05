@@ -77,7 +77,7 @@ const Sidebar = () => {
                 <AccessTimeIcon />
               </ListItemIcon>
             </ListItemButton>
-            <ListItemButton onClick={handleOpenPreparingService} sx={{ mt: 3 }}>
+            <ListItemButton href={PATHS.group.root} sx={{ mt: 3 }}>
               <ListItemIcon sx={{ justifyContent: 'center' }}>
                 <GroupIcon />
               </ListItemIcon>

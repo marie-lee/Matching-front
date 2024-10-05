@@ -11,6 +11,7 @@ import Home from '@/pages/home';
 import wbs from '@/routes/wbs';
 import task from '@/routes/task';
 import review from '@/routes/review';
+import group from '@/routes/group';
 
 import NotFoundPage from '@/pages/error/404';
 import MainLayout from '@/layouts/main/main-layout';
@@ -28,11 +29,11 @@ const Router = () => {
 
   const main = {
     path: '/',
-    element: <MainLayout /> ,
+    element: <MainLayout />,
     children: [
       {
         index: true,
-        element:<Home /> ,
+        element: <Home />,
       },
     ],
   };
@@ -48,6 +49,7 @@ const Router = () => {
     wbs,
     task,
     review,
+    group,
 
     {
       path: '*',
