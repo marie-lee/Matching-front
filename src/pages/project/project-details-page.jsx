@@ -10,6 +10,7 @@ import {
   ProjectReqDialog,
 } from '@/pages/project/components';
 import { getProject } from '@/services/project';
+import ProjectDetailsSelectedMemberSkeleton from './components/project-skeleton-selected-member';
 
 // ----------------------------------------------------------------------
 
@@ -56,12 +57,13 @@ const ProjectDetailsPage = () => {
       </Grid>
       {/* 선택한 멤버의 프로필과 포트폴리오 확인 */}
       <Grid item container xs={6}>
-        {selectedMember && (
-          <ProjectDetailsSelectedMember
+        {selectedMember == null ?
+          <ProjectDetailsSelectedMemberSkeleton />
+        : <ProjectDetailsSelectedMember
             member={selectedMember}
             handleClickReq={() => setOpenReqDialog(true)}
           />
-        )}
+        }
       </Grid>
 
       {/* 프로젝트 요청 다이얼로그 */}
