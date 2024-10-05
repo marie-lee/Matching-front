@@ -1,4 +1,5 @@
 import {
+  AppBar,
   Avatar,
   Box,
   Button,
@@ -10,6 +11,7 @@ import {
 } from '@mui/material';
 import { ResponsiveImg } from '@/components/img';
 import { Fragment, useState } from 'react';
+import { HEADER } from '@/layouts/config-layout';
 import PortfolioDetail from '@/pages/profile/components/portfolio-detail';
 
 // ----------------------------------------------------------------------
@@ -94,95 +96,130 @@ export const GetPortfolioList = ({ portfolio }) => {
 const MatchSelectedMember = ({ member }) => {
   return (
     <Stack>
-      <Grid
-        p={2}
-        border={1}
-        borderColor={'divider'}
-        borderRadius={1}
-        container
-        bgcolor={'background.default'}
+      <AppBar
+        position="sticky"
+        color="default"
+        sx={{
+          height: '100vh',
+          top: `${HEADER.H_DESKTOP + 24}px`,
+          zIndex: (theme) => theme.zIndex.drawer - 101,
+        }}
       >
-        <Grid item container xs={12} md={'auto'}>
-          <Avatar alt={'프로필 이미지'} sx={{ width: 130, height: 130 }} />
-        </Grid>
-        <Grid item container xs pl={2}>
-          {/* 이름 및 요청 버튼 */}
-          <Grid
-            item
-            container
-            alignItems={'center'}
-            justifyContent={'space-between'}
-          >
-            <Typography variant={'lg'}>{member?.profile?.USER_NM}</Typography>
-            <Button>요청</Button>
+        <Grid
+          p={2}
+          border={1}
+          borderColor={'divider'}
+          borderRadius={1}
+          container
+          bgcolor={'background.default'}
+        >
+          <Grid item container xs={12} md={'auto'}>
+            <Avatar alt={'프로필 이미지'} sx={{ width: 130, height: 130 }} />
           </Grid>
+          <Grid item container xs pl={2}>
+            {/* 이름 및 요청 버튼 */}
+            <Grid
+              item
+              container
+              alignItems={'center'}
+              justifyContent={'space-between'}
+            >
+              <Typography variant={'lg'}>{member?.profile?.USER_NM}</Typography>
+              <Button>요청</Button>
+            </Grid>
 
-          {/* 한 줄 소개 */}
-          <Grid item container mt={1}>
-            <Typography variant={'md'}>{member?.profile?.PF_INTRO}</Typography>
-            <Grid item container spacing={0.5} alignItems={'center'} mt={2}>
-              {member.profile.url?.map((url, index) => (
-                <Fragment key={`url_${index}`}>
-                  <Grid item xs={12} sm={2}>
-                    <Typography fontWeight={'fontWeightMedium'}>
-                      {url.URL_INTRO}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} md={10}>
-                    <Typography size={'sm'} color={'text.secondary'}>
-                      {url.URL_ADDR}
-                    </Typography>
-                  </Grid>
-                </Fragment>
+            {/* 한 줄 소개 */}
+            <Grid item container mt={1}>
+              <Typography variant={'md'}>
+                {member?.profile?.PF_INTRO}
+              </Typography>
+              <Grid item container spacing={0.5} alignItems={'center'} mt={2}>
+                {member.profile.url?.map((url, index) => (
+                  <Fragment key={`url_${index}`}>
+                    <Grid item xs={12} sm={2}>
+                      <Typography fontWeight={'fontWeightMedium'}>
+                        {url.URL_INTRO}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} md={10}>
+                      <Typography size={'sm'} color={'text.secondary'}>
+                        {url.URL_ADDR}
+                      </Typography>
+                    </Grid>
+                  </Fragment>
+                ))}
+              </Grid>
+            </Grid>
+          </Grid>
+          {/* 주요 스킬 */}
+          <Grid item xs={12} mt={4}>
+            <Typography variant={'lg'} fontWeight={'fontWeightSemiBold'}>
+              주요 스킬
+            </Typography>
+            <Divider />
+            <Grid container spacing={1} pt={1}>
+              {member.profile?.stack?.map((skill, index) => (
+                <Grid item key={`stack_${index}`}>
+                  <Chip key={`chip_${index}`} label={skill.ST_NM} />
+                </Grid>
               ))}
             </Grid>
           </Grid>
-        </Grid>
-        {/* 주요 스킬 */}
-        <Grid item xs={12} mt={4}>
-          <Typography variant={'lg'} fontWeight={'fontWeightSemiBold'}>
-            주요 스킬
-          </Typography>
-          <Divider />
-          <Grid container spacing={1} pt={1}>
-            {member.profile?.stack?.map((skill, index) => (
-              <Grid item key={`stack_${index}`}>
-                <Chip key={`chip_${index}`} label={skill.ST_NM} />
-              </Grid>
-            ))}
+          {/* 경력 */}
+          <Grid item xs={12} mt={4}>
+            <Typography variant={'lg'} fontWeight={'fontWeightSemiBold'}>
+              경력
+            </Typography>
+            <Divider></Divider>
+            <Stack spacing={1} pt={1}>
+              {member.profile.carrer?.map((exp, index) => (
+                <Fragment key={`career_${index}`}>
+                  {/* Fragment에 key prop 추가 */}
+                  <Stack
+                    key={`career_${index}`}
+                    direction={'row'}
+                    spacing={2}
+                    alignItems={'center'}
+                  >
+                    <Typography>{exp.CARRER_NM}</Typography>
+                    <Typography variant={'sm'} color={'text.secondary'}>
+                      {exp.ENTERING_DT} ~ {exp.QUIT_DT}
+                    </Typography>
+                  </Stack>
+                  <Divider></Divider>
+                </Fragment>
+              ))}
+            </Stack>
           </Grid>
         </Grid>
-        {/* 경력 */}
-        <Grid item xs={12} mt={4}>
-          <Typography variant={'lg'} fontWeight={'fontWeightSemiBold'}>
-            경력
-          </Typography>
-          <Divider></Divider>
-          <Stack spacing={1} pt={1}>
-            {member.profile.carrer?.map((exp, index) => (
-              <Fragment key={`career_${index}`}>
-                {/* Fragment에 key prop 추가 */}
-                <Stack
-                  key={`career_${index}`}
-                  direction={'row'}
-                  spacing={2}
-                  alignItems={'center'}
-                >
-                  <Typography>{exp.CARRER_NM}</Typography>
-                  <Typography variant={'sm'} color={'text.secondary'}>
-                    {exp.ENTERING_DT} ~ {exp.QUIT_DT}
-                  </Typography>
-                </Stack>
-                <Divider></Divider>
-              </Fragment>
-            ))}
-          </Stack>
-        </Grid>
-      </Grid>
-      {/* 포트폴리오 */}
-      <Grid item xs={12} mt={2}>
-        <GetPortfolioList portfolio={member.portfolioInfo} />
-      </Grid>
+        {/* 포트폴리오 */}
+
+        <Box
+          sx={{
+            overflowY: 'auto',
+            flexGrow: 1,
+            pb: 24,
+            '&::-webkit-scrollbar': {
+              width: '6px',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: '#f1f1f1',
+              borderRadius: '10px',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: '#DDD',
+              borderRadius: '10px',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              background: '#555',
+            },
+          }}
+        >
+          <Grid item xs={12} mt={2}>
+            <GetPortfolioList portfolio={member.portfolioInfo} />
+          </Grid>
+        </Box>
+      </AppBar>
     </Stack>
   );
 };
