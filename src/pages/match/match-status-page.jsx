@@ -20,6 +20,7 @@ import { getStatus } from '@/services/status';
 import MatchSelectedMember from './components/match-selected-member';
 import { ProjectDetails } from '../project/components';
 import MatchSelectedProject from './components/match-selected-project';
+import MatchSkeleton from './components/match-skeleton';
 
 // ----------------------------------------------------------------------
 
@@ -144,7 +145,9 @@ const MatchStatusPage = () => {
         )}
       </Grid>
       <Grid item container xs={6}>
-        {selectedMember && <MatchSelectedMember member={selectedMember} />}
+        {selectedMember == null ?
+          <MatchSkeleton />
+        : <MatchSelectedMember member={selectedMember} />}
         <MatchSelectedProject data={selectedProject} />
       </Grid>
 
