@@ -9,6 +9,7 @@ import {
   Typography,
   CircularProgress,
   Box,
+  Skeleton,
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
 
@@ -67,6 +68,51 @@ const MemberItem = ({ member, ...other }) => {
 };
 
 // ----------------------------------------------------------------------
+const MemberItemSkeleton = () => {
+  return (
+    <Grid item xs={12}>
+      {/* 스켈레톤 UI 표시 */}
+      {Array.from(new Array(6)).map((_, index) => (
+        <Grid container item xs={12} pb={2} key={index}>
+          <Grid container sx={{ ...memberItemStyles }}>
+            <Grid container alignItems={'center'} spacing={3}>
+              <Grid item xs={'auto'}>
+                <Skeleton variant="circular" width={70} height={70} />
+              </Grid>
+              <Grid item xs>
+                <Typography component={'p'} fontWeight={'fontWeightMedium'}>
+                  <Skeleton width="60%" />
+                </Typography>
+                <Typography
+                  component={'p'}
+                  variant={'sm'}
+                  color={'text.secondary'}
+                >
+                  <Skeleton width="80%" />
+                </Typography>
+                <Stack direction={'row'} flexWrap={'wrap'} gap={1} mt={1}>
+                  {Array.from(new Array(3)).map((_, index) => (
+                    <Skeleton
+                      key={index}
+                      variant="rectangular"
+                      width={60}
+                      height={24}
+                    />
+                  ))}
+                </Stack>
+              </Grid>
+              <Grid item xs={2}>
+                {/* <Skeleton variant="rectangular" width={24} height={24} /> */}
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      ))}
+    </Grid>
+  );
+};
+
+// ----------------------------------------------------------------------
 
 const ProjectDetailsRecommendMember = ({ setSelectedMember }) => {
   const { pjtSn } = useParams();
@@ -107,20 +153,9 @@ const ProjectDetailsRecommendMember = ({ setSelectedMember }) => {
     <Grid container pt={2}>
       {/* 로딩 중일 때 CircularProgress와 Loading... 메시지 표시 */}
       {isLoading ?
-        <Grid item xs={12}>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              minHeight: '300px',
-            }}
-          >
-            <CircularProgress />
-            <Typography mt={2}>Loading...</Typography>
-          </Box>
-        </Grid>
+        <>
+          <MemberItemSkeleton />
+        </>
       : <Grid item xs={12} container spacing={3}>
           {/* 추천된 멤버 목록 */}
           <Grid item container spacing={2}>
