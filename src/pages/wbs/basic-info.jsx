@@ -1,7 +1,7 @@
 import { useState } from 'react';
 //React Import
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 //Mui Import
 import {
   Button,
@@ -22,9 +22,12 @@ import ProjectInfo from '@/pages/wbs/components/project-info';
 import UserAdd from '@/pages/wbs/components/user-add';
 import WbsTable, { createMergedTable } from '@/pages/wbs/components/wbs-table';
 import { wbsData } from '@/pages/wbs/components/constants';
+import { setMemberData } from '@/store/wbsSlice';
 
 const BasicInfo = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [participants, setParticipants] = useState([]); // participants 상태 추가
@@ -50,6 +53,7 @@ const BasicInfo = () => {
       alert('참여자 정보에 모든 유저를 추가해 주세요.');
       return;
     }
+    dispatch(setMemberData(participants));
 
     // 모든 조건을 만족했을 때만 이동
     navigate(PATHS.wbs.wbsInput);
