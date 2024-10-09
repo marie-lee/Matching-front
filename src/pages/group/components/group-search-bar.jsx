@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Grid,
   MenuItem,
@@ -12,41 +12,38 @@ import { useNavigate } from 'react-router-dom';
 
 import { PATHS } from '@/routes/paths';
 
-const menulist = [
-  {
-    value: '1',
-    label: 'Backend',
-  },
-  {
-    value: '2',
-    label: 'Frontend',
-  },
-  {
-    value: '3',
-    label: 'Planner',
-  },
-  {
-    value: '4',
-    label: 'Designer',
-  },
-  {
-    value: '5',
-    label: 'ALL',
-  },
-];
-const GroupSearchBar = () => {
+const GroupSearchBar = ({partList, onRoleChange, onSearchChange}) => {
+  // "ALL" 옵션을 partList에 추가
+  const updatedPartList = [{part: 'ALL'}, ...partList];
+  const [selectedPart, setSelectedPart] = useState('ALL');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleRoleChange = (event) => {
+    const role = event.target.value;
+    setSelectedPart(role);
+    onRoleChange(role);
+  }
+
+  const handleSearchChange = (event) => {
+    const term = event.target.value;
+    setSearchTerm(term);
+    onSearchChange(term);
+  }
+
   return (
     <Stack>
       <Grid pt={10} pb={2}>
         <Typography variant="lg">팀원 목록</Typography>
       </Grid>
       <Grid container>
-        {/* 이름 검색창, 역할 필터 추가 */}
+        {/* 검색창, 역할 필터 추가 */}
         <Stack direction="row" spacing={2} alignItems={'center'} minWidth={400}>
           <TextField
             fullWidth
             placeholder="검색..."
             variant="standard"
+            value={searchTerm}
+            onChange={handleSearchChange}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -55,10 +52,10 @@ const GroupSearchBar = () => {
               ),
             }}
           />
-          <TextField fullWidth select defaultValue={5} variant="standard">
-            {menulist.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
+          <TextField fullWidth select defaultValue={'ALL'} variant="standard" onChange={handleRoleChange} value={selectedPart}>
+            {updatedPartList.map((option) => (
+              <MenuItem key={option.part} value={option.part}>
+                {option.part}
               </MenuItem>
             ))}
           </TextField>
