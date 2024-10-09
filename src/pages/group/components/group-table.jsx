@@ -21,7 +21,7 @@ import { useTheme } from '@emotion/react';
 import dayjs from 'dayjs';
 import SettingMenu from './group-settting-menu';
 
-const columns = [
+const columns = (partList) => [
   {
     field: 'userNm',
     headerName: '이름',
@@ -75,7 +75,7 @@ const columns = [
     headerName: '',
     sortable: false,
     width: 150,
-    renderCell: (params) => <SettingMenu user={params.row} />,
+    renderCell: (params) => <SettingMenu user={params.row} partList={partList}/>,
   },
 ];
 
@@ -102,14 +102,14 @@ const MemberEmpty = () => {
   );
 };
 
-const GroupTable = ({memberList}) => {
+const GroupTable = ({memberList, partList}) => {
   const [data, setData] = useState([]);
-  
+
   return (
     <Stack pt={1}>
       <BasicDataGrid
         autoHeight
-        columns={columns}
+        columns={columns(partList)}
         rows={data.length > 0 ? data : memberList}
         getRowId={(row) => row.pjtMemSn}
         noRows={MemberEmpty}

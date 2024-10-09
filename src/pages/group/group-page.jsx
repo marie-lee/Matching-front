@@ -45,7 +45,7 @@ const GroupPage = () => {
   return (
     <Container maxWidth="xl" sx={{ pb: 5 }}>
       <GroupSearchBar partList={partList}/>
-      <GroupTable memberList={memberList}/>
+      <GroupTable memberList={memberList} partList={partList}/>
     </Container>
   );
 };

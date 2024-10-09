@@ -63,3 +63,13 @@ export const postProjectRate = (payload, pjtSn, targetSn) => {
     payload,
   );
 };
+
+// ----------------------------------------------------------------------
+// PUT
+// ----------------------------------------------------------------------
+
+// 프로젝트 멤버 파트 변경
+export const URL_PUT_PROJECT_MEMBER_PART = '/project/memberList/part';
+export const putProjectMemberPart = (payload, pjtSn, memSn) => {
+  return instance.put(`${URL_PUT_PROJECT_MEMBER_PART}/${pjtSn}/${memSn}`, payload);
+};

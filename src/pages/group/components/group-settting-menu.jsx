@@ -12,15 +12,22 @@ import {
   FormControl,
   InputLabel,
   Typography,
+  TextField,
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { useState } from 'react';
+import { putProjectMemberPart } from '@/services/project';
+import { useSelector } from 'react-redux';
+import { selectPjtSn } from '@/store/pjtsn-reducer';
+import { useNavigate } from 'react-router-dom';
 
-const SettingMenu = ({ user }) => {
+const SettingMenu = ({ user, partList }) => {
+  const pjtSn = useSelector(selectPjtSn);
   const [anchorEl, setAnchorEl] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogContent, setDialogContent] = useState('');
   const [selectedRole, setSelectedRole] = useState('');
+  const navigate = useNavigate();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -50,6 +57,30 @@ const SettingMenu = ({ user }) => {
     setSelectedRole(event.target.value);
   };
 
+  const handleConfirmClick = () => {
+    if (dialogContent === '역할 변경' && selectedRole) {
+      onRoleChange(user.userSn, selectedRole);
+    }
+    setDialogOpen(false);
+  };
+
+  const onRoleChange = async (userSn, role) => {
+    // 역할 변경 API 호출
+    console.log(userSn, role);
+    const payload = {
+      "newPart": role
+    }
+    try {
+      const res = await putProjectMemberPart(payload, pjtSn, userSn);
+      if (res?.status === 200) {
+        console.log('역할 변경 성공');
+        navigate(0);
+      }
+    } catch (error) {
+      console.error(error);
+    }  
+  }
+
   return (
     <>
       <IconButton onClick={handleClick}>
@@ -78,16 +109,18 @@ const SettingMenu = ({ user }) => {
                   variant="outlined"
                   size="small"
                 >
-                  <SelectMenuItem value="front">Front-end</SelectMenuItem>
-                  <SelectMenuItem value="back">Back-end</SelectMenuItem>
-                  <SelectMenuItem value="full">Full-stack</SelectMenuItem>
+                  {partList.map((part) => (
+                    <SelectMenuItem key={part.part} value={part.part}>
+                      {part.part}
+                    </SelectMenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </>
           }
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose} color="secondary">
+          <Button onClick={handleConfirmClick} color="secondary">
             확인
           </Button>
           <Button onClick={handleDialogClose} color="primary">
