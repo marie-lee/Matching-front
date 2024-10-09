@@ -12,15 +12,22 @@ import { useNavigate } from 'react-router-dom';
 
 import { PATHS } from '@/routes/paths';
 
-const GroupSearchBar = ({partList, onRoleChange}) => {
+const GroupSearchBar = ({partList, onRoleChange, onSearchChange}) => {
   // "ALL" 옵션을 partList에 추가
   const updatedPartList = [{part: 'ALL'}, ...partList];
   const [selectedPart, setSelectedPart] = useState('ALL');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleRoleChange = (event) => {
     const role = event.target.value;
     setSelectedPart(role);
     onRoleChange(role);
+  }
+
+  const handleSearchChange = (event) => {
+    const term = event.target.value;
+    setSearchTerm(term);
+    onSearchChange(term);
   }
 
   return (
@@ -29,12 +36,14 @@ const GroupSearchBar = ({partList, onRoleChange}) => {
         <Typography variant="lg">팀원 목록</Typography>
       </Grid>
       <Grid container>
-        {/* 이름 검색창, 역할 필터 추가 */}
+        {/* 검색창, 역할 필터 추가 */}
         <Stack direction="row" spacing={2} alignItems={'center'} minWidth={400}>
           <TextField
             fullWidth
             placeholder="검색..."
             variant="standard"
+            value={searchTerm}
+            onChange={handleSearchChange}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">

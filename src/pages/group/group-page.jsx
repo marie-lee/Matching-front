@@ -27,6 +27,8 @@ const GroupPage = () => {
   const [memberList, setMemberList] = useState([]);
   const [partList, setPartList] = useState([]);
   const [filteredMemberList, setFilteredMemberList] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedRole, setSelectedRole] = useState('ALL');
    // 그룹 멤버 조회
    const fetchGroupMember = async () => {
     try {
@@ -44,16 +46,31 @@ const GroupPage = () => {
   }, []);
 
   const handleRoleChange = (role) => {
-    if (role === 'ALL') {
-      setFilteredMemberList(memberList);
-    } else {
-      setFilteredMemberList(memberList.filter((member) => member.part === role));
+    setSelectedRole(role);
+    filterMembers(role, searchTerm);
+  };
+
+  const handleSearchChange = (term) => {
+    setSearchTerm(term);
+    filterMembers(selectedRole, term);
+  };
+
+  const filterMembers = (role, term) => {
+    let filtered = memberList;
+    if (role !== 'ALL') {
+      filtered = filtered.filter((member) => member.part === role);
     }
+    if (term) {
+      filtered = filtered.filter((member) =>
+        member.userNm.toLowerCase().includes(term.toLowerCase())
+      );
+    }
+    setFilteredMemberList(filtered);
   };
 
   return (
     <Container maxWidth="xl" sx={{ pb: 5 }}>
-      <GroupSearchBar partList={partList} onRoleChange={handleRoleChange}/>
+      <GroupSearchBar partList={partList} onRoleChange={handleRoleChange} onSearchChange={handleSearchChange}/>
       <GroupTable memberList={filteredMemberList} partList={partList}/>
     </Container>
   );
