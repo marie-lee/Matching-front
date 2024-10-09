@@ -103,14 +103,12 @@ const MemberEmpty = () => {
 };
 
 const GroupTable = ({memberList, partList}) => {
-  const [data, setData] = useState([]);
-
   return (
     <Stack pt={1}>
       <BasicDataGrid
         autoHeight
         columns={columns(partList)}
-        rows={data.length > 0 ? data : memberList}
+        rows={memberList}
         getRowId={(row) => row.pjtMemSn}
         noRows={MemberEmpty}
         rowHeight={60}

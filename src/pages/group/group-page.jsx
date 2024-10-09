@@ -26,12 +26,14 @@ const GroupPage = () => {
   const pjtSn = useSelector(selectPjtSn);
   const [memberList, setMemberList] = useState([]);
   const [partList, setPartList] = useState([]);
+  const [filteredMemberList, setFilteredMemberList] = useState([]);
    // 그룹 멤버 조회
    const fetchGroupMember = async () => {
     try {
       const { data } = await getProjectMemberPart(pjtSn);
       setMemberList(data.memList);
       setPartList(data.partList);
+      setFilteredMemberList(data.memList);
     } catch (error) {
       console.log(error);
     }
@@ -41,11 +43,18 @@ const GroupPage = () => {
     fetchGroupMember();
   }, []);
 
+  const handleRoleChange = (role) => {
+    if (role === 'ALL') {
+      setFilteredMemberList(memberList);
+    } else {
+      setFilteredMemberList(memberList.filter((member) => member.part === role));
+    }
+  };
 
   return (
     <Container maxWidth="xl" sx={{ pb: 5 }}>
-      <GroupSearchBar partList={partList}/>
-      <GroupTable memberList={memberList} partList={partList}/>
+      <GroupSearchBar partList={partList} onRoleChange={handleRoleChange}/>
+      <GroupTable memberList={filteredMemberList} partList={partList}/>
     </Container>
   );
 };

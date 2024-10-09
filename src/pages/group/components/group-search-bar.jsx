@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Grid,
   MenuItem,
@@ -12,10 +12,17 @@ import { useNavigate } from 'react-router-dom';
 
 import { PATHS } from '@/routes/paths';
 
-const GroupSearchBar = ({partList}) => {
+const GroupSearchBar = ({partList, onRoleChange}) => {
   // "ALL" 옵션을 partList에 추가
   const updatedPartList = [{part: 'ALL'}, ...partList];
-  
+  const [selectedPart, setSelectedPart] = useState('ALL');
+
+  const handleRoleChange = (event) => {
+    const role = event.target.value;
+    setSelectedPart(role);
+    onRoleChange(role);
+  }
+
   return (
     <Stack>
       <Grid pt={10} pb={2}>
@@ -36,7 +43,7 @@ const GroupSearchBar = ({partList}) => {
               ),
             }}
           />
-          <TextField fullWidth select defaultValue={'ALL'} variant="standard">
+          <TextField fullWidth select defaultValue={'ALL'} variant="standard" onChange={handleRoleChange} value={selectedPart}>
             {updatedPartList.map((option) => (
               <MenuItem key={option.part} value={option.part}>
                 {option.part}
