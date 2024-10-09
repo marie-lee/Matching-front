@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   AppBar,
   Box,
@@ -13,19 +13,34 @@ import {
 import { ProfilePopover, MenuPopover } from '@/layouts/components';
 import { HEADER } from '@/layouts/config-layout';
 import { Icon } from '@iconify/react';
-import PreparingService from '@/components/custom-popover/preparing-service';
+import Notification from '@/components/notification';
 
 const Header = () => {
   const theme = useTheme();
 
-  const [isPreparingOpen, setIsPreparingOpen] = useState(false);
+  const [notifications, setNotifications] = useState([
+    { message: '새로운 메시지가 도착했습니다.' },
+    { message: '업데이트가 완료되었습니다.' },
+  ]);
 
-  const handleOpenPreparingService = () => {
-    setIsPreparingOpen(true);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleOpenNotifications = (event) => {
+    setAnchorEl(event.currentTarget);
   };
 
-  const handleClosePreparingService = () => {
-    setIsPreparingOpen(false);
+  const handleCloseNotifications = () => {
+    setAnchorEl(null);
+  };
+
+  const handleDeleteNotification = (index) => {
+    setNotifications((prevNotifications) =>
+      prevNotifications.filter((_, i) => i !== index),
+    );
+  };
+
+  const handleClearAllNotifications = () => {
+    setNotifications([]);
   };
 
   return (
@@ -58,7 +73,7 @@ const Header = () => {
             <Box sx={{ flexGrow: 1 }} />
 
             <Stack direction={'row'} spacing={1}>
-              <IconButton onClick={handleOpenPreparingService}>
+              <IconButton onClick={handleOpenNotifications}>
                 <Icon icon={'iconoir:bell'} fontSize={28} />
               </IconButton>
               <MenuPopover />
@@ -68,7 +83,14 @@ const Header = () => {
         </Toolbar>
       </AppBar>
 
-      <PreparingService open={isPreparingOpen} onClose={handleClosePreparingService} />
+      <Notification
+        notifications={notifications}
+        anchorEl={anchorEl}
+        onClose={handleCloseNotifications}
+        onDeleteNotification={handleDeleteNotification}
+        onClearAll={handleClearAllNotifications}
+        position={'bottom'}
+      />
     </>
   );
 };

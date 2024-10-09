@@ -19,12 +19,22 @@ import { PATHS } from '@/routes/paths';
 import { getWbs } from '@/services/wbs';
 import { useSelector } from 'react-redux';
 import { selectPjtSn } from '@/store/pjtsn-reducer';
+import Notification from '@/components/notification';
 
 const drawerWidth = 80;
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const [isPreparingOpen, setIsPreparingOpen] = useState(false);
+  const [notifications, setNotifications] = useState([
+    {
+      message:
+        '새로운 메시지가 도착했습니다. q블라라라라라라라라라랄q블라라라라라라라라라랄',
+    },
+    { message: '업데이트가 완료되었습니다.' },
+  ]);
+
+  const [anchorEl, setAnchorEl] = useState(null);
   const pjtSn = useSelector(selectPjtSn);
 
   const handleOpenPreparingService = () => {
@@ -33,6 +43,25 @@ const Sidebar = () => {
 
   const handleClosePreparingService = () => {
     setIsPreparingOpen(false);
+  };
+
+  const handleOpenNotifications = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseNotifications = () => {
+    setAnchorEl(null);
+  };
+
+  const handleDeleteNotification = (index) => {
+    setNotifications((prevNotifications) =>
+      prevNotifications.filter((_, i) => i !== index),
+    );
+  };
+
+  // 모두 읽기 (모든 알림 삭제)
+  const handleClearAllNotifications = () => {
+    setNotifications([]); // 모든 알림을 삭제
   };
 
   const handleWbs = async () => {
@@ -89,7 +118,7 @@ const Sidebar = () => {
             </ListItemButton>
           </Box>
           <Box>
-            <ListItemButton onClick={handleOpenPreparingService} sx={{ mt: 3 }}>
+            <ListItemButton onClick={handleOpenNotifications} sx={{ mt: 3 }}>
               <ListItemIcon sx={{ justifyContent: 'center' }}>
                 <NotificationsIcon />
               </ListItemIcon>
@@ -102,6 +131,15 @@ const Sidebar = () => {
           </Box>
         </List>
       </Drawer>
+
+      <Notification
+        notifications={notifications}
+        anchorEl={anchorEl}
+        onClose={handleCloseNotifications}
+        onDeleteNotification={handleDeleteNotification}
+        onClearAll={handleClearAllNotifications}
+        position={'top'}
+      />
 
       <PreparingService
         open={isPreparingOpen}

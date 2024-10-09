@@ -1,6 +1,5 @@
 import { Typography, Button, Box, Grid, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import MainImg from '@/assets/mainImg.png';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import intro from '@/assets/intro.png';
 import { useSelector } from 'react-redux';

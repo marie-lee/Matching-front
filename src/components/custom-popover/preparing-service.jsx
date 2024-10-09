@@ -23,11 +23,7 @@ const PreparingService = ({ open, onClose }) => {
         <Typography variant="h6" sx={{ mb: 2 }}>
           이런! 서비스 준비 중입니다!
         </Typography>
-        <Button
-          variant="contained"
-          onClick={onClose}
-          sx={{ mt: 2 }}
-        >
+        <Button variant="contained" onClick={onClose} sx={{ mt: 2 }}>
           확인
         </Button>
       </Box>
