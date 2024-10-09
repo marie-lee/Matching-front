@@ -215,7 +215,7 @@ const GuidePopup = ({ open, onClose }) => {
             }}
           />
           <Typography component="span" sx={{ color: '#ffffff' }}>
-            오늘 하루 보지 않기
+            Do not show this again.
           </Typography>
           <Button
             variant="outlined"
@@ -227,7 +227,7 @@ const GuidePopup = ({ open, onClose }) => {
               backgroundColor: '#555454',
             }}
           >
-            닫기
+            Close
           </Button>
         </Box>
       </Box>
