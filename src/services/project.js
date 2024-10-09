@@ -73,3 +73,9 @@ export const URL_PUT_PROJECT_MEMBER_PART = '/project/memberList/part';
 export const putProjectMemberPart = (payload, pjtSn, memSn) => {
   return instance.put(`${URL_PUT_PROJECT_MEMBER_PART}/${pjtSn}/${memSn}`, payload);
 };
+
+// 프로젝트 관리자 권한 부여
+export const URL_PUT_PROJECT_MEMBER_ADMIN = '/project/memberList/role';
+export const putProjectMemberAdmin = (payload, pjtSn, memSn) => {
+  return instance.put(`${URL_PUT_PROJECT_MEMBER_ADMIN}/${pjtSn}/${memSn}`, payload);
+};
