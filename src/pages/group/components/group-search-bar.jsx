@@ -12,29 +12,10 @@ import { useNavigate } from 'react-router-dom';
 
 import { PATHS } from '@/routes/paths';
 
-const menulist = [
-  {
-    value: '1',
-    label: 'Backend',
-  },
-  {
-    value: '2',
-    label: 'Frontend',
-  },
-  {
-    value: '3',
-    label: 'Planner',
-  },
-  {
-    value: '4',
-    label: 'Designer',
-  },
-  {
-    value: '5',
-    label: 'ALL',
-  },
-];
-const GroupSearchBar = () => {
+const GroupSearchBar = ({partList}) => {
+  // "ALL" 옵션을 partList에 추가
+  const updatedPartList = [{part: 'ALL'}, ...partList];
+  
   return (
     <Stack>
       <Grid pt={10} pb={2}>
@@ -55,10 +36,10 @@ const GroupSearchBar = () => {
               ),
             }}
           />
-          <TextField fullWidth select defaultValue={5} variant="standard">
-            {menulist.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
+          <TextField fullWidth select defaultValue={'ALL'} variant="standard">
+            {updatedPartList.map((option) => (
+              <MenuItem key={option.part} value={option.part}>
+                {option.part}
               </MenuItem>
             ))}
           </TextField>

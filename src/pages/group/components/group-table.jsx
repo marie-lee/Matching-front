@@ -31,12 +31,14 @@ const columns = [
       <Stack direction="row" alignItems="center" spacing={2}>
         <Avatar src={params.row.userImg} alt={params.row.userNm} />
         <Typography>{params.row.userNm}</Typography>
-        <Chip
-          size="small"
-          color="secondary"
-          variant="outlined"
-          label="관리자"
-        ></Chip>
+        {params.row.role === 'owner' && (
+          <Chip
+            size="small"
+            color="secondary"
+            variant="outlined"
+            label="관리자"
+          />
+        )}
       </Stack>
     ),
   },
@@ -100,50 +102,15 @@ const MemberEmpty = () => {
   );
 };
 
-const ExampleMemberList = [
-  {
-    pjtMemSn: 1,
-    userSn: 1,
-    userNm: '임동현',
-    userImg: 'http://218.232.137.30:20090/matching/profile/img.png',
-    pjtRoleSn: 1,
-    part: 'front',
-    firstDt: '2024-05-01T00:00:00.000Z',
-    endDt: null,
-    delYn: 0,
-  },
-  {
-    pjtMemSn: 2,
-    userSn: 2,
-    userNm: '홍길동',
-    userImg: 'http://218.232.137.30:20090/matching/profile/img.png',
-    pjtRoleSn: 1,
-    part: 'front',
-    firstDt: '2024-05-01T00:00:00.000Z',
-    endDt: null,
-    delYn: 0,
-  },
-  {
-    pjtMemSn: 3,
-    userSn: 3,
-    userNm: '김철수',
-    userImg: 'http://218.232.137.30:20090/matching/profile/img.png',
-    pjtRoleSn: 2,
-    part: 'end',
-    firstDt: '2024-05-01T00:00:00.000Z',
-    endDt: null,
-    delYn: 0,
-  },
-];
-
-const GroupTable = () => {
+const GroupTable = ({memberList}) => {
   const [data, setData] = useState([]);
+  
   return (
     <Stack pt={1}>
       <BasicDataGrid
         autoHeight
         columns={columns}
-        rows={data.length > 0 ? data : ExampleMemberList}
+        rows={data.length > 0 ? data : memberList}
         getRowId={(row) => row.pjtMemSn}
         noRows={MemberEmpty}
         rowHeight={60}

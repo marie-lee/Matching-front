@@ -40,6 +40,12 @@ export const getMyRate = (pjtSn) => {
   return instance.get(`${URL_GET_MY_RATE}/${pjtSn}`);
 };
 
+// 프로젝트 멤버, 파트 리스트 조회
+export const URL_GET_PROJECT_MEMBER_PART = '/project/memberList';
+export const getProjectMemberPart = (pjtSn) => {
+  return instance.get(`${URL_GET_PROJECT_MEMBER_PART}/${pjtSn}`);
+};
+
 // ----------------------------------------------------------------------
 // POST
 // ----------------------------------------------------------------------
