@@ -38,6 +38,8 @@ const Notification = ({
         style: {
           maxHeight: 300,
           width: '300px',
+          padding: 0,
+          paddingLeft: 5,
         },
       }}
       anchorOrigin={anchorOriginConfig}
@@ -70,6 +72,7 @@ const Notification = ({
                   whiteSpace: 'normal',
                   wordWrap: 'break-word',
                   fontSize: '14px',
+                  paddingTop: 10,
                 },
               }}
             />
