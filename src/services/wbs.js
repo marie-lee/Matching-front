@@ -47,6 +47,12 @@ export const getWbsAllTaskList = (pjtSn) => {
   return instance.get(`${URL_GET_WBS_ALL_TASK_LIST}/${pjtSn}`);
 };
 
+// 전체 지난 업무 및 이슈 목록 조회
+export const URL_GET_PROJECT_WBS_PAST_LIST = '/project/wbs/past';
+export const getWbsPastList = (pjtSn) => {
+  return instance.get(`${URL_GET_PROJECT_WBS_PAST_LIST}/${pjtSn}`);
+};
+
 // ----------------------------------------------------------------------
 // POST
 // ----------------------------------------------------------------------
