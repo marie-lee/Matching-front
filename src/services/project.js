@@ -71,11 +71,31 @@ export const postProjectRate = (payload, pjtSn, targetSn) => {
 // 프로젝트 멤버 파트 변경
 export const URL_PUT_PROJECT_MEMBER_PART = '/project/memberList/part';
 export const putProjectMemberPart = (payload, pjtSn, memSn) => {
-  return instance.put(`${URL_PUT_PROJECT_MEMBER_PART}/${pjtSn}/${memSn}`, payload);
+  return instance.put(
+    `${URL_PUT_PROJECT_MEMBER_PART}/${pjtSn}/${memSn}`,
+    payload,
+  );
 };
 
 // 프로젝트 관리자 권한 부여
 export const URL_PUT_PROJECT_MEMBER_ADMIN = '/project/memberList/role';
 export const putProjectMemberAdmin = (payload, pjtSn, memSn) => {
-  return instance.put(`${URL_PUT_PROJECT_MEMBER_ADMIN}/${pjtSn}/${memSn}`, payload);
+  return instance.put(
+    `${URL_PUT_PROJECT_MEMBER_ADMIN}/${pjtSn}/${memSn}`,
+    payload,
+  );
+};
+
+// 프로젝트 종료일 수정
+export const URL_PUT_PROJECT_DATE = '/project/updateEndDate';
+export const putProjectDate = (pjtSn, payload) => {
+  return instance.put(`${URL_PUT_PROJECT_DATE}/${pjtSn}`, payload);
+};
+
+// 프로젝트 종료 상태로 변경
+export const URL_PUT_PROJECT_FINISH = '/project/updateProjectStatus';
+export const putProjectFinish = (pjtSn) => {
+  return instance.put(`${URL_PUT_PROJECT_FINISH}/${pjtSn}`, {
+    status: 'FINISH',
+  });
 };

@@ -37,6 +37,9 @@ export const PATHS = {
     wbsInput: '/wbs/wbs-input',
     wbsView: '/wbs/wbs-view',
   },
+  // 업무 및 이슈 대시보드
   task: { root: '/task' },
   group: { root: '/group' },
+  // 프로젝트 리더
+  leader: { root: '/leader' },
 };

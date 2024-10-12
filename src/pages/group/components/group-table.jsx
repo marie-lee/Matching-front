@@ -31,7 +31,7 @@ const columns = (partList) => [
       <Stack direction="row" alignItems="center" spacing={2}>
         <Avatar src={params.row.userImg} alt={params.row.userNm} />
         <Typography>{params.row.userNm}</Typography>
-        {params.row.role === 'owner' && (
+        {params.row.role === 'leader' && (
           <Chip
             size="small"
             color="secondary"
@@ -75,7 +75,9 @@ const columns = (partList) => [
     headerName: '',
     sortable: false,
     width: 150,
-    renderCell: (params) => <SettingMenu user={params.row} partList={partList}/>,
+    renderCell: (params) => (
+      <SettingMenu user={params.row} partList={partList} />
+    ),
   },
 ];
 
@@ -102,7 +104,7 @@ const MemberEmpty = () => {
   );
 };
 
-const GroupTable = ({memberList, partList}) => {
+const GroupTable = ({ memberList, partList }) => {
   return (
     <Stack pt={1}>
       <BasicDataGrid

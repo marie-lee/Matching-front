@@ -19,7 +19,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-const permissions = ['member', 'owner'];
+const permissions = ['member', 'leader'];
 
 const UserAdd = ({ roles, resData, participants, setParticipants }) => {
   const tableEndRef = useRef(null);
@@ -36,7 +36,7 @@ const UserAdd = ({ roles, resData, participants, setParticipants }) => {
   const handleAddRow = () => {
     setParticipants((prev) => [
       ...prev,
-      { userNm: '', part: '', role: 'owner', userSn: null },
+      { userNm: '', part: '', role: 'leader', userSn: null },
     ]);
   };
 

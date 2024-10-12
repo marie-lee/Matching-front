@@ -1,16 +1,18 @@
 import {
+  Avatar,
   Box,
   Button,
-  ButtonBase,
   Chip,
   Dialog,
   Divider,
   Grid,
+  IconButton,
+  InputAdornment,
   Stack,
   Typography,
 } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 
@@ -18,16 +20,22 @@ import {
   RhfDatePicker,
   RhfDropdown,
   RhfFormProvider,
+  RhfMentions,
 } from '@/components/hook-form';
 import {
+  commentAddFormDefaultValues,
   LEVEL_LIST,
   PRIORITY_LIST,
   STATUS_LIST,
   taskEditFormDefaultValues,
 } from '@/pages/task/constants';
+import {
+  getWbsTask,
+  postWbsTaskComment,
+  postWbsTaskEdit,
+} from '@/services/wbs';
+import TaskIssueAdd from '@/pages/task/components/task-issue-add';
 import { Icon } from '@iconify/react';
-import { getWbsTask, postWbsTaskEdit } from '@/services/wbs';
-import TaskIssueAdd from '@/pages/task/components/task-issue-add.jsx';
 
 // ----------------------------------------------------------------------
 
@@ -40,6 +48,9 @@ const TaskDetail = ({
   fetchDashboard,
   handleOpenIssue,
 }) => {
+  const dialogRef = useRef(null);
+  const commentRef = useRef(null);
+
   // 업무 상세 정보
   const [data, setData] = useState();
 
@@ -110,6 +121,71 @@ const TaskDetail = ({
       fetchTask();
     }
   }, [selectedTaskSn, selectedPjtSn]);
+
+  // ----------------------------------------------------------------------
+
+  const [isPending, setIsPending] = useState(false);
+
+  const getCommentMentionList =
+    optionData?.memberList?.map(({ userSn, userNm }) => ({
+      id: userSn,
+      display: userNm,
+    })) || [];
+
+  const commentAddForm = useForm({
+    defaultValues: commentAddFormDefaultValues,
+  });
+
+  const fetchAddComment = async (payload) => {
+    setIsPending(true);
+    try {
+      const res = await postWbsTaskComment(
+        selectedPjtSn,
+        selectedTaskSn,
+        payload,
+      );
+      setIsPending(false);
+      if (res?.status === 200) {
+        fetchTask();
+        commentAddForm.reset();
+      }
+    } catch (error) {
+      setIsPending(false);
+      console.log(error);
+    }
+  };
+
+  const onSubmitComment = commentAddForm.handleSubmit(async (_payload) => {
+    if (!isPending) {
+      let payload = {};
+
+      const regExp = /\@\[(.+?)\]\(\d+\)/g;
+
+      payload['TEXT'] = _payload['TEXT'].replace(regExp, '@$1');
+
+      payload['MENTIONS'] = [
+        ..._payload['TEXT'].matchAll(/\@\[(.+?)\]\((\d+)\)/g),
+      ].map((match) => Number(match[2]));
+
+      await fetchAddComment(payload);
+    }
+  });
+
+  const renderCommentText = (text, mentions) => {
+    _.forEach(mentions, (value) => {
+      const regExp = new RegExp(`@${value.USER_NM}`, 'g');
+      text = text.replace(regExp, `<b>@${value.USER_NM}</b>`);
+    });
+
+    return <Typography dangerouslySetInnerHTML={{ __html: text }} />;
+  };
+
+  // 덧글 추가될 경우, 덧글 영역 스크롤 하단으로 위치시키기 위함
+  useEffect(() => {
+    if (commentRef.current) {
+      commentRef.current.scrollTop = commentRef.current.scrollHeight;
+    }
+  }, [data]);
 
   // ----------------------------------------------------------------------
 
@@ -212,6 +288,7 @@ const TaskDetail = ({
 
         <Divider flexItem />
 
+        {/* ----------------------- 이슈 ---------------------- */}
         <Stack spacing={1.5}>
           <Stack
             direction={'row'}
@@ -267,6 +344,77 @@ const TaskDetail = ({
             ))}
           </Stack>
         </Stack>
+        {/* ----------------------- // 이슈 ---------------------- */}
+
+        {/* ----------------------- 댓글 ---------------------- */}
+        <Stack spacing={1.5}>
+          <Typography variant={'lg'}>Comment</Typography>
+
+          <Divider flexItem />
+
+          <Stack
+            ref={commentRef}
+            spacing={2}
+            sx={{ height: '20rem', overflowY: 'auto' }}
+          >
+            {data?.COMMENTS?.map((comment) => (
+              <Stack
+                direction={'row'}
+                key={`comment-${comment.COMMENT_SN}`}
+                spacing={1.5}
+                alignItems={'center'}
+              >
+                <Avatar />
+                <Stack spacing={0.5}>
+                  <Stack direction={'row'} spacing={1}>
+                    <Typography variant={'sm'}>{comment.CREATER_NM}</Typography>
+                    <Typography variant={'xs'} color={'text.secondary'}>
+                      {dayjs(comment?.CREATED_DT).format('YYYY-MM-DD HH:mm')}
+                    </Typography>
+                  </Stack>
+                  <Typography>
+                    {/*{comment.TEXT}*/}
+
+                    {renderCommentText(comment.TEXT, comment.mentions)}
+                  </Typography>
+                </Stack>
+              </Stack>
+            ))}
+          </Stack>
+          <RhfFormProvider form={commentAddForm}>
+            <Stack direction={'row'} spacing={1.5} pt={1}>
+              <Avatar />
+              <Stack width={1}>
+                <RhfMentions
+                  name={'TEXT'}
+                  placeholder={'덧글 추가'}
+                  sx={{ pt: 1 }}
+                  containerRef={dialogRef}
+                  data={getCommentMentionList}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      onSubmitComment();
+                    }
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end" sx={{ mb: 1 }}>
+                        <IconButton disableRipple onClick={onSubmitComment}>
+                          <Icon
+                            icon={'clarity:circle-arrow-solid'}
+                            color={'#000'}
+                            fontSize={24}
+                          />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Stack>
+            </Stack>
+          </RhfFormProvider>
+        </Stack>
+        {/* ----------------------- // 댓글 ---------------------- */}
       </Stack>
     </Dialog>
   );

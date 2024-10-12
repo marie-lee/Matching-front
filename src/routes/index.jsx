@@ -12,6 +12,7 @@ import wbs from '@/routes/wbs';
 import task from '@/routes/task';
 import review from '@/routes/review';
 import group from '@/routes/group';
+import leader from '@/routes/leader';
 
 import NotFoundPage from '@/pages/error/404';
 import MainLayout from '@/layouts/main/main-layout';
@@ -50,6 +51,7 @@ const Router = () => {
     task,
     review,
     group,
+    leader,
 
     {
       path: '*',
@@ -67,7 +69,6 @@ const Router = () => {
   ];
 
   const routes = isSignIn ? privateRoutes : publicRoutes;
-  // const routes = privateRoutes;
 
   return useRoutes(routes);
 };

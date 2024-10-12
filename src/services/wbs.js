@@ -47,6 +47,12 @@ export const getWbsAllTaskList = (pjtSn) => {
   return instance.get(`${URL_GET_WBS_ALL_TASK_LIST}/${pjtSn}`);
 };
 
+// 전체 지난 업무 및 이슈 목록 조회
+export const URL_GET_PROJECT_WBS_PAST_LIST = '/project/wbs/past';
+export const getWbsPastList = (pjtSn) => {
+  return instance.get(`${URL_GET_PROJECT_WBS_PAST_LIST}/${pjtSn}`);
+};
+
 // ----------------------------------------------------------------------
 // POST
 // ----------------------------------------------------------------------
@@ -77,13 +83,22 @@ export const postWbsTaskEdit = (pjtSn, taskSn, payload) => {
   return instance.post(`${URL_POST_WBS_TASK_EDIT}/${pjtSn}/${taskSn}`, payload);
 };
 
+// WBS 업무 댓글 생성
+export const URL_POST_WBS_TASK_COMMENT = '/project/wbs/task/comment';
+export const postWbsTaskComment = (pjtSn, taskSn, payload) => {
+  return instance.post(
+    `${URL_POST_WBS_TASK_COMMENT}/${pjtSn}/${taskSn}`,
+    payload,
+  );
+};
+
 // WBS 이슈 추가
 export const URL_POST_WBS_ISSUE = '/project/wbs/issue';
 export const postWbsIssue = (pjtSn, taskSn, payload) => {
   return instance.post(`${URL_POST_WBS_ISSUE}/${pjtSn}/${taskSn}`, payload);
 };
 
-// WBS 이슈 덧글 생성
+// WBS 이슈 댓글 생성
 export const URL_POST_WBS_ISSUE_COMMENT = '/project/wbs/issue/comment';
 export const postWbsIssueComment = (pjtSn, issueSn, payload) => {
   return instance.post(
