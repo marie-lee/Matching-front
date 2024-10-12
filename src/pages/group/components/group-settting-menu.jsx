@@ -16,7 +16,10 @@ import {
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { useState } from 'react';
-import { putProjectMemberAdmin, putProjectMemberPart } from '@/services/project';
+import {
+  putProjectMemberAdmin,
+  putProjectMemberPart,
+} from '@/services/project';
 import { useSelector } from 'react-redux';
 import { selectPjtSn } from '@/store/pjtsn-reducer';
 import { useNavigate } from 'react-router-dom';
@@ -71,25 +74,24 @@ const SettingMenu = ({ user, partList }) => {
   const onAdminAdd = async (userSn) => {
     // 관리자 권한 부여 API 호출
     const payload = {
-      "newRole" : "owner"
-    }
-    try{
+      newRole: 'leader',
+    };
+    try {
       const res = await putProjectMemberAdmin(payload, pjtSn, userSn);
-      if(res?.status === 200){
+      if (res?.status === 200) {
         console.log('관리자 권한 부여 성공');
         navigate(0);
       }
-    }catch(error){
+    } catch (error) {
       console.error(error);
     }
-  }
-
+  };
 
   const onRoleChange = async (userSn, role) => {
     // 역할 변경 API 호출
     const payload = {
-      "newPart": role
-    }
+      newPart: role,
+    };
     try {
       const res = await putProjectMemberPart(payload, pjtSn, userSn);
       if (res?.status === 200) {
@@ -98,8 +100,8 @@ const SettingMenu = ({ user, partList }) => {
       }
     } catch (error) {
       console.error(error);
-    }  
-  }
+    }
+  };
 
   return (
     <>

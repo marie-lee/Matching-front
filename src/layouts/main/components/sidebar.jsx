@@ -96,7 +96,7 @@ const Sidebar = () => {
             <ListItemButton href={'/'}>
               <ListItemText primary="Hoit!" sx={{ textAlign: 'center' }} />
             </ListItemButton>
-            <ListItemButton href={'/task'} sx={{ mt: 7 }}>
+            <ListItemButton href={PATHS.wbs.root} sx={{ mt: 7 }}>
               <ListItemIcon sx={{ justifyContent: 'center' }}>
                 <MenuBookIcon />
               </ListItemIcon>
@@ -111,7 +111,7 @@ const Sidebar = () => {
                 <GroupIcon />
               </ListItemIcon>
             </ListItemButton>
-            <ListItemButton onClick={handleOpenPreparingService} sx={{ mt: 3 }}>
+            <ListItemButton href={PATHS.leader.root} sx={{ mt: 3 }}>
               <ListItemIcon sx={{ justifyContent: 'center' }}>
                 <StarIcon />
               </ListItemIcon>
