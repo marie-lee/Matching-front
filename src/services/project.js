@@ -91,3 +91,11 @@ export const URL_PUT_PROJECT_DATE = '/project/updateEndDate';
 export const putProjectDate = (pjtSn, payload) => {
   return instance.put(`${URL_PUT_PROJECT_DATE}/${pjtSn}`, payload);
 };
+
+// 프로젝트 종료 상태로 변경
+export const URL_PUT_PROJECT_FINISH = '/project/updateProjectStatus';
+export const putProjectFinish = (pjtSn) => {
+  return instance.put(`${URL_PUT_PROJECT_FINISH}/${pjtSn}`, {
+    status: 'FINISH',
+  });
+};

@@ -111,6 +111,7 @@ const Sidebar = () => {
                 <GroupIcon />
               </ListItemIcon>
             </ListItemButton>
+            {/* TODO: 프로젝트 리더인 경우에만(?) 노출 */}
             <ListItemButton href={PATHS.leader.root} sx={{ mt: 3 }}>
               <ListItemIcon sx={{ justifyContent: 'center' }}>
                 <StarIcon />
