@@ -13,6 +13,7 @@ import {
 } from '@/pages/task/components';
 import { getWbsDashboard, getWbsTaskAdditionalInfo } from '@/services/wbs';
 import { useSelector } from 'react-redux';
+import FloatingButton from '@/pages/guide/components/floating-button';
 
 // ----------------------------------------------------------------------
 
@@ -179,6 +180,7 @@ const TaskDashboardPage = () => {
           </Stack>
         </Grid>
       </Grid>
+      <FloatingButton initialTab={5} />
     </Container>
   );
 };

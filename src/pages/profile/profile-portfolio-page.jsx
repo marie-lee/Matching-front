@@ -2,6 +2,7 @@ import { Grid } from '@mui/material';
 import { useState } from 'react';
 
 import { ProfileDetails, PortfolioList } from '@/pages/profile/components';
+import FloatingButton from '@/pages/guide/components/floating-button';
 
 const ProfilePortfolioPage = () => {
   const [profileData, setProfileData] = useState([]);
@@ -17,7 +18,10 @@ const ProfilePortfolioPage = () => {
       <Grid item xs={12} md={8}>
         <PortfolioList profileData={profileData} />
       </Grid>
+      <FloatingButton initialTab={1} />
     </Grid>
+    
+
   );
 };
 

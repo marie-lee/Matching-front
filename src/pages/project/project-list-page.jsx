@@ -4,6 +4,7 @@ import { selectName } from '@/store/name-reducer';
 
 import { ProjectList } from '@/pages/project/components';
 import { PATHS } from '@/routes/paths';
+import FloatingButton from '@/pages/guide/components/floating-button';
 
 const ProjectListPage = () => {
   const name = useSelector(selectName);
@@ -18,6 +19,7 @@ const ProjectListPage = () => {
         </Button>
       </Stack>
       <ProjectList name={name} />
+      <FloatingButton initialTab={2} />
     </Stack>
   );
 };
