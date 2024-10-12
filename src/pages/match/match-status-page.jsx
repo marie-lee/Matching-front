@@ -21,6 +21,7 @@ import MatchSelectedMember from './components/match-selected-member';
 import { ProjectDetails } from '../project/components';
 import MatchSelectedProject from './components/match-selected-project';
 import MatchSkeleton from './components/match-skeleton';
+import FloatingButton from '@/pages/guide/components/floating-button';
 
 // ----------------------------------------------------------------------
 
@@ -157,6 +158,7 @@ const MatchStatusPage = () => {
         data={reqDialogData}
         fetchStatus={fetchStatus}
       />
+      <FloatingButton initialTab={3} />
     </Grid>
   );
 };

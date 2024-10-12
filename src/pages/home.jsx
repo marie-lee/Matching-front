@@ -4,6 +4,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import intro from '@/assets/intro.png';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import FloatingButton from '@/pages/guide/components/floating-button';
 
 const Home = () => {
   const theme = useTheme();
@@ -168,6 +169,7 @@ const Home = () => {
           </Typography>
         </Grid>
       </Grid>
+      <FloatingButton initialTab={0} />
     </>
   );
 };

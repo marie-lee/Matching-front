@@ -21,6 +21,9 @@ import {
 import { getProject } from '@/services/project';
 import { getWbsInfo } from '@/services/wbs';
 
+// Guide Import
+import FloatingButton from '@/pages/guide/components/floating-button';
+
 const CreateWbsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -150,6 +153,7 @@ const CreateWbsPage = () => {
           </Box>
         </Stack>
       </Stack>
+      <FloatingButton initialTab={4} />
     </Box>
   );
 };

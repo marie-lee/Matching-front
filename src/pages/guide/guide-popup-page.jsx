@@ -5,9 +5,9 @@ import {
   Tab,
   Box,
   IconButton,
-  Checkbox,
   Typography,
   Button,
+  Checkbox,
 } from '@mui/material';
 import Slide0 from '@/assets/guide/slide0.png';
 import Slide1 from '@/assets/guide/slide1.png';
@@ -18,8 +18,8 @@ import Slide5 from '@/assets/guide/slide5.png';
 import leftArrow from '@/assets/guide/leftArrow.png';
 import rightArrow from '@/assets/guide/rightArrow.png';
 
-const GuidePopup = ({ open, onClose }) => {
-  const [currentTab, setCurrentTab] = useState(0);
+const GuidePopup = ({ open, onClose, initialTab, showCheckbox }) => {
+  const [currentTab, setCurrentTab] = useState(initialTab || 0);
   const [showAgain, setShowAgain] = useState(true);
 
   const tabs = [
@@ -193,10 +193,10 @@ const GuidePopup = ({ open, onClose }) => {
           </IconButton>
         </Box>
 
-        {/* 체크박스 및 버튼 */}
+        {/* 체크박스 및 닫기 버튼 */}
         <Box
           sx={{
-            mt: 0,
+            mt: 2,
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
@@ -204,22 +204,26 @@ const GuidePopup = ({ open, onClose }) => {
             gap: '10px',
           }}
         >
-          <Checkbox
-            checked={!showAgain}
-            onChange={(e) => setShowAgain(!e.target.checked)}
-            sx={{
-              color: '#ffffff',
-              '&.Mui-checked': {
-                color: '#000000',
-              },
-            }}
-          />
-          <Typography component="span" sx={{ color: '#ffffff' }}>
-            Do not show this again.
-          </Typography>
+          {showCheckbox && (
+            <>
+              <Checkbox
+                checked={!showAgain}
+                onChange={(e) => setShowAgain(!e.target.checked)}
+                sx={{
+                  color: '#ffffff',
+                  '&.Mui-checked': {
+                    color: '#000000',
+                  },
+                }}
+              />
+              <Typography component="span" sx={{ color: '#ffffff' }}>
+                Do not show this again.
+              </Typography>
+            </>
+          )}
           <Button
             variant="outlined"
-            onClick={handleClose}
+            onClick={onClose}
             sx={{
               color: '#fff',
               borderColor: '#fff',
