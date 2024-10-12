@@ -1,9 +1,13 @@
 import { Box, IconButton, Stack, Typography } from '@mui/material';
-import { getWbsPastList } from '@/services/wbs.js';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import { Icon } from '@iconify/react';
+
+import { IssueDetail, TaskDetail } from '@/pages/task/components';
+import { getWbsPastList, getWbsTaskAdditionalInfo } from '@/services/wbs';
+
+// ----------------------------------------------------------------------
 
 const PastTasks = () => {
   const pjtSn = useSelector((state) => state.pjtSn.pjtSn);
@@ -12,6 +16,8 @@ const PastTasks = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
   const itemsPerPage = 5;
+
+  // ----------------------------------------------------------------------
 
   const fetchWbsPastList = async () => {
     try {
@@ -32,8 +38,44 @@ const PastTasks = () => {
   useEffect(() => {
     if (pjtSn) {
       fetchWbsPastList();
+      fetchTaskAdditionalInfo();
     }
   }, [pjtSn]);
+
+  // ----------------------------------------------------------------------
+
+  const [taskDialogOpen, setTaskDialogOpen] = useState(false);
+  const [issueDialogOpen, setIssueDialogOpen] = useState(false);
+
+  const [selectedTaskSn, setSelectedTaskSn] = useState();
+  const [selectedIssueSn, setSelectedIssueSn] = useState();
+  const [optionData, setOptionData] = useState({
+    workPackage: [],
+    depth: [],
+    memberList: [],
+  });
+
+  const handleOpenTask = (value) => {
+    setSelectedTaskSn(value?.ticketSn);
+    setTaskDialogOpen(true);
+  };
+
+  const handleOpenIssue = (value) => {
+    setSelectedIssueSn(value?.issueSn);
+    setIssueDialogOpen(true);
+  };
+
+  // WBS 업무 추가 정보 조회
+  const fetchTaskAdditionalInfo = async () => {
+    try {
+      const { data } = await getWbsTaskAdditionalInfo(pjtSn);
+      setOptionData(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // ----------------------------------------------------------------------
 
   return (
     <Stack
@@ -60,9 +102,21 @@ const PastTasks = () => {
         </Typography>
       </Stack>
 
-      <Stack spacing={3}>
+      <Stack spacing={2}>
         {currentTasks?.map((task, index) => (
-          <Stack spacing={1} key={`past-task-${task.ticketSn}`}>
+          <Stack
+            key={`past-task-${task.ticketSn}`}
+            spacing={1}
+            onClick={() => handleOpenTask(task)}
+            sx={{
+              p: 1,
+              px: 2,
+              ':hover': {
+                cursor: 'pointer',
+                backgroundColor: (theme) => theme.palette.action.hover,
+              },
+            }}
+          >
             <Stack direction={'row'} alignItems={'center'} spacing={1.5}>
               <Typography variant={'sm'}>{task.ticketNum}</Typography>
               <Typography variant={'sm'}>{task.title}</Typography>
@@ -92,6 +146,31 @@ const PastTasks = () => {
           <Icon icon={'material-symbols:navigate-next'} fontSize={28} />
         </IconButton>
       </Stack>
+
+      {/* 업무 목록 item 선택 시, 상세/수정 Dialog */}
+      {taskDialogOpen && (
+        <TaskDetail
+          open={taskDialogOpen}
+          setOpen={setTaskDialogOpen}
+          selectedPjtSn={pjtSn}
+          selectedTaskSn={selectedTaskSn}
+          optionData={optionData}
+          handleOpenIssue={handleOpenIssue}
+          fetchDashboard={() => fetchWbsPastList()}
+        />
+      )}
+
+      {/* 이슈 목록 item 선택 시, 상세/수정 Dialog */}
+      {issueDialogOpen && (
+        <IssueDetail
+          open={issueDialogOpen}
+          setOpen={setIssueDialogOpen}
+          selectedPjtSn={pjtSn}
+          selectedIssueSn={selectedIssueSn}
+          optionData={optionData}
+          fetchDashboard={() => fetchWbsPastList()}
+        />
+      )}
     </Stack>
   );
 };
