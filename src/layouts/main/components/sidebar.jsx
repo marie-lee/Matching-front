@@ -20,6 +20,7 @@ import { getWbs } from '@/services/wbs';
 import { useSelector } from 'react-redux';
 import { selectPjtSn } from '@/store/pjtsn-reducer';
 import Notification from '@/components/notification';
+import wbs from '@/routes/wbs';
 
 const drawerWidth = 80;
 
@@ -73,6 +74,25 @@ const Sidebar = () => {
       navigate(PATHS.wbs.wbsView);
     }
   };
+
+  // wbs가 있는지 확인 후 이동
+  const handleGetWbs = async () => {
+    const wbsDataInfo = await getWbs(pjtSn);
+    if(wbsDataInfo.data.wbsData.length == 0){
+      navigate(PATHS.wbs.root, {
+        state: { 
+          pjtSn : pjtSn,
+        },
+      });
+    } else {
+      navigate(PATHS.task.root, {
+        state: { 
+          pjtSn : pjtSn,
+        },
+      });
+    }
+  };
+  
   return (
     <>
       <Drawer
@@ -96,7 +116,7 @@ const Sidebar = () => {
             <ListItemButton href={'/'}>
               <ListItemText primary="Hoit!" sx={{ textAlign: 'center' }} />
             </ListItemButton>
-            <ListItemButton href={PATHS.wbs.root} sx={{ mt: 7 }}>
+            <ListItemButton onClick={handleGetWbs} sx={{ mt: 7 }}>
               <ListItemIcon sx={{ justifyContent: 'center' }}>
                 <MenuBookIcon />
               </ListItemIcon>
