@@ -39,7 +39,7 @@ const MatchStatusPage = () => {
   const [projectReqList, setProjectReqList] = useState([]);
   const [myReqList, setMyReqList] = useState([]);
 
-  const fetchStatus = async () => {
+  const fetchStatus = async (pjt = null) => {
     setIsFetching(true);
     try {
       const res = await getStatus();
@@ -47,8 +47,10 @@ const MatchStatusPage = () => {
       setMyReqList(res?.data?.myReqList);
       setProjectReqList(res?.data?.projectReqList);
 
-      if (res?.data?.projectReqList && res?.data?.projectReqList.length > 0) {
+      if (res?.data?.projectReqList && res?.data?.projectReqList.length > 0 && pjt == null) { // pjt가 null이면 첫번째 프로젝트 선택
         setSelectedProjectSN(res?.data?.projectReqList[0].PJT_SN);
+      } else if (pjt) { // pjt가 있으면 해당 프로젝트 선택
+        setSelectedProjectSN(pjt);
       }
     } catch (error) {
       setIsFetching(false);

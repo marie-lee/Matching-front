@@ -43,9 +43,10 @@ const MatchReqDialog = ({ open, setOpen, data, fetchStatus }) => {
       const res = await putStatusReq(data?.pjtSn, data?.reqSn, {
         reqStts: data?.reqStts,
       });
+
       setIsPending(false);
       setOpen(false);
-      fetchStatus();
+      fetchStatus(data?.pjtSn);
     } catch (error) {
       console.log(error);
       setIsPending(false);
