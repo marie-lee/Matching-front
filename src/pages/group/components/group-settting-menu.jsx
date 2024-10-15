@@ -79,9 +79,8 @@ const SettingMenu = ({ user, partList }) => {
     try {
       const res = await putProjectMemberAdmin(payload, pjtSn, userSn);
       if (res?.status === 200) {
-        console.log('관리자 권한 부여 성공');
         navigate(0);
-      }
+      } 
     } catch (error) {
       console.error(error);
     }
@@ -96,7 +95,9 @@ const SettingMenu = ({ user, partList }) => {
       const res = await putProjectMemberPart(payload, pjtSn, userSn);
       if (res?.status === 200) {
         console.log('역할 변경 성공');
-        navigate(0);
+        navigate(0); 
+      } else if (res?.status === 400) {
+        alert("권한이 없습니다.");
       }
     } catch (error) {
       console.error(error);
