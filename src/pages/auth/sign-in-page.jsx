@@ -76,61 +76,61 @@ const SignInPage = () => {
   };
 
   const handleGoogleLogin = async () => {
-    setIsPreparingOpen(true); // 모달 열기
-    // setIsPending(true);
-    // setErrorMessage('');
+    //setIsPreparingOpen(true); // 모달 열기
+    setIsPending(true);
+    setErrorMessage('');
 
-    // try {
-    //   const result = await signInWithPopup(auth, googleProvider);
-    //   console.log('Google 로그인 성공:', result);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      console.log('Google 로그인 성공:', result);
 
-    //   if (result && result.user) {
-    //     const userEmail = result.user.email;
-    //     const userName = result.user.displayName || 'Google User';
-    //     const userAccessToken = result.user.accessToken;
+      if (result && result.user) {
+        const userEmail = result.user.email;
+        const userName = result.user.displayName || 'Google User';
+        const userAccessToken = result.user.accessToken;
 
-    //     if (!userEmail) {
-    //       console.error('No user email found after Google sign-in.');
-    //       setErrorMessage('사용자 이메일을 가져올 수 없습니다.');
-    //       setIsPending(false);
-    //       return;
-    //     }
+        if (!userEmail) {
+          console.error('No user email found after Google sign-in.');
+          setErrorMessage('사용자 이메일을 가져올 수 없습니다.');
+          setIsPending(false);
+          return;
+        }
 
-    //     try {
-    //       const emailCheckResponse = await postMemberEmailCheck({
-    //         email: userEmail,
-    //       });
-    //       if (emailCheckResponse.status === 200) {
-    //         navigate(PATHS.auth.signUp);
-    //       } else {
-    //         setErrorMessage('이메일 확인 중 오류가 발생했습니다.');
-    //       }
-    //     } catch (error) {
-    //       try {
-    //         const googleLoginResponse = await postMemberLoginGoogle({
-    //           userName: userName,
-    //           accessToken: userAccessToken,
-    //         });
+        try {
+          const emailCheckResponse = await postMemberEmailCheck({
+            email: userEmail,
+          });
+          if (emailCheckResponse.status === 200) {
+            navigate(PATHS.auth.signUp);
+          } else {
+            setErrorMessage('이메일 확인 중 오류가 발생했습니다.');
+          }
+        } catch (error) {
+          try {
+            const googleLoginResponse = await postMemberLoginGoogle({
+              userName: userName,
+              accessToken: userAccessToken,
+            });
 
-    //         if (googleLoginResponse.status === 200) {
-    //           dispatch(setName(googleLoginResponse.data.USER_NM));
-    //           dispatch(signIn({ token: googleLoginResponse.data.accessToken }));
-    //           navigate(PATHS.root);
-    //         } else {
-    //           setErrorMessage('로그인 처리 중 오류가 발생했습니다.');
-    //         }
-    //       } catch (loginError) {
-    //         setErrorMessage('로그인 처리 중 오류가 발생했습니다.');
-    //       }
-    //     }
-    //   } else {
-    //     setErrorMessage('사용자 정보를 확인할 수 없습니다.');
-    //   }
-    // } catch (error) {
-    //   setErrorMessage('Google 로그인 시도 실패했습니다.');
-    // } finally {
-    //   setIsPending(false);
-    // }
+            if (googleLoginResponse.status === 200) {
+              dispatch(setName(googleLoginResponse.data.USER_NM));
+              dispatch(signIn({ token: googleLoginResponse.data.accessToken }));
+              navigate(PATHS.root);
+            } else {
+              setErrorMessage('로그인 처리 중 오류가 발생했습니다.');
+            }
+          } catch (loginError) {
+            setErrorMessage('로그인 처리 중 오류가 발생했습니다.');
+          }
+        }
+      } else {
+        setErrorMessage('사용자 정보를 확인할 수 없습니다.');
+      }
+    } catch (error) {
+      setErrorMessage('Google 로그인 시도 실패했습니다.');
+    } finally {
+      setIsPending(false);
+    }
   };
 
   useEffect(() => {

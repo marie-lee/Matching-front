@@ -1,23 +1,30 @@
+import { useEffect, useState } from 'react';
 import { Typography, Button, Box, Grid, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import intro from '@/assets/intro.png';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import FloatingButton from '@/pages/guide/components/floating-button';
+import GuidePopup from '@/pages/guide/guide-popup-page'; 
 
 const Home = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('lg'));
-  const { isSignIn } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  
+  const [openGuidePopup, setOpenGuidePopup] = useState(false);
+
+  useEffect(() => {
+    const hideGuidePopup = localStorage.getItem('hideGuidePopup');
+    if (!hideGuidePopup) {
+      setOpenGuidePopup(true);
+    }
+  }, []);
+
+  const handleCloseGuidePopup = () => {
+    setOpenGuidePopup(false);
+  };
 
   const handleNavigation = (path) => {
-    if (isSignIn) {
-      navigate(path);
-    } else {
-      navigate('/auth/sign-in');
-    }
+    navigate(path);
   };
 
   return (
@@ -112,63 +119,16 @@ const Home = () => {
           </Box>
         </Grid>
       </Grid>
-      <div
-        style={{
-          borderTop: '1px solid #C9C9C9',
-          width: '100%',
-          marginTop: isSmallScreen ? '3%' : '10%',
-        }}
-      ></div>
 
-      <Typography sx={{ textAlign: 'center', mt: 1 }}>
-        Feature Description
-      </Typography>
-      <Box
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-      >
-        <ExpandMoreIcon />
-      </Box>
-      <Grid container spacing={2} sx={{ mt: 5 }}>
-        <Grid
-          item
-          xs={isSmallScreen ? 12 : 7}
-          sx={{ textAlign: 'center', order: isSmallScreen ? 1 : 0 }}
-        >
-          <img
-            src={intro}
-            style={{
-              width: isSmallScreen ? '70%' : '100%',
-              height: 'auto',
-              marginTop: isSmallScreen ? '0%' : '10%',
-            }}
-          />
-        </Grid>
-        <Grid xs={0.5}></Grid>
-        <Grid item xs={isSmallScreen ? 12 : 4.5}>
-          <Typography
-            variant={'h3'}
-            fontWeight={'fontWeightMedium'}
-            sx={{
-              textAlign: isSmallScreen ? 'center' : '',
-              mt: isSmallScreen ? 1 : 20,
-              mb: 3,
-            }}
-          >
-            AI를 통한 팀원 추천
-          </Typography>
-          <Typography
-            variant={'body1'}
-            sx={{
-              textAlign: isSmallScreen ? 'center' : '',
-              mb: isSmallScreen ? 5 : 40,
-            }}
-          >
-            AI를 통해 팀원을 추천받아보세요. 프로젝트에 필요한 역량을 가진
-            팀원을 추천받아보세요.또한 팀원들의 프로필을 확인하고 프로젝트에
-            추가하세요.
-          </Typography>
-        </Grid>
-      </Grid>
+      {/* 가이드 팝업 */}
+      <GuidePopup
+        open={openGuidePopup}
+        onClose={handleCloseGuidePopup}
+        initialTab={0}
+        showCheckbox={true}
+      />
+
+      {/* 플로팅 버튼 */}
       <FloatingButton initialTab={0} />
     </>
   );
