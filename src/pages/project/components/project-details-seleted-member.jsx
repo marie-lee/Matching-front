@@ -222,31 +222,33 @@ const ProjectDetailsSelectedMember = ({ member, handleClickReq }) => {
             </Grid>
           </Grid>
           {/* 경력 */}
-          <Grid item xs={12} mt={4}>
-            <Typography variant={'lg'} fontWeight={'fontWeightSemiBold'}>
-              Career
-            </Typography>
-            <Stack spacing={1} pt={1}>
-              {member.profile.career?.map((exp, index) => (
-                <Fragment key={`career_${index}`}>
-                  {' '}
-                  {/* Fragment에 key prop 추가 */}
-                  <Stack
-                    key={`career_${index}`}
-                    direction={'row'}
-                    spacing={2}
-                    alignItems={'center'}
-                  >
-                    <Typography>{exp.careerNm}</Typography>
-                    <Typography variant={'sm'} color={'text.secondary'}>
-                      {exp.enteringDt} ~ {exp.quitDt}
-                    </Typography>
-                  </Stack>
-                  <Divider></Divider>
-                </Fragment>
-              ))}
-            </Stack>
-          </Grid>
+          {member.profile.career[0]?.careerNm && (
+            <Grid item xs={12} mt={4}>
+              <Typography variant={'lg'} fontWeight={'fontWeightSemiBold'}>
+                Career
+              </Typography>
+              <Stack spacing={1} pt={1}>
+                {member.profile.career?.map((exp, index) => (
+                  <Fragment key={`career_${index}`}>
+                    {' '}
+                    {/* Fragment에 key prop 추가 */}
+                    <Stack
+                      key={`career_${index}`}
+                      direction={'row'}
+                      spacing={2}
+                      alignItems={'center'}
+                    >
+                      <Typography>{exp.careerNm}</Typography>
+                      <Typography variant={'sm'} color={'text.secondary'}>
+                        {exp.enteringDt} ~ {exp.quitDt}
+                      </Typography>
+                    </Stack>
+                    <Divider></Divider>
+                  </Fragment>
+                ))}
+              </Stack>
+            </Grid>
+          )}
         </Grid>
         {/* 포트폴리오 */}
         <Box
