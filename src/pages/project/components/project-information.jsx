@@ -63,9 +63,14 @@ const ProjectInformation = ({ projectData }) => {
                 <Typography>기간</Typography>
               </Grid>
               <Grid item xs={10}>
-                <Typography variant={'sm'}>
-                  {projectData.startDt}~{projectData.endDt}
-                </Typography>
+                {projectData.startDt ?
+                  <Typography variant={'sm'}>
+                    {projectData.startDt}~{projectData.endDt}
+                  </Typography>
+                : <Typography variant={'sm'}>
+                    {projectData.period} {projectData.durationUnit}
+                  </Typography>
+                }
               </Grid>
             </Grid>
             <Grid
