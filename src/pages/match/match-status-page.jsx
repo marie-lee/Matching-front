@@ -76,82 +76,92 @@ const MatchStatusPage = () => {
 
   return (
     <Grid container direction={'row'}>
-      <Grid item xs={6} pr={2}>
+      <Grid item xs={6}>
         <Stack spacing={2}>
-          <Typography variant={'xl'}>매칭 현황</Typography>
+        <Typography variant={'xl'}>매칭 현황</Typography>
 
-          {selectedView == '받은 제안' && (
-            <Typography variant={'lg'} px={2} pt={2}>
-              나의 현황
-            </Typography>
-          )}
-          {selectedView == '보낸 제안' && (
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">내 프로젝트</InputLabel>
-              <Select
-                variant="standard"
-                label="내 프로젝트"
-                value={selectedProjectSN}
-                onChange={handleChangeProject}
-                placeholder={'프로젝트를 선택하세요'}
-              >
-                {projectReqList.map((item) => (
-                  <MenuItem value={item.PJT_SN} key={item.PJT_SN}>
-                    {item.PJT_NM}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
+        {selectedView == '받은 제안' && (
+          <Typography variant={'lg'} px={2} pt={2}>
+            나의 현황
+          </Typography>
+        )}
+        {selectedView == '보낸 제안' && (
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">내 프로젝트</InputLabel>
+            <Select
+              variant="standard"
+              label="내 프로젝트"
+              value={selectedProjectSN}
+              onChange={handleChangeProject}
+              placeholder={'프로젝트를 선택하세요'}
+              // 너비를 80%로 설정
+              sx={{ width: '80%' }}
+            >
+              {projectReqList.map((item) => (
+                <MenuItem value={item.PJT_SN} key={item.PJT_SN}>
+                  {item.PJT_NM}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
 
-          <ButtonGroup sx={{ pb: 2 }}>
-            <Button
-              sx={{ px: 2.5 }}
-              variant={selectedView === '보낸 제안' ? 'contained' : 'outlined'}
-              onClick={() => {
-                setSelectedView('보낸 제안');
-                setSelectedProject(null);
-              }}
-            >
-              보낸 제안
-            </Button>
-            <Button
-              sx={{ px: 2.5 }}
-              variant={selectedView === '받은 제안' ? 'contained' : 'outlined'}
-              onClick={() => {
-                setSelectedView('받은 제안');
-                setSelectedMember(null);
-                setSelectedProjectSN(null);
-              }}
-            >
-              받은 제안
-            </Button>
-          </ButtonGroup>
+        <ButtonGroup sx={{ pb: 2 }}>
+          <Button
+            sx={{ px: 2.5 }}
+            variant={selectedView === '보낸 제안' ? 'contained' : 'outlined'}
+            onClick={() => {
+              setSelectedView('보낸 제안');
+              setSelectedProject(null);
+            }}
+          >
+            보낸 제안
+          </Button>
+          <Button
+            sx={{ px: 2.5 }}
+            variant={selectedView === '받은 제안' ? 'contained' : 'outlined'}
+            onClick={() => {
+              setSelectedView('받은 제안');
+              setSelectedMember(null);
+              setSelectedProjectSN(null);
+            }}
+          >
+            받은 제안
+          </Button>
+        </ButtonGroup>
         </Stack>
-
-        {selectedView === '보낸 제안' && (
-          <SentProposalList
-            data={projectReqList.find(
-              (item) => item.PJT_SN === selectedProjectSN,
-            )}
-            setSelectedMember={setSelectedMember}
-            handleClickReq={handleClickReq}
-          />
-        )}
-
-        {selectedView === '받은 제안' && (
-          <ReceivedProposalList
-            data={myReqList}
-            setSelectedProject={setSelectedProject}
-            handleClickReq={handleClickReq}
-          />
-        )}
       </Grid>
-      <Grid item container xs={6}>
-        {selectedMember == null ?
-          <MatchSkeleton />
-        : <MatchSelectedMember member={selectedMember} />}
-        <MatchSelectedProject data={selectedProject} />
+      
+      <Grid item container xs={12}>
+            <Grid item xs={6}  pr={2}> 
+              {selectedView === '보낸 제안' && (
+                <SentProposalList
+                  data={projectReqList.find(
+                    (item) => item.PJT_SN === selectedProjectSN,
+                  )}
+                  setSelectedMember={setSelectedMember}
+                  handleClickReq={handleClickReq}
+                />
+              )}
+              {selectedView === '받은 제안' && (
+                <ReceivedProposalList
+                  data={myReqList}
+                  setSelectedProject={setSelectedProject}
+                  handleClickReq={handleClickReq}
+                />
+              )}
+            </Grid>
+            <Grid item container xs={6}>
+              {!selectedMember && !selectedProject ? 
+                <MatchSkeleton /> 
+                : (
+                  <>
+                    {selectedMember && <MatchSelectedMember member={selectedMember} />}
+                    {selectedProject && <MatchSelectedProject data={selectedProject} />}
+                  </>
+                )
+              }
+            </Grid>
       </Grid>
 
       <MatchReqDialog
