@@ -14,6 +14,16 @@ const ProjectInformation = ({ projectData }) => {
   if (!projectData) {
     return <div>Loading.....</div>;
   }
+  const formatDataUnit = (data, unit) => {
+    console.log('unit', unit);
+    if (unit == 'MONTH') {
+      return data + '개월';
+    } else if (unit == 'DAY') {
+      return data + '일';
+    } else {
+      return data + ' ' + unit;
+    }
+  };
 
   return (
     <Grid
@@ -68,7 +78,10 @@ const ProjectInformation = ({ projectData }) => {
                     {projectData.startDt}~{projectData.endDt}
                   </Typography>
                 : <Typography variant={'sm'}>
-                    {projectData.period} {projectData.durationUnit}
+                    {formatDataUnit(
+                      projectData.period,
+                      projectData.durationUnit,
+                    )}
                   </Typography>
                 }
               </Grid>
